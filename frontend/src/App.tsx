@@ -8,6 +8,7 @@ import { DialogProvider } from './common/Dialogs/dialog.provider';
 import { LoginPage } from './features/auth/pages/LoginPage';
 import { DashboardPage } from './features/dashboard/pages/DashboardPage';
 import { SchoolsPage } from './features/schools';
+import { PlansPage } from './features/plans/pages/PlansPage';
 import { MainLayout } from '@common/navbar';
 
 /*------------- Conditional App Shell -------------*/
@@ -26,6 +27,7 @@ function AppContent() {
       <Routes>
         <Route path="/" element={<DashboardPage />} />
         <Route path="/schools" element={<SchoolsPage />} />
+        <Route path="/app-management/plans" element={user.role.name === 'SUPER_ADMIN' ? <PlansPage /> : <Navigate to="/" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </MainLayout>

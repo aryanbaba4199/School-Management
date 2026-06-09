@@ -27,13 +27,15 @@ describe('App Authentication and Dashboard Lifecycle', () => {
     expect(screen.queryByText('School OS Ecosystem')).not.toBeInTheDocument();
     expect(screen.queryByText('Schools Management')).not.toBeInTheDocument();
 
-    // 2. Select Admin demo login
-    const adminDemoChip = screen.getByText('Admin');
-    fireEvent.click(adminDemoChip);
-
-    // Verify input gets filled
+    // 2. Fill in login credentials manually
     const emailInput = screen.getByLabelText('Email Address') as HTMLInputElement;
-    expect(emailInput.value).toBe('superadmin@schoolos.com');
+    const passwordInput = screen.getByLabelText('Password') as HTMLInputElement;
+    
+    fireEvent.change(emailInput, { target: { value: 'aryan@schoolos.com' } });
+    fireEvent.change(passwordInput, { target: { value: 'admin123' } });
+
+    expect(emailInput.value).toBe('aryan@schoolos.com');
+    expect(passwordInput.value).toBe('admin123');
 
     // 3. Submit the Login form
     const loginButton = screen.getByRole('button', { name: 'Log In' });

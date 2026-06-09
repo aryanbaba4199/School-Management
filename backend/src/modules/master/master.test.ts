@@ -4,7 +4,9 @@ import { StateModel } from './models/state.model';
 import { DistrictModel } from './models/district.model';
 import { CityModel } from './models/city.model';
 import { SubscriptionPlanModel } from './models/subscription-plan.model';
+import { SchoolModel } from '../school/school.model';
 import { Types } from 'mongoose';
+import { generateToken } from '../../common/utils/jwt';
 
 /*------------- Jest Mongoose Mocks -------------*/
 
@@ -12,10 +14,17 @@ jest.mock('./models/state.model');
 jest.mock('./models/district.model');
 jest.mock('./models/city.model');
 jest.mock('./models/subscription-plan.model');
+jest.mock('../school/school.model');
 
 describe('Master Module API Endpoints', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  const superAdminToken = generateToken({
+    userId: 'admin123',
+    role: 'SUPER_ADMIN',
+    schoolId: '507f1f77bcf86cd799439011',
   });
 
   describe('States Routes', () => {
@@ -85,12 +94,61 @@ describe('Master Module API Endpoints', () => {
       (SubscriptionPlanModel.findOne as jest.Mock).mockResolvedValue(null);
       (SubscriptionPlanModel.prototype.save as jest.Mock).mockResolvedValue({ _id: 'plan123', name: 'Basic' });
 
-      const response = await request(app).post('/api/masters/subscription-plans').send({
+      const response = await request(app)
+        .post('/api/masters/subscription-plans')
+        .set('Authorization', `Bearer ${superAdminToken}`)
+        .send({
+          name: 'Basic',
+          code: 'BASIC',
+          price: 999,
+        });
+      expect(response.status).toBe(201);
+    });
+
+    it('should update Plan (PUT /subscription-plans/:id)', async () => {
+      const mockPlan = {
+        _id: 'plan123',
         name: 'Basic',
         code: 'BASIC',
         price: 999,
-      });
-      expect(response.status).toBe(201);
+        save: jest.fn().mockResolvedValue({ _id: 'plan123', name: 'Standard', code: 'BASIC', price: 1500 }),
+      };
+      (SubscriptionPlanModel.findById as jest.Mock).mockResolvedValue(mockPlan);
+      (SubscriptionPlanModel.findOne as jest.Mock).mockResolvedValue(null);
+
+      const response = await request(app)
+        .put('/api/masters/subscription-plans/plan123')
+        .set('Authorization', `Bearer ${superAdminToken}`)
+        .send({
+          name: 'Standard',
+          price: 1500,
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.body.data.price).toBe(1500);
+    });
+
+    it('should delete Plan if no schools are using it (DELETE /subscription-plans/:id)', async () => {
+      (SchoolModel.countDocuments as jest.Mock).mockResolvedValue(0);
+      (SubscriptionPlanModel.findByIdAndDelete as jest.Mock).mockResolvedValue({ _id: '507f1f77bcf86cd799439013' });
+
+      const response = await request(app)
+        .delete('/api/masters/subscription-plans/507f1f77bcf86cd799439013')
+        .set('Authorization', `Bearer ${superAdminToken}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+    });
+
+    it('should fail to delete Plan if schools are using it', async () => {
+      (SchoolModel.countDocuments as jest.Mock).mockResolvedValue(3);
+
+      const response = await request(app)
+        .delete('/api/masters/subscription-plans/507f1f77bcf86cd799439013')
+        .set('Authorization', `Bearer ${superAdminToken}`);
+
+      expect(response.status).toBe(400);
+      expect(response.body.message).toContain('Cannot delete plan. 3 schools are currently using this plan.');
     });
   });
 });

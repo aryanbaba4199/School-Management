@@ -112,4 +112,32 @@ export class MasterController {
       sendError(res, 500, errorMessage);
     }
   }
+
+  /**
+   * HTTP PUT /api/masters/subscription-plans/:id
+   */
+  async updateSubscriptionPlan(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const id = req.params.id as string;
+      const plan = await masterService.updateSubscriptionPlan(id, req.body);
+      sendSuccess(res, 200, plan);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to update Subscription Plan';
+      sendError(res, 400, errorMessage);
+    }
+  }
+
+  /**
+   * HTTP DELETE /api/masters/subscription-plans/:id
+   */
+  async deleteSubscriptionPlan(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const id = req.params.id as string;
+      await masterService.deleteSubscriptionPlan(id);
+      sendSuccess(res, 200, null);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete Subscription Plan';
+      sendError(res, 400, errorMessage);
+    }
+  }
 }

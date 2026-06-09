@@ -1,5 +1,5 @@
 import { baseApi } from './baseApi';
-import type { ISchool } from '../features/schools/types/schools.types';
+import type { ISchool, ISchoolDraft } from '../features/schools/types/schools.types';
 import type { SchoolFormData } from '../features/schools/schema/school.schema';
 
 export const schoolsApi = baseApi.injectEndpoints({
@@ -16,15 +16,38 @@ export const schoolsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['School'],
     }),
-    getDraft: builder.query<{ success: boolean; data: any }, string>({
+    getDraft: builder.query<{ success: boolean; data: ISchoolDraft }, string>({
       query: (email) => `/schools/drafts/${encodeURIComponent(email)}`,
     }),
-    saveDraft: builder.mutation<{ success: boolean; data: any }, any>({
+    saveDraft: builder.mutation<{ success: boolean; data: ISchoolDraft }, ISchoolDraft>({
       query: (draft) => ({
         url: '/schools/drafts',
         method: 'POST',
         body: draft,
       }),
+    }),
+    updateSchool: builder.mutation<{ success: boolean; data: ISchool }, { id: string; body: Partial<SchoolFormData> }>({
+      query: ({ id, body }) => ({
+        url: `/schools/${id}`,
+        method: 'PUT',
+        body,
+      }),
+      invalidatesTags: ['School'],
+    }),
+    deactivateSchool: builder.mutation<{ success: boolean; data: ISchool }, string>({
+      query: (id) => ({
+        url: `/schools/${id}/deactivate`,
+        method: 'PATCH',
+      }),
+      invalidatesTags: ['School'],
+    }),
+    deleteSchool: builder.mutation<{ success: boolean; message?: string }, { id: string; passcode: string }>({
+      query: ({ id, passcode }) => ({
+        url: `/schools/${id}`,
+        method: 'DELETE',
+        body: { passcode },
+      }),
+      invalidatesTags: ['School'],
     }),
   }),
 });
@@ -34,5 +57,8 @@ export const {
   useCreateSchoolMutation,
   useGetDraftQuery,
   useLazyGetDraftQuery,
-  useSaveDraftMutation
+  useSaveDraftMutation,
+  useUpdateSchoolMutation,
+  useDeactivateSchoolMutation,
+  useDeleteSchoolMutation
 } = schoolsApi;

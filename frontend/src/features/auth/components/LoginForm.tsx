@@ -3,19 +3,13 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { 
   Box, TextField, Button, Typography, InputAdornment, 
-  IconButton, Alert, CircularProgress, Divider, Chip 
+  IconButton, Alert, CircularProgress 
 } from '@mui/material';
 import { FaEye, FaEyeSlash, FaSchool } from 'react-icons/fa';
 import { loginSchema, type LoginFormData } from '../forms/login.schema';
 import { useAuth } from '@common/hooks/useAuth';
-import type { RoleName } from '@common/ACL/ACLProvider';
+import { API_BASE_URL } from '@constants';
 
-/*------------- Demo Account Details -------------*/
-const DEMO_ACCOUNTS = [
-  { label: 'Admin', email: 'superadmin@schoolos.com', role: 'SUPER_ADMIN' },
-  { label: 'Teacher', email: 'teacher@schoolos.com', role: 'TEACHER' },
-  { label: 'Student', email: 'student@schoolos.com', role: 'STUDENT' },
-];
 
 export function LoginForm() {
   const { login } = useAuth();
@@ -23,7 +17,7 @@ export function LoginForm() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { register, handleSubmit, setValue, formState: { errors } } = useForm<LoginFormData>({
+  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
     resolver: yupResolver(loginSchema),
     defaultValues: { email: '', password: '' }
   });
@@ -32,7 +26,7 @@ export function LoginForm() {
     setErrorMsg(null);
     setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:5001/api/users/login', {
+      const response = await fetch(`${API_BASE_URL}/users/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -45,41 +39,13 @@ export function LoginForm() {
 
       login(resData.data.token, resData.data.user);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Network error';
-      // If server is offline, fall back to automatic local mock authentication for previewing
-      const isNetworkError = 
-        message.toLowerCase().includes('failed to fetch') ||
-        message.toLowerCase().includes('fetch failed') ||
-        message.toLowerCase().includes('networkerror') ||
-        message.toLowerCase().includes('econnrefused') ||
-        message.toLowerCase().includes('network error');
-
-      if (isNetworkError) {
-        const matchingDemo = DEMO_ACCOUNTS.find(d => d.email === data.email);
-        const roleName = (matchingDemo?.role || 'SUPER_ADMIN') as RoleName;
-        const mockUser = {
-          _id: 'mock-id-' + Math.random(),
-          name: matchingDemo?.label ? `Demo ${matchingDemo.label}` : 'Demo User',
-          email: data.email,
-          userCode: roleName === 'SUPER_ADMIN' ? 'SA-01' : roleName === 'TEACHER' ? 'T-202' : 'ST-505',
-          role: { name: roleName, access: roleName === 'SUPER_ADMIN' ? ['ALL'] : ['READ'] },
-          isActive: true,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        };
-        login('mock-jwt-token', mockUser);
-      } else {
-        setErrorMsg(message);
-      }
+      const message = err instanceof Error ? err.message : 'Authentication failed';
+      setErrorMsg(message);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleDemoClick = (email: string) => {
-    setValue('email', email);
-    setValue('password', 'password123'); // Standard password for demo seeding
-  };
 
   return (
     <Box sx={{ width: '100%', maxWidth: 360, px: 2 }}>
@@ -136,21 +102,6 @@ export function LoginForm() {
           {isLoading ? <CircularProgress size={24} color="inherit" /> : 'Log In'}
         </Button>
       </form>
-
-      <Divider sx={{ my: 2 }}><Typography variant="caption" color="text.secondary">QUICK DEMO LOGINS</Typography></Divider>
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, justifySelf: 'center', mt: 2 }}>
-        {DEMO_ACCOUNTS.map((account) => (
-          <Chip
-            key={account.role}
-            label={account.label}
-            onClick={() => handleDemoClick(account.email)}
-            clickable
-            variant="outlined"
-            color="primary"
-            size="small"
-          />
-        ))}
-      </Box>
     </Box>
   );
 }

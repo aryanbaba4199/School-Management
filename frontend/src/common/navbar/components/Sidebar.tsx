@@ -1,11 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Drawer } from '@mui/material';
+import { useLocation } from 'react-router-dom';
 import type { SidebarProps } from '../types/navbar.types';
 import { SidebarWrapper } from '../styles/navbar.styles';
 import { ProfileSection, MenuItemsList } from './Menus';
 
 export function Sidebar({ collapsed, mobileOpen, onClose }: SidebarProps) {
-  const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
+  const location = useLocation();
+  const [openSubmenu, setOpenSubmenu] = useState<string | null>(() => {
+    if (location.pathname.startsWith('/app-management')) {
+      return 'App Management';
+    }
+    return null;
+  });
+
+  useEffect(() => {
+    if (location.pathname.startsWith('/app-management')) {
+      setOpenSubmenu('App Management');
+    }
+  }, [location.pathname]);
 
   const toggleSubmenu = (label: string) => {
     setOpenSubmenu(prev => (prev === label ? null : label));

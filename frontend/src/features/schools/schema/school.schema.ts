@@ -41,8 +41,10 @@ export const schoolSchema = yup.object({
   phone: yup
     .string()
     .required('Phone number is required')
-    .min(10, 'Phone must be at least 10 characters')
-    .max(15, 'Phone cannot exceed 15 characters'),
+    .matches(/^[0-9]{10}$/, 'Phone number must be exactly 10 digits'),
+  countryCode: yup
+    .string()
+    .default('+91'),
   address: yup.string().max(250, 'Address cannot exceed 250 characters').optional(),
   state: yup
     .string()
@@ -51,10 +53,6 @@ export const schoolSchema = yup.object({
   district: yup
     .string()
     .matches(ObjectIdRegex, { message: 'Invalid District ID', excludeEmptyString: true })
-    .optional(),
-  city: yup
-    .string()
-    .matches(ObjectIdRegex, { message: 'Invalid City ID', excludeEmptyString: true })
     .optional(),
   pincode: yup
     .number()

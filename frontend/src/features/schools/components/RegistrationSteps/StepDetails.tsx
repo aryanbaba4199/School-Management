@@ -1,27 +1,26 @@
-import type { Control, FieldErrors } from 'react-hook-form';
-import { Grid, Typography, Box } from '@mui/material';
+import type { Control } from 'react-hook-form';
+import { Grid, Typography, Box, Button } from '@mui/material';
 import { FormTextField, FormSelectField } from '@common/Forms';
 import type { SchoolFormData } from '../../schema/school.schema';
 import { type MasterOption } from '../../types/schools.types';
+import { FaPlus } from 'react-icons/fa';
 
 interface StepDetailsProps {
   control: Control<SchoolFormData>;
-  errors: FieldErrors<SchoolFormData>;
   states: MasterOption[];
   districts: MasterOption[];
-  cities: MasterOption[];
   selectedState?: string;
-  selectedDistrict?: string;
+  onAddState: () => void;
+  onAddDistrict: () => void;
 }
 
 export function StepDetails({
   control,
-  errors,
   states,
   districts,
-  cities,
   selectedState,
-  selectedDistrict,
+  onAddState,
+  onAddDistrict,
 }: StepDetailsProps) {
   const mapToOptions = (opts: MasterOption[]) => opts.map(o => ({ value: o._id, label: o.name }));
   const boardOptions = ['CBSE', 'ICSE', 'STATE', 'IB', 'OTHER'].map(b => ({ value: b, label: b }));
@@ -45,19 +44,43 @@ export function StepDetails({
           <FormTextField name="email" control={control} label="Email Address" type="email" required />
         </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
-          <FormTextField name="phone" control={control} label="Phone Number" required />
+          <FormTextField name="phone" control={control} label="Phone Number (+91)" required />
         </Grid>
         <Grid size={12}>
           <FormTextField name="address" control={control} label="Street Address" />
         </Grid>
-        <Grid size={{ xs: 12, sm: 4 }}>
-          <FormSelectField name="state" control={control} label="State" options={mapToOptions(states)} />
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
+            <Box sx={{ flexGrow: 1 }}>
+              <FormSelectField name="state" control={control} label="State" options={mapToOptions(states)} />
+            </Box>
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={onAddState}
+              sx={{ minWidth: '40px', height: '40px', p: 0, mt: 0.5 }}
+              title="Add State"
+            >
+              <FaPlus size={12} />
+            </Button>
+          </Box>
         </Grid>
-        <Grid size={{ xs: 12, sm: 4 }}>
-          <FormSelectField name="district" control={control} label="District" options={mapToOptions(districts)} disabled={!selectedState} />
-        </Grid>
-        <Grid size={{ xs: 12, sm: 4 }}>
-          <FormSelectField name="city" control={control} label="City" options={mapToOptions(cities)} disabled={!selectedDistrict} />
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
+            <Box sx={{ flexGrow: 1 }}>
+              <FormSelectField name="district" control={control} label="District" options={mapToOptions(districts)} disabled={!selectedState} />
+            </Box>
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={onAddDistrict}
+              disabled={!selectedState}
+              sx={{ minWidth: '40px', height: '40px', p: 0, mt: 0.5 }}
+              title="Add District"
+            >
+              <FaPlus size={12} />
+            </Button>
+          </Box>
         </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
           <FormSelectField name="boardType" control={control} label="Board Type" options={boardOptions} required />

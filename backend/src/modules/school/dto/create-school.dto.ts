@@ -33,13 +33,11 @@ export const CreateSchoolSchema = z.object({
       .email('Invalid email address format'),
 
     phone: z.string({ message: 'Phone number must be a string' })
-      .min(10, 'Phone number must be at least 10 characters long')
-      .max(15, 'Phone number cannot exceed 15 characters'),
+      .regex(/^[0-9]{10}$/, 'Phone number must be exactly 10 digits'),
+
+    countryCode: z.string().default('+91').optional(),
 
     address: z.string().max(250, 'Address cannot exceed 250 characters').optional(),
-    city: z.string()
-      .regex(/^[0-9a-fA-F]{24}$/, 'Invalid City ID format (must be a 24-character hex string)')
-      .optional(),
     
     district: z.string()
       .regex(/^[0-9a-fA-F]{24}$/, 'Invalid District ID format (must be a 24-character hex string)')

@@ -23,7 +23,9 @@
 
     /* Path Aliases */
     "paths": {
-      "@common/*": ["./src/common/*"]
+      "@common/*": ["./src/common/*"],
+      "@constants": ["./src/common/constants/index.ts"],
+      "@constants/*": ["./src/common/constants/*"]
     }
   },
   "include": ["src"]

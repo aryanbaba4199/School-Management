@@ -73,4 +73,56 @@ export class SchoolController {
       sendError(res, 400, errorMessage);
     }
   }
+
+  /**
+   * HTTP PUT /api/schools/:id
+   * Updates a school's details.
+   */
+  async update(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const id = req.params.id as string;
+      const school = await schoolService.updateSchool(id, req.body);
+      sendSuccess(res, 200, school);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to update school';
+      sendError(res, 400, errorMessage);
+    }
+  }
+
+  /**
+   * HTTP PATCH /api/schools/:id/deactivate
+   * Toggles the active/deactivated status of a school.
+   */
+  async toggleDeactivate(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const id = req.params.id as string;
+      const school = await schoolService.toggleSchoolStatus(id);
+      sendSuccess(res, 200, school);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to toggle school status';
+      sendError(res, 400, errorMessage);
+    }
+  }
+
+  /**
+   * HTTP DELETE /api/schools/:id
+   * Deletes a deactivated school. Requires a master passcode.
+   */
+  async deleteSchool(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const id = req.params.id as string;
+      const passcode = (req.body.passcode || req.query.passcode) as string | undefined;
+      
+      if (!passcode) {
+        sendError(res, 400, 'Master passcode is required.');
+        return;
+      }
+
+      await schoolService.deleteSchool(id, passcode);
+      sendSuccess(res, 200, null);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete school';
+      sendError(res, 400, errorMessage);
+    }
+  }
 }

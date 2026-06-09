@@ -81,8 +81,12 @@ export const CreateSubscriptionPlanSchema = z.object({
 });
 
 /*------------- TypeScript Type Inferences -------------*/
+export const UpdateSubscriptionPlanSchema = z.object({
+  body: CreateSubscriptionPlanSchema.shape.body.partial(),
+});
 
 export type CreateStateInput = z.infer<typeof CreateStateSchema>['body'];
 export type CreateDistrictInput = z.infer<typeof CreateDistrictSchema>['body'];
 export type CreateCityInput = z.infer<typeof CreateCitySchema>['body'];
 export type CreateSubscriptionPlanInput = z.infer<typeof CreateSubscriptionPlanSchema>['body'];
+export type UpdateSubscriptionPlanInput = z.infer<typeof UpdateSubscriptionPlanSchema>['body'];

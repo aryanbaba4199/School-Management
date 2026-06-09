@@ -5,7 +5,7 @@ import {
 import { 
   FaChartPie, FaSchool, FaUsers, FaUserGraduate, FaChalkboardTeacher, 
   FaClipboardList, FaBook, FaUserCheck, FaFileSignature, FaBookOpen, 
-  FaCreditCard, FaBell, FaChevronDown, FaChevronUp 
+  FaCreditCard, FaBell, FaChevronDown, FaChevronUp, FaCogs 
 } from 'react-icons/fa';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@common/hooks/useAuth';
@@ -14,6 +14,14 @@ import { ActiveBar } from '../styles/navbar.styles';
 
 const MENU_ITEMS: MenuItemType[] = [
   { label: 'Dashboard', icon: <FaChartPie size={16} />, roles: ['ALL'], path: '/' },
+  {
+    label: 'App Management',
+    icon: <FaCogs size={16} />,
+    roles: ['SUPER_ADMIN'],
+    children: [
+      { label: 'Plans Management', roles: ['SUPER_ADMIN'], path: '/app-management/plans' }
+    ]
+  },
   { label: 'Schools', icon: <FaSchool size={16} />, roles: ['SUPER_ADMIN'], path: '/schools' },
   { label: 'Users', icon: <FaUsers size={16} />, roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN'], path: '/users' },
   { label: 'Students', icon: <FaUserGraduate size={16} />, roles: ['SCHOOL_ADMIN', 'TEACHER'], path: '/students' },
@@ -80,7 +88,9 @@ export function MenuItemsList({ collapsed, openSubmenu, toggleSubmenu, onItemCli
         const isSubmenuOpen = openSubmenu === item.label;
         const isActive = item.path === '/' 
           ? location.pathname === '/' 
-          : (item.path ? location.pathname.startsWith(item.path) : false);
+          : (item.path 
+              ? location.pathname.startsWith(item.path) 
+              : (item.children ? item.children.some(c => c.path && location.pathname.startsWith(c.path)) : false));
 
         return (
           <ListItem key={idx} disablePadding sx={{ display: 'block', position: 'relative' }}>

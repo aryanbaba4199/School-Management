@@ -74,7 +74,11 @@ async function seedDatabase() {
     }) => {
       const existing = await UserModel.findOne({ email: userObj.email.toLowerCase() });
       if (existing) {
-        console.log(`User '${userObj.email}' already exists, skipping.`);
+        existing.password = hashPassword(userObj.passwordPlain);
+        existing.role = userObj.role;
+        existing.schoolId = userObj.schoolId;
+        await existing.save();
+        console.log(`Updated existing user: ${userObj.email}`);
         return;
       }
       
@@ -100,6 +104,15 @@ async function seedDatabase() {
       email: 'aryan@schoolos.com',
       passwordPlain: 'admin123',
       userCode: 'SA-01',
+      role: { name: 'SUPER_ADMIN', access: ['ALL'] },
+    });
+
+    // Additional Super Admin for Demo UI Click
+    await seedUser({
+      name: 'Super Admin Demo',
+      email: 'superadmin@schoolos.com',
+      passwordPlain: 'admin123',
+      userCode: 'SA-02',
       role: { name: 'SUPER_ADMIN', access: ['ALL'] },
     });
 

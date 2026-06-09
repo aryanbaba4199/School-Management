@@ -22,6 +22,7 @@ export interface ISchool extends Document {
   subscriptionEndDate?: Date;
   maxStudents: number;
   isActive: boolean;
+  isDeactive: boolean;
   settings: {
     attendanceEnabled: boolean;
     onlineExamEnabled: boolean;
@@ -127,6 +128,10 @@ const SchoolSchema = new Schema<ISchool>(
     isActive: {
       type: Boolean,
       default: true,
+    },
+    isDeactive: {
+      type: Boolean,
+      default: false,
     },
     settings: {
       attendanceEnabled: {

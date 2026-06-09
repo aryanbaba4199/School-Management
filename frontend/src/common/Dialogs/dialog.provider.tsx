@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, lazy, Suspense } from 'react';
+import { useState, useMemo, useCallback, Suspense } from 'react';
 import type { ReactNode } from 'react';
 import { Dialog } from '@mui/material';
 import { DialogContext, useDialog } from './dialog.context';
@@ -7,9 +7,12 @@ import type { DialogType, DialogPropsMap, DialogState } from './dialog.types';
 
 /*------------- Lazy Loaded Dialog Components -------------*/
 
-const UserDetailsDialog = lazy(() => import('../components/UserDetailsDialog'));
-const SchoolDetailsDialog = lazy(() => import('../components/SchoolDetailsDialog'));
-const ConfirmationDialog = lazy(() => import('../components/ConfirmationDialog'));
+import UserDetailsDialog from '../components/UserDetailsDialog';
+import SchoolDetailsDialog from '../components/SchoolDetailsDialog';
+import ConfirmationDialog from '../components/ConfirmationDialog';
+import SchoolFormDialogWrapper from './SchoolFormDialogWrapper';
+import { PlanFormDialog } from '../../features/plans/components/PlanFormDialog';
+import PasscodeDialog from '../components/PasscodeDialog';
 
 /*------------- Dialog Provider Component -------------*/
 
@@ -48,9 +51,22 @@ export function DialogProvider({ children }: { children: ReactNode }) {
         return <SchoolDetailsDialog {...(props as DialogPropsMap['SCHOOL_DETAILS'])} onClose={closeDialog} />;
       case 'CONFIRMATION':
         return <ConfirmationDialog {...(props as DialogPropsMap['CONFIRMATION'])} onClose={closeDialog} />;
+      case 'SCHOOL_FORM':
+        return <SchoolFormDialogWrapper {...(props as DialogPropsMap['SCHOOL_FORM'])} onClose={closeDialog} />;
+      case 'PLAN_FORM':
+        return <PlanFormDialog {...(props as DialogPropsMap['PLAN_FORM'])} onClose={closeDialog} />;
+      case 'PASSCODE_PROMPT':
+        return <PasscodeDialog {...(props as DialogPropsMap['PASSCODE_PROMPT'])} onClose={closeDialog} />;
       default:
         return null;
     }
+  };
+
+  const getMaxWidth = () => {
+    const { type } = dialogState;
+    if (type === 'CONFIRMATION') return 'xs';
+    if (type === 'PLAN_FORM') return 'sm';
+    return 'md';
   };
 
   return (
@@ -59,7 +75,7 @@ export function DialogProvider({ children }: { children: ReactNode }) {
       <Dialog
         open={dialogState.type !== null}
         onClose={closeDialog}
-        maxWidth="md"
+        maxWidth={getMaxWidth()}
         fullWidth
         scroll="paper"
         slotProps={{

@@ -22,7 +22,10 @@ describe('App Schools Navigation and Registration', () => {
     );
 
     // 1. Login as Super Admin
-    fireEvent.click(screen.getByText('Admin'));
+    const emailInput = screen.getByLabelText('Email Address') as HTMLInputElement;
+    const passwordInput = screen.getByLabelText('Password') as HTMLInputElement;
+    fireEvent.change(emailInput, { target: { value: 'aryan@schoolos.com' } });
+    fireEvent.change(passwordInput, { target: { value: 'admin123' } });
     fireEvent.click(screen.getByRole('button', { name: 'Log In' }));
 
     await waitFor(() => {
@@ -47,8 +50,9 @@ describe('App Schools Navigation and Registration', () => {
     // 3. Click Create School to open dialog
     fireEvent.click(screen.getByRole('button', { name: 'Create School' }));
     
-    // Verify dialog opened
-    expect(screen.getByText('Register New School')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Register New School')).toBeInTheDocument();
+    });
 
     // 4. Fill in Step 1 (Admin Credentials)
     fireEvent.change(screen.getByLabelText('Administrator Name *'), { target: { value: 'Demo Admin' } });
@@ -66,7 +70,7 @@ describe('App Schools Navigation and Registration', () => {
     fireEvent.change(screen.getByLabelText('School Code *'), { target: { value: 'NTSC' } });
     fireEvent.change(screen.getByLabelText('Subdomain *'), { target: { value: 'ntsc' } });
     fireEvent.change(screen.getByLabelText('Email Address *'), { target: { value: 'test@schoolos.com' } });
-    fireEvent.change(screen.getByLabelText('Phone Number *'), { target: { value: '1234567890' } });
+    fireEvent.change(screen.getByLabelText('Phone Number (+91) *'), { target: { value: '1234567890' } });
 
     // Click Next
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
@@ -84,5 +88,103 @@ describe('App Schools Navigation and Registration', () => {
     await waitFor(() => {
       expect(screen.getByText('New Test School')).toBeInTheDocument();
     });
-  });
+  }, 20000);
+
+  it('allows super admin to edit, deactivate, and delete a school', async () => {
+    render(
+      <AppThemeProvider>
+        <App />
+      </AppThemeProvider>
+    );
+
+    // 1. Login as Super Admin
+    const emailInput = screen.getByLabelText('Email Address') as HTMLInputElement;
+    const passwordInput = screen.getByLabelText('Password') as HTMLInputElement;
+    fireEvent.change(emailInput, { target: { value: 'aryan@schoolos.com' } });
+    fireEvent.change(passwordInput, { target: { value: 'admin123' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Log In' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('School OS Ecosystem')).toBeInTheDocument();
+    });
+
+    // 2. Click on Schools tab in sidebar
+    const schoolsTab = screen.getAllByText('Schools')[0];
+    fireEvent.click(schoolsTab);
+
+    // Verify schools page loaded
+    await waitFor(() => {
+      expect(screen.getByText('Schools Management')).toBeInTheDocument();
+    });
+
+    // Verify mock schools display
+    await waitFor(() => {
+      expect(screen.getByText('Greenwood International School')).toBeInTheDocument();
+    });
+
+    // 3. Edit School: click the Edit icon button for Greenwood International School
+    const editButtons = screen.getAllByTitle('Edit School');
+    expect(editButtons.length).toBeGreaterThan(0);
+    fireEvent.click(editButtons[0]);
+
+    // Verify edit dialog opens (starts at Step 1 of Edit mode, which is "School Details")
+    await waitFor(() => {
+      expect(screen.getByText('Edit School')).toBeInTheDocument();
+      expect(screen.getByLabelText('School Name *')).toBeInTheDocument();
+    });
+
+    // Change name
+    fireEvent.change(screen.getByLabelText('School Name *'), { target: { value: 'Greenwood Edited' } });
+    
+    // Click Next to go to subscription step
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+
+    // Click Save Changes
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Save Changes' })).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Save Changes' }));
+
+    // Verify updated school name appears in the table
+    await waitFor(() => {
+      expect(screen.getByText('Greenwood Edited')).toBeInTheDocument();
+    });
+
+    // 4. Deactivate School: click deactivate icon button
+    const deactivateButtons = screen.getAllByTitle('Deactivate School');
+    fireEvent.click(deactivateButtons[0]);
+
+    // Verify status changes to Deactivated (a Deactivated chip appears)
+    await waitFor(() => {
+      expect(screen.getByText('Deactivated')).toBeInTheDocument();
+    });
+
+    // 5. Delete School: click the delete button (which should now be enabled since the school is deactivated)
+    const deleteButtons = screen.getAllByTitle('Delete School');
+    fireEvent.click(deleteButtons[0]);
+
+    // Verify passcode dialog opens
+    await waitFor(() => {
+      expect(screen.getByText('Confirm Delete School')).toBeInTheDocument();
+    });
+
+    // Fill in incorrect passcode
+    const passcodeField = screen.getByLabelText('6-Digit Passcode') as HTMLInputElement;
+    fireEvent.change(passcodeField, { target: { value: '111111' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Delete' }));
+
+    // Verify error message
+    await waitFor(() => {
+      expect(screen.getByText('Invalid master passcode')).toBeInTheDocument();
+    });
+
+    // Fill in correct passcode
+    fireEvent.change(passcodeField, { target: { value: '727798' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Delete' }));
+
+    // Verify school is deleted and removed from document
+    await waitFor(() => {
+      expect(screen.queryByText('Greenwood Edited')).not.toBeInTheDocument();
+    });
+  }, 25000);
 });

@@ -12,8 +12,8 @@ export interface ISchool {
   subdomain: string;
   email: string;
   phone: string;
+  countryCode: string;
   address?: string;
-  city?: { _id: string; name: string; code: string } | string;
   district?: { _id: string; name: string; code: string } | string;
   state?: { _id: string; name: string; code: string } | string;
   country: string;
@@ -26,9 +26,39 @@ export interface ISchool {
   subscriptionEndDate?: string;
   maxStudents: number;
   isActive: boolean;
+  isDeactive: boolean;
   settings: ISchoolSettings;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface ISchoolDraft {
+  adminEmail?: string;
+  adminName?: string;
+  adminPassword?: string;
+  currentStep?: number;
+  schoolDetails?: {
+    name?: string;
+    code?: string;
+    subdomain?: string;
+    email?: string;
+    phone?: string;
+    countryCode?: string;
+    address?: string;
+    state?: string;
+    district?: string;
+    boardType?: 'CBSE' | 'ICSE' | 'STATE' | 'IB' | 'OTHER';
+  };
+  subscriptionDetails?: {
+    subscriptionPlan?: string;
+    maxStudents?: number;
+    settings?: {
+      attendanceEnabled?: boolean;
+      onlineExamEnabled?: boolean;
+      aiAnalyticsEnabled?: boolean;
+      parentAppEnabled?: boolean;
+    };
+  };
 }
 
 export interface MasterOption {
@@ -52,11 +82,6 @@ export const MOCK_DISTRICTS: Record<string, MasterOption[]> = {
   '60f7c223405c102c98d6c821': [{ _id: '60f7c223405c102c98d6c831', name: 'New Delhi' }],
 };
 
-export const MOCK_CITIES: Record<string, MasterOption[]> = {
-  '60f7c223405c102c98d6c830': [{ _id: '60f7c223405c102c98d6c840', name: 'Bengaluru' }],
-  '60f7c223405c102c98d6c831': [{ _id: '60f7c223405c102c98d6c841', name: 'New Delhi' }],
-};
-
 export const MOCK_SCHOOLS: ISchool[] = [
   {
     _id: '60f7c223405c102c98d6c801',
@@ -65,10 +90,12 @@ export const MOCK_SCHOOLS: ISchool[] = [
     subdomain: 'greenwood',
     email: 'info@greenwood.edu',
     phone: '9876543210',
+    countryCode: '+91',
     boardType: 'CBSE',
     subscriptionPlan: { _id: '60f7c223405c102c98d6c810', name: 'Pro Plan', code: 'PRO' },
     maxStudents: 1500,
     isActive: true,
+    isDeactive: false,
     country: 'India',
     settings: { attendanceEnabled: true, onlineExamEnabled: true, aiAnalyticsEnabled: true, parentAppEnabled: true },
     createdAt: new Date().toISOString(),
@@ -81,10 +108,12 @@ export const MOCK_SCHOOLS: ISchool[] = [
     subdomain: 'stxaviers',
     email: 'contact@stxaviers.org',
     phone: '8765432109',
+    countryCode: '+91',
     boardType: 'ICSE',
     subscriptionPlan: { _id: '60f7c223405c102c98d6c811', name: 'Basic Plan', code: 'BASIC' },
     maxStudents: 800,
     isActive: true,
+    isDeactive: false,
     country: 'India',
     settings: { attendanceEnabled: true, onlineExamEnabled: false, aiAnalyticsEnabled: false, parentAppEnabled: true },
     createdAt: new Date().toISOString(),

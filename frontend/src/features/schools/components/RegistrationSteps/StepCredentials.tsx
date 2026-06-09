@@ -4,11 +4,12 @@ import { FormTextField } from '@common/Forms';
 import type { SchoolFormData } from '../../schema/school.schema';
 import { useLazyGetDraftQuery } from '../../../../api/schoolsApi';
 import { useNotifier } from '@common/Notifier/NotifierProvider';
+import type { ISchoolDraft } from '../../types/schools.types';
 
 interface StepCredentialsProps {
   control: Control<SchoolFormData>;
   errors: FieldErrors<SchoolFormData>;
-  onDraftLoaded: (draftData: any) => void;
+  onDraftLoaded: (draftData: ISchoolDraft) => void;
 }
 
 export function StepCredentials({ control, errors, onDraftLoaded }: StepCredentialsProps) {

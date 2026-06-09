@@ -12,10 +12,10 @@ export interface IRegistrationDraft extends Document {
     code?: string;
     subdomain?: string;
     phone?: string;
+    countryCode?: string;
     address?: string;
     state?: string;
     district?: string;
-    city?: string;
     boardType?: string;
   };
   subscriptionDetails?: {
@@ -61,10 +61,10 @@ const RegistrationDraftSchema = new Schema<IRegistrationDraft>(
       code: { type: String, trim: true, uppercase: true },
       subdomain: { type: String, trim: true, lowercase: true },
       phone: { type: String, trim: true },
+      countryCode: { type: String, default: '+91' },
       address: { type: String, trim: true },
       state: { type: String },
       district: { type: String },
-      city: { type: String },
       boardType: { type: String, enum: ['CBSE', 'ICSE', 'STATE', 'IB', 'OTHER'] },
     },
     subscriptionDetails: {

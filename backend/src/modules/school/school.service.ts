@@ -105,4 +105,61 @@ export class SchoolService {
   async deleteDraft(adminEmail: string) {
     return await RegistrationDraftModel.deleteOne({ adminEmail: adminEmail.toLowerCase() });
   }
+
+  /**
+   * Updates an existing school's details.
+   */
+  async updateSchool(id: string, input: Partial<CreateSchoolInput>): Promise<ISchool> {
+    const school = await SchoolModel.findById(id);
+    if (!school) {
+      throw new Error('School not found.');
+    }
+
+    if (input.name) school.name = input.name;
+    if (input.email) school.email = input.email.toLowerCase();
+    if (input.phone) school.phone = input.phone;
+    if (input.countryCode) school.countryCode = input.countryCode;
+    if (input.address !== undefined) school.address = input.address;
+    if (input.state) school.state = input.state as any;
+    if (input.district) school.district = input.district as any;
+    if (input.boardType) school.boardType = input.boardType;
+    if (input.maxStudents) school.maxStudents = input.maxStudents;
+    if (input.settings) {
+      school.settings = {
+        ...school.settings,
+        ...input.settings,
+      };
+    }
+
+    return await school.save();
+  }
+
+  /**
+   * Toggles the isDeactive status of a school.
+   */
+  async toggleSchoolStatus(id: string): Promise<ISchool> {
+    const school = await SchoolModel.findById(id);
+    if (!school) {
+      throw new Error('School not found.');
+    }
+    school.isDeactive = !school.isDeactive;
+    return await school.save();
+  }
+
+  /**
+   * Deletes a school if it is deactivated and correct passcode is provided.
+   */
+  async deleteSchool(id: string, passcode: string): Promise<void> {
+    if (passcode !== '727798') {
+      throw new Error('Invalid master passcode.');
+    }
+    const school = await SchoolModel.findById(id);
+    if (!school) {
+      throw new Error('School not found.');
+    }
+    if (!school.isDeactive) {
+      throw new Error('Only deactivated schools can be deleted.');
+    }
+    await SchoolModel.findByIdAndDelete(id);
+  }
 }

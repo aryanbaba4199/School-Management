@@ -8,10 +8,12 @@ export const INITIAL_MOCK_SCHOOLS = [
     subdomain: 'greenwood',
     email: 'info@greenwood.edu',
     phone: '9876543210',
+    countryCode: '+91',
     boardType: 'CBSE',
     subscriptionPlan: { _id: '60f7c223405c102c98d6c810', name: 'Pro Plan', code: 'PRO' },
     maxStudents: 1500,
     isActive: true,
+    isDeactive: false,
     country: 'India',
     settings: { attendanceEnabled: true, onlineExamEnabled: true, aiAnalyticsEnabled: true, parentAppEnabled: true },
     createdAt: new Date().toISOString(),
@@ -24,10 +26,12 @@ export const INITIAL_MOCK_SCHOOLS = [
     subdomain: 'stxaviers',
     email: 'contact@stxaviers.org',
     phone: '8765432109',
+    countryCode: '+91',
     boardType: 'ICSE',
     subscriptionPlan: { _id: '60f7c223405c102c98d6c811', name: 'Basic Plan', code: 'BASIC' },
     maxStudents: 800,
     isActive: true,
+    isDeactive: false,
     country: 'India',
     settings: { attendanceEnabled: true, onlineExamEnabled: false, aiAnalyticsEnabled: false, parentAppEnabled: true },
     createdAt: new Date().toISOString(),
@@ -47,9 +51,9 @@ export const fetchStub = vi.fn((url: string | Request, options?: RequestInit) =>
   try {
     if (urlString.includes('/api/users/login')) {
       const body = options?.body ? JSON.parse(options.body as string) : {};
-      const email = body.email || 'superadmin@schoolos.com';
-      const roleName = email.includes('admin') ? 'SUPER_ADMIN' : email.includes('teacher') ? 'TEACHER' : 'STUDENT';
-      const label = email.includes('admin') ? 'Admin' : email.includes('teacher') ? 'Teacher' : 'Student';
+      const email = body.email || 'aryan@schoolos.com';
+      const roleName = email.includes('admin') || email.includes('aryan') ? 'SUPER_ADMIN' : email.includes('teacher') ? 'TEACHER' : 'STUDENT';
+      const label = email.includes('admin') || email.includes('aryan') ? 'Admin' : email.includes('teacher') ? 'Teacher' : 'Student';
 
       return Promise.resolve(new Response(JSON.stringify({
         success: true,
@@ -85,6 +89,96 @@ export const fetchStub = vi.fn((url: string | Request, options?: RequestInit) =>
     }
 
     if (urlString.includes('/api/schools')) {
+      if (urlString.includes('/deactivate') && method === 'PATCH') {
+        const match = urlString.match(/\/schools\/([^/]+)\/deactivate/);
+        const id = match ? match[1] : null;
+        const schoolIndex = mockSchoolsList.findIndex(s => s._id === id);
+        if (schoolIndex !== -1) {
+          mockSchoolsList[schoolIndex] = {
+            ...mockSchoolsList[schoolIndex],
+            isDeactive: !mockSchoolsList[schoolIndex].isDeactive
+          };
+          return Promise.resolve(new Response(JSON.stringify({
+            success: true,
+            data: mockSchoolsList[schoolIndex]
+          }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+        }
+        return Promise.resolve(new Response(JSON.stringify({
+          success: false,
+          message: 'School not found'
+        }), { status: 404, headers: { 'Content-Type': 'application/json' } }));
+      }
+
+      if (method === 'PUT') {
+        const match = urlString.match(/\/schools\/([^/]+)$/);
+        const id = match ? match[1] : null;
+        const schoolIndex = mockSchoolsList.findIndex(s => s._id === id);
+        if (schoolIndex !== -1) {
+          let updateData = {};
+          try {
+            const bodyStr = options?.body || (typeof url === 'object' ? (url as unknown as { _bodyInit?: string })._bodyInit : undefined);
+            if (bodyStr) {
+              updateData = JSON.parse(bodyStr as string);
+            }
+          } catch (e) {
+            // ignore
+          }
+          mockSchoolsList[schoolIndex] = {
+            ...mockSchoolsList[schoolIndex],
+            ...updateData
+          };
+          return Promise.resolve(new Response(JSON.stringify({
+            success: true,
+            data: mockSchoolsList[schoolIndex]
+          }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+        }
+        return Promise.resolve(new Response(JSON.stringify({
+          success: false,
+          message: 'School not found'
+        }), { status: 404, headers: { 'Content-Type': 'application/json' } }));
+      }
+
+      if (method === 'DELETE') {
+        const match = urlString.match(/\/schools\/([^/]+)$/);
+        const id = match ? match[1] : null;
+        let passcode = '';
+        try {
+          const bodyStr = options?.body || (typeof url === 'object' ? (url as unknown as { _bodyInit?: string })._bodyInit : undefined);
+          if (bodyStr) {
+            const body = JSON.parse(bodyStr as string);
+            passcode = body.passcode;
+          }
+        } catch (e) {
+          // ignore
+        }
+
+        if (passcode !== '727798') {
+          return Promise.resolve(new Response(JSON.stringify({
+            success: false,
+            message: 'Invalid master passcode'
+          }), { status: 400, headers: { 'Content-Type': 'application/json' } }));
+        }
+
+        const schoolIndex = mockSchoolsList.findIndex(s => s._id === id);
+        if (schoolIndex !== -1) {
+          if (!mockSchoolsList[schoolIndex].isDeactive) {
+            return Promise.resolve(new Response(JSON.stringify({
+              success: false,
+              message: 'School must be deactivated before deletion'
+            }), { status: 400, headers: { 'Content-Type': 'application/json' } }));
+          }
+          mockSchoolsList.splice(schoolIndex, 1);
+          return Promise.resolve(new Response(JSON.stringify({
+            success: true,
+            message: 'School deleted successfully'
+          }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+        }
+        return Promise.resolve(new Response(JSON.stringify({
+          success: false,
+          message: 'School not found'
+        }), { status: 404, headers: { 'Content-Type': 'application/json' } }));
+      }
+
       if (method === 'POST') {
         let name = 'New Test School';
         let code = 'NTSC';
@@ -94,7 +188,7 @@ export const fetchStub = vi.fn((url: string | Request, options?: RequestInit) =>
         let subscriptionPlan = '60f7c223405c102c98d6c810';
 
         try {
-          const bodyStr = options?.body || (typeof url === 'object' ? (url as any)._bodyInit : undefined);
+          const bodyStr = options?.body || (typeof url === 'object' ? (url as unknown as { _bodyInit?: string })._bodyInit : undefined);
           if (bodyStr) {
             const body = JSON.parse(bodyStr as string);
             if (body.name) name = body.name;
@@ -115,10 +209,12 @@ export const fetchStub = vi.fn((url: string | Request, options?: RequestInit) =>
           subdomain,
           email,
           phone,
+          countryCode: '+91',
           boardType: 'CBSE',
           subscriptionPlan: { _id: subscriptionPlan, name: 'Pro Plan', code: 'PRO' },
           maxStudents: 500,
           isActive: true,
+          isDeactive: false,
           country: 'India',
           settings: { attendanceEnabled: true, onlineExamEnabled: false, aiAnalyticsEnabled: false, parentAppEnabled: true },
           createdAt: new Date().toISOString(),

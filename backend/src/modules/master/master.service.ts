@@ -4,6 +4,7 @@ import { CityModel, ICity } from './models/city.model';
 import { SubscriptionPlanModel, ISubscriptionPlan } from './models/subscription-plan.model';
 import { CreateStateInput, CreateDistrictInput, CreateCityInput, CreateSubscriptionPlanInput } from './dto/create-master.dto';
 import { Types } from 'mongoose';
+import { SchoolModel } from '../school/school.model';
 
 /*------------- Master Database Service -------------*/
 
@@ -159,5 +160,58 @@ export class MasterService {
    */
   async findAllSubscriptionPlans(): Promise<ISubscriptionPlan[]> {
     return await SubscriptionPlanModel.find().sort({ price: 1 });
+  }
+
+  /**
+   * Updates an existing Subscription Plan.
+   */
+  async updateSubscriptionPlan(id: string, input: Partial<CreateSubscriptionPlanInput>): Promise<ISubscriptionPlan> {
+    const plan = await SubscriptionPlanModel.findById(id);
+    if (!plan) {
+      throw new Error('Subscription plan not found.');
+    }
+
+    if (input.name && input.name.toLowerCase() !== plan.name.toLowerCase()) {
+      const existingName = await SubscriptionPlanModel.findOne({ name: new RegExp(`^${input.name}$`, 'i') });
+      if (existingName) {
+        throw new Error(`Subscription plan name '${input.name}' already exists.`);
+      }
+    }
+
+    if (input.code && input.code.toUpperCase() !== plan.code) {
+      const existingCode = await SubscriptionPlanModel.findOne({ code: input.code.toUpperCase() });
+      if (existingCode) {
+        throw new Error(`Subscription plan code '${input.code}' is already taken.`);
+      }
+    }
+
+    if (input.name) plan.name = input.name;
+    if (input.code) plan.code = input.code.toUpperCase();
+    if (input.price !== undefined) plan.price = input.price;
+    if (input.maxStudents !== undefined) plan.maxStudents = input.maxStudents;
+    if (input.isActive !== undefined) plan.isActive = input.isActive;
+    if (input.features) {
+      plan.features = {
+        ...plan.features,
+        ...input.features,
+      };
+    }
+
+    return await plan.save();
+  }
+
+  /**
+   * Deletes a Subscription Plan after checking that no schools are linked to it.
+   */
+  async deleteSubscriptionPlan(id: string): Promise<void> {
+    const linkedSchoolsCount = await SchoolModel.countDocuments({ subscriptionPlan: new Types.ObjectId(id) });
+    if (linkedSchoolsCount > 0) {
+      throw new Error(`Cannot delete plan. ${linkedSchoolsCount} school${linkedSchoolsCount === 1 ? ' is' : 's are'} currently using this plan.`);
+    }
+
+    const result = await SubscriptionPlanModel.findByIdAndDelete(id);
+    if (!result) {
+      throw new Error('Subscription plan not found.');
+    }
   }
 }

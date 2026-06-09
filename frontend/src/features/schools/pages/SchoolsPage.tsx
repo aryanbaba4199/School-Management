@@ -1,23 +1,33 @@
 import { useState, useEffect } from 'react';
-import { Dialog, DialogTitle, DialogContent, Chip } from '@mui/material';
+import { Chip, Box, IconButton } from '@mui/material';
+import { FaEdit, FaBan, FaCheckCircle, FaTrash } from 'react-icons/fa';
 import { PageWrapper, Datatable, DatatableHeader, DatatableFooter, type Column } from '@common/Datatable';
-import { useGetSchoolsQuery, useCreateSchoolMutation } from '../../../api/schoolsApi';
+import { 
+  useGetSchoolsQuery, 
+  useCreateSchoolMutation,
+  useUpdateSchoolMutation,
+  useDeactivateSchoolMutation,
+  useDeleteSchoolMutation
+} from '../../../api/schoolsApi';
 import { useNotifier } from '@common/Notifier/NotifierProvider';
-import { SchoolForm } from '../components/SchoolForm';
+import { useDialog } from '@common/Dialogs/dialog.provider';
 import { type ISchool, MOCK_SCHOOLS } from '../types/schools.types';
 import type { SchoolFormData } from '../schema/school.schema';
 
 export function SchoolsPage() {
   const { data: schoolsRes, isLoading, error } = useGetSchoolsQuery();
   const [createSchool] = useCreateSchoolMutation();
+  const [updateSchool] = useUpdateSchoolMutation();
+  const [deactivateSchool] = useDeactivateSchoolMutation();
+  const [deleteSchool] = useDeleteSchoolMutation();
   const notifier = useNotifier();
+  const { openDialog, closeDialog } = useDialog();
 
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [sortColumn, setSortColumn] = useState<string>('name');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
-  const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
     if (error) {
@@ -36,13 +46,64 @@ export function SchoolsPage() {
     try {
       await createSchool(data).unwrap();
       notifier.showSuccess('School created successfully!');
-      setDialogOpen(false);
+      closeDialog();
     } catch (err: unknown) {
       const msg = (err && typeof err === 'object' && 'data' in err)
         ? (err.data as { message?: string })?.message 
         : 'Failed to create school';
       notifier.showError(msg || 'Failed to create school');
     }
+  };
+
+  const handleEdit = (school: ISchool) => {
+    openDialog('SCHOOL_FORM', {
+      school,
+      onSubmit: async (data: SchoolFormData) => {
+        try {
+          await updateSchool({ id: school._id, body: data }).unwrap();
+          notifier.showSuccess('School updated successfully!');
+          closeDialog();
+        } catch (err: unknown) {
+          const msg = (err && typeof err === 'object' && 'data' in err)
+            ? (err.data as { message?: string })?.message 
+            : 'Failed to update school';
+          notifier.showError(msg || 'Failed to update school');
+        }
+      }
+    });
+  };
+
+  const handleToggleDeactivate = async (school: ISchool) => {
+    try {
+      await deactivateSchool(school._id).unwrap();
+      notifier.showSuccess(`School ${school.isDeactive ? 'activated' : 'deactivated'} successfully!`);
+    } catch (err: unknown) {
+      const msg = (err && typeof err === 'object' && 'data' in err)
+        ? (err.data as { message?: string })?.message 
+        : 'Failed to update school status';
+      notifier.showError(msg || 'Failed to update school status');
+    }
+  };
+
+  const handleDelete = (school: ISchool) => {
+    openDialog('PASSCODE_PROMPT', {
+      title: 'Confirm Delete School',
+      message: `Are you sure you want to delete ${school.name}? This action is irreversible. Enter the 6-digit master passcode to confirm.`,
+      confirmLabel: 'Delete',
+      onConfirm: async (passcode: string) => {
+        try {
+          await deleteSchool({ id: school._id, passcode }).unwrap();
+          notifier.showSuccess('School deleted successfully!');
+          closeDialog();
+        } catch (err: unknown) {
+          const msg = (err && typeof err === 'object' && 'data' in err)
+            ? (err.data as { message?: string })?.message 
+            : 'Failed to delete school';
+          notifier.showError(msg || 'Failed to delete school');
+          throw err;
+        }
+      }
+    });
   };
 
   const schools = schoolsRes?.success ? schoolsRes.data : MOCK_SCHOOLS;
@@ -91,19 +152,69 @@ export function SchoolsPage() {
       id: 'isActive',
       label: 'Status',
       sortable: true,
+      render: (row) => {
+        if (row.isDeactive) {
+          return (
+            <Chip
+              label="Deactivated"
+              color="error"
+              size="small"
+              sx={{ fontWeight: 600 }}
+            />
+          );
+        }
+        return (
+          <Chip
+            label={row.isActive ? 'Active' : 'Inactive'}
+            color={row.isActive ? 'success' : 'default'}
+            size="small"
+            sx={{ fontWeight: 600 }}
+          />
+        );
+      }
+    },
+    {
+      id: 'actions',
+      label: 'Actions',
+      sortable: false,
       render: (row) => (
-        <Chip
-          label={row.isActive ? 'Active' : 'Inactive'}
-          color={row.isActive ? 'success' : 'default'}
-          size="small"
-          sx={{ fontWeight: 600 }}
-        />
+        <Box sx={{ display: 'flex', gap: 0.5 }}>
+          <IconButton 
+            onClick={() => handleEdit(row)} 
+            color="primary" 
+            size="small"
+            title="Edit School"
+          >
+            <FaEdit size={16} />
+          </IconButton>
+          <IconButton 
+            onClick={() => handleToggleDeactivate(row)} 
+            color={row.isDeactive ? 'success' : 'warning'} 
+            size="small"
+            title={row.isDeactive ? 'Activate School' : 'Deactivate School'}
+          >
+            {row.isDeactive ? <FaCheckCircle size={16} /> : <FaBan size={16} />}
+          </IconButton>
+          <IconButton 
+            onClick={() => handleDelete(row)} 
+            color="error" 
+            size="small"
+            disabled={!row.isDeactive}
+            title={row.isDeactive ? 'Delete School' : 'Deactivate school first to delete'}
+          >
+            <FaTrash size={16} />
+          </IconButton>
+        </Box>
       )
     }
   ];
 
   return (
-    <PageWrapper title="Schools Management" onCreate={() => setDialogOpen(true)} createLabel="Create School">
+    <PageWrapper 
+      title="Schools Management" 
+      onCreate={() => openDialog('SCHOOL_FORM', { onSubmit: handleCreateSchool })} 
+      createLabel="Create School"
+    >
       <DatatableHeader searchValue={search} onSearchChange={(val) => { setSearch(val); setPage(0); }} searchPlaceholder="Search by name, code, or subdomain..." />
       
       <Datatable
@@ -122,30 +233,6 @@ export function SchoolsPage() {
         onChangePage={setPage}
         onChangeRowsPerPage={(rows) => { setRowsPerPage(rows); setPage(0); }}
       />
-
-      <Dialog 
-        open={dialogOpen} 
-        onClose={() => setDialogOpen(false)} 
-        maxWidth="md" 
-        fullWidth
-        slotProps={{
-          paper: {
-            sx: {
-              backgroundColor: 'var(--color-background-paper)',
-              color: 'var(--color-text-primary)',
-              border: '1px solid var(--color-border-default)',
-              boxShadow: 'var(--shadow-lg)'
-            }
-          }
-        }}
-      >
-        <DialogTitle sx={{ fontWeight: 800, color: 'var(--color-text-primary)', px: 3, pt: 3, pb: 1 }}>
-          Register New School
-        </DialogTitle>
-        <DialogContent sx={{ px: 3, pb: 3, pt: 3 }}>
-          <SchoolForm onSubmit={handleCreateSchool} onCancel={() => setDialogOpen(false)} />
-        </DialogContent>
-      </Dialog>
     </PageWrapper>
   );
 }
