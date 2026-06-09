@@ -45,13 +45,25 @@ export const resetMockSchools = () => {
   mockSchoolsList = [...INITIAL_MOCK_SCHOOLS];
 };
 
-export const fetchStub = vi.fn((url: string | Request, options?: RequestInit) => {
+export const fetchStub = vi.fn(async (url: string | Request, options?: RequestInit) => {
   const urlString = typeof url === 'string' ? url : url.url;
   const method = (options?.method || (typeof url === 'object' ? url.method : 'GET')).toUpperCase();
+
+  let parsedBody: any = null;
+  try {
+    if (options?.body) {
+      parsedBody = typeof options.body === 'string' ? JSON.parse(options.body) : options.body;
+    } else if (typeof url === 'object' && url.clone) {
+      const text = await url.clone().text();
+      if (text) parsedBody = JSON.parse(text);
+    }
+  } catch (e) {
+    // ignore
+  }
+
   try {
     if (urlString.includes('/api/users/login')) {
-      const body = options?.body ? JSON.parse(options.body as string) : {};
-      const email = body.email || 'aryan@schoolos.com';
+      const email = parsedBody?.email || 'aryan@schoolos.com';
       const roleName = email.includes('admin') || email.includes('aryan') ? 'SUPER_ADMIN' : email.includes('teacher') ? 'TEACHER' : 'STUDENT';
       const label = email.includes('admin') || email.includes('aryan') ? 'Admin' : email.includes('teacher') ? 'Teacher' : 'Student';
 
@@ -75,10 +87,9 @@ export const fetchStub = vi.fn((url: string | Request, options?: RequestInit) =>
 
     if (urlString.includes('/api/schools/drafts')) {
       if (method === 'POST') {
-        const body = options?.body ? JSON.parse(options.body as string) : {};
         return Promise.resolve(new Response(JSON.stringify({
           success: true,
-          data: body
+          data: parsedBody || {}
         }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
       } else {
         return Promise.resolve(new Response(JSON.stringify({
@@ -114,15 +125,7 @@ export const fetchStub = vi.fn((url: string | Request, options?: RequestInit) =>
         const id = match ? match[1] : null;
         const schoolIndex = mockSchoolsList.findIndex(s => s._id === id);
         if (schoolIndex !== -1) {
-          let updateData = {};
-          try {
-            const bodyStr = options?.body || (typeof url === 'object' ? (url as unknown as { _bodyInit?: string })._bodyInit : undefined);
-            if (bodyStr) {
-              updateData = JSON.parse(bodyStr as string);
-            }
-          } catch (e) {
-            // ignore
-          }
+          const updateData = parsedBody || {};
           mockSchoolsList[schoolIndex] = {
             ...mockSchoolsList[schoolIndex],
             ...updateData
@@ -141,16 +144,7 @@ export const fetchStub = vi.fn((url: string | Request, options?: RequestInit) =>
       if (method === 'DELETE') {
         const match = urlString.match(/\/schools\/([^/]+)$/);
         const id = match ? match[1] : null;
-        let passcode = '';
-        try {
-          const bodyStr = options?.body || (typeof url === 'object' ? (url as unknown as { _bodyInit?: string })._bodyInit : undefined);
-          if (bodyStr) {
-            const body = JSON.parse(bodyStr as string);
-            passcode = body.passcode;
-          }
-        } catch (e) {
-          // ignore
-        }
+        let passcode = parsedBody?.passcode || '';
 
         if (passcode !== '727798') {
           return Promise.resolve(new Response(JSON.stringify({
@@ -187,19 +181,13 @@ export const fetchStub = vi.fn((url: string | Request, options?: RequestInit) =>
         let phone = '1234567890';
         let subscriptionPlan = '60f7c223405c102c98d6c810';
 
-        try {
-          const bodyStr = options?.body || (typeof url === 'object' ? (url as unknown as { _bodyInit?: string })._bodyInit : undefined);
-          if (bodyStr) {
-            const body = JSON.parse(bodyStr as string);
-            if (body.name) name = body.name;
-            if (body.code) code = body.code;
-            if (body.subdomain) subdomain = body.subdomain;
-            if (body.email) email = body.email;
-            if (body.phone) phone = body.phone;
-            if (body.subscriptionPlan) subscriptionPlan = body.subscriptionPlan;
-          }
-        } catch (e) {
-          // ignore body parsing errors
+        if (parsedBody) {
+          if (parsedBody.name) name = parsedBody.name;
+          if (parsedBody.code) code = parsedBody.code;
+          if (parsedBody.subdomain) subdomain = parsedBody.subdomain;
+          if (parsedBody.email) email = parsedBody.email;
+          if (parsedBody.phone) phone = parsedBody.phone;
+          if (parsedBody.subscriptionPlan) subscriptionPlan = parsedBody.subscriptionPlan;
         }
 
         const newSchool = {

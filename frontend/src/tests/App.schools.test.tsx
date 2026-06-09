@@ -122,10 +122,15 @@ describe('App Schools Navigation and Registration', () => {
       expect(screen.getByText('Greenwood International School')).toBeInTheDocument();
     });
 
-    // 3. Edit School: click the Edit icon button for Greenwood International School
-    const editButtons = screen.getAllByTitle('Edit School');
-    expect(editButtons.length).toBeGreaterThan(0);
-    fireEvent.click(editButtons[0]);
+    // 3. Edit School: click the Actions icon button for Greenwood International School
+    const actionMenus = screen.getAllByTitle('Actions');
+    expect(actionMenus.length).toBeGreaterThan(0);
+    fireEvent.click(actionMenus[0]);
+
+    await waitFor(() => {
+      expect(screen.getByText('Edit')).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByText('Edit'));
 
     // Verify edit dialog opens (starts at Step 1 of Edit mode, which is "School Details")
     await waitFor(() => {
@@ -148,11 +153,25 @@ describe('App Schools Navigation and Registration', () => {
     // Verify updated school name appears in the table
     await waitFor(() => {
       expect(screen.getByText('Greenwood Edited')).toBeInTheDocument();
+      expect(screen.getByText('Greenwood Edited')).toBeInTheDocument();
     });
 
     // 4. Deactivate School: click deactivate icon button
-    const deactivateButtons = screen.getAllByTitle('Deactivate School');
-    fireEvent.click(deactivateButtons[0]);
+    const actionMenus2 = screen.getAllByTitle('Actions');
+    fireEvent.click(actionMenus2[0]);
+    await waitFor(() => {
+      expect(screen.getByText('Deactivate')).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByText('Deactivate'));
+
+    // Verify confirmation dialog opens
+    await waitFor(() => {
+      expect(screen.getByText('Confirm Deactivation')).toBeInTheDocument();
+      expect(screen.getByText(/This school has an active subscription/)).toBeInTheDocument();
+    });
+
+    // Click confirm
+    fireEvent.click(screen.getByRole('button', { name: 'Deactivate' }));
 
     // Verify status changes to Deactivated (a Deactivated chip appears)
     await waitFor(() => {
@@ -160,8 +179,12 @@ describe('App Schools Navigation and Registration', () => {
     });
 
     // 5. Delete School: click the delete button (which should now be enabled since the school is deactivated)
-    const deleteButtons = screen.getAllByTitle('Delete School');
-    fireEvent.click(deleteButtons[0]);
+    const actionMenus3 = screen.getAllByTitle('Actions');
+    fireEvent.click(actionMenus3[0]);
+    await waitFor(() => {
+      expect(screen.getByText('Delete')).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByText('Delete'));
 
     // Verify passcode dialog opens
     await waitFor(() => {
@@ -175,7 +198,7 @@ describe('App Schools Navigation and Registration', () => {
 
     // Verify error message
     await waitFor(() => {
-      expect(screen.getByText('Invalid master passcode')).toBeInTheDocument();
+      expect(screen.getAllByText('Invalid master passcode').length).toBeGreaterThan(0);
     });
 
     // Fill in correct passcode

@@ -2,6 +2,7 @@ import { SchoolModel, ISchool } from './school.model';
 import { CreateSchoolInput } from './dto/create-school.dto';
 import { UserService } from '../user/user.service';
 import { RegistrationDraftModel } from './draft.model';
+import { Types } from 'mongoose';
 
 /*------------- School Database Service -------------*/
 
@@ -120,8 +121,8 @@ export class SchoolService {
     if (input.phone) school.phone = input.phone;
     if (input.countryCode) school.countryCode = input.countryCode;
     if (input.address !== undefined) school.address = input.address;
-    if (input.state) school.state = input.state as any;
-    if (input.district) school.district = input.district as any;
+    if (input.state) school.state = new Types.ObjectId(input.state);
+    if (input.district) school.district = new Types.ObjectId(input.district);
     if (input.boardType) school.boardType = input.boardType;
     if (input.maxStudents) school.maxStudents = input.maxStudents;
     if (input.settings) {
