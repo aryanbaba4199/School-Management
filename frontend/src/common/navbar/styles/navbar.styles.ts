@@ -68,5 +68,6 @@ export const ContentArea = styled.main`
   overflow-y: auto;
   min-height: calc(100vh - 70px);
   background-color: var(--color-background-default);
+  padding: 10px;
   transition: padding-left 0.2s ease;
 `;

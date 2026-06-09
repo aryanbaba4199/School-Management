@@ -4,6 +4,7 @@ export interface SubMenuItemType {
   label: string;
   roles: string[];
   active?: boolean;
+  path?: string;
 }
 
 export interface MenuItemType {
@@ -11,6 +12,7 @@ export interface MenuItemType {
   icon: ReactNode;
   roles: string[];
   active?: boolean;
+  path?: string;
   children?: SubMenuItemType[]; // Support parent-child navigation
 }
 

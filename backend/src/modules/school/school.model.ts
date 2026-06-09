@@ -8,8 +8,8 @@ export interface ISchool extends Document {
   subdomain: string;
   email: string;
   phone: string;
+  countryCode: string;
   address?: string;
-  city?: Types.ObjectId;
   district?: Types.ObjectId;
   state?: Types.ObjectId;
   country: string;
@@ -68,14 +68,14 @@ const SchoolSchema = new Schema<ISchool>(
       required: true,
       trim: true,
     },
+    countryCode: {
+      type: String,
+      default: '+91',
+      trim: true,
+    },
     address: {
       type: String,
       trim: true,
-    },
-    city: {
-      type: Schema.Types.ObjectId,
-      ref: 'City',
-      index: true,
     },
     district: {
       type: Schema.Types.ObjectId,

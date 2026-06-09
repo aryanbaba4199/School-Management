@@ -14,4 +14,8 @@ router.post('/', validate(CreateSchoolSchema), controller.register);
 // Fetch all schools (paginated list)
 router.get('/', controller.list);
 
+// Draft management routes
+router.get('/drafts/:email', controller.getDraft);
+router.post('/drafts', controller.saveDraft);
+
 export default router;

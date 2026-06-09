@@ -6,7 +6,7 @@ import { TextField } from '@mui/material';
 
 interface FormTextFieldProps<TFieldValues extends FieldValues> {
   name: Path<TFieldValues>;
-  control: Control<TFieldValues>;
+  control: Control<TFieldValues, any, any>;
   label: string;
   type?: string;
   placeholder?: string;
@@ -14,6 +14,7 @@ interface FormTextFieldProps<TFieldValues extends FieldValues> {
   required?: boolean;
   multiline?: boolean;
   rows?: number;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
 }
 
 /*------------- FormTextField Component -------------*/
@@ -28,6 +29,7 @@ export function FormTextField<TFieldValues extends FieldValues>({
   required = false,
   multiline = false,
   rows = 1,
+  onBlur,
 }: FormTextFieldProps<TFieldValues>) {
   return (
     <Controller
@@ -35,7 +37,13 @@ export function FormTextField<TFieldValues extends FieldValues>({
       control={control}
       render={({ field, fieldState: { error } }) => (
         <TextField
-          {...field}
+          onChange={field.onChange}
+          onBlur={(e) => {
+            field.onBlur();
+            if (onBlur) onBlur(e as React.FocusEvent<HTMLInputElement>);
+          }}
+          name={field.name}
+          ref={field.ref}
           value={field.value ?? ''}
           type={type}
           label={label}

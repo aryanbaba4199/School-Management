@@ -4,6 +4,17 @@ import { z } from 'zod';
 
 export const CreateSchoolSchema = z.object({
   body: z.object({
+    adminName: z.string({ message: 'Admin name must be a string' })
+      .min(2, 'Admin name must be at least 2 characters long')
+      .max(100, 'Admin name cannot exceed 100 characters'),
+
+    adminEmail: z.string({ message: 'Admin email must be a string' })
+      .email('Invalid admin email address format'),
+
+    adminPassword: z.string({ message: 'Admin password must be a string' })
+      .min(6, 'Admin password must be at least 6 characters long')
+      .max(50, 'Admin password cannot exceed 50 characters'),
+
     name: z.string({ message: 'School name must be a string' })
       .min(2, 'School name must be at least 2 characters long')
       .max(100, 'School name cannot exceed 100 characters'),

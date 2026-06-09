@@ -1,5 +1,7 @@
 import { SchoolModel, ISchool } from './school.model';
 import { CreateSchoolInput } from './dto/create-school.dto';
+import { UserService } from '../user/user.service';
+import { RegistrationDraftModel } from './draft.model';
 
 /*------------- School Database Service -------------*/
 
@@ -9,7 +11,7 @@ export class SchoolService {
    * Throws an error if subdomain or email is already registered.
    */
   async registerSchool(input: CreateSchoolInput): Promise<ISchool> {
-    const { code, subdomain, email } = input;
+    const { code, subdomain, email, adminName, adminEmail, adminPassword, ...schoolData } = input;
 
     // Check for unique school code
     const existingCode = await SchoolModel.findOne({ code: code.toUpperCase() });
@@ -31,13 +33,31 @@ export class SchoolService {
 
     // Create and save new school
     const school = new SchoolModel({
-      ...input,
+      ...schoolData,
       code: code.toUpperCase(),
       subdomain: subdomain.toLowerCase(),
       email: email.toLowerCase(),
     });
 
-    return await school.save();
+    const savedSchool = await school.save();
+
+    // Create associated school admin user
+    const userService = new UserService();
+    await userService.createUser({
+      name: adminName,
+      email: adminEmail,
+      password: adminPassword,
+      userCode: 'ADMIN',
+      role: {
+        name: 'SCHOOL_ADMIN',
+        access: ['ALL'],
+      },
+    }, savedSchool._id.toString());
+
+    // Clean up draft registration if it exists
+    await RegistrationDraftModel.deleteOne({ adminEmail: adminEmail.toLowerCase() });
+
+    return savedSchool;
   }
 
   /**
@@ -55,5 +75,34 @@ export class SchoolService {
       schools,
       totalCount,
     };
+  }
+
+  /**
+   * Finds a draft registration by admin email.
+   */
+  async findDraftByEmail(adminEmail: string) {
+    return await RegistrationDraftModel.findOne({ adminEmail: adminEmail.toLowerCase() });
+  }
+
+  /**
+   * Saves or updates a draft registration.
+   */
+  async saveDraft(draftData: any) {
+    const { adminEmail } = draftData;
+    if (!adminEmail) {
+      throw new Error('adminEmail is required to save a draft.');
+    }
+    return await RegistrationDraftModel.findOneAndUpdate(
+      { adminEmail: adminEmail.toLowerCase() },
+      { ...draftData, adminEmail: adminEmail.toLowerCase() },
+      { new: true, upsert: true }
+    );
+  }
+
+  /**
+   * Deletes a draft registration by admin email.
+   */
+  async deleteDraft(adminEmail: string) {
+    return await RegistrationDraftModel.deleteOne({ adminEmail: adminEmail.toLowerCase() });
   }
 }

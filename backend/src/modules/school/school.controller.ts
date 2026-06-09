@@ -44,4 +44,33 @@ export class SchoolController {
       sendError(res, 500, errorMessage);
     }
   }
+
+  /**
+   * HTTP GET /api/schools/drafts/:email
+   * Retrieves a draft registration by adminEmail.
+   */
+  async getDraft(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const email = req.params.email as string;
+      const draft = await schoolService.findDraftByEmail(email);
+      sendSuccess(res, 200, draft);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while fetching draft';
+      sendError(res, 500, errorMessage);
+    }
+  }
+
+  /**
+   * HTTP POST /api/schools/drafts
+   * Saves/Updates a draft registration.
+   */
+  async saveDraft(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const draft = await schoolService.saveDraft(req.body);
+      sendSuccess(res, 200, draft);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while saving draft';
+      sendError(res, 400, errorMessage);
+    }
+  }
 }

@@ -4,6 +4,18 @@ This file tracks chronological updates, architectural decisions, and setups perf
 
 ---
 
+## [2026-06-09] Database Seeding Extension
+
+### What Was Done
+1. **Multi-Role Seeding Script**:
+   - Refactored [seed.ts](file:///Users/aryandubey/project/personal-/School%20Management/backend/src/seed.ts) to seed a `Pro Subscription Plan`, a demo tenant `School` ("Demo International School"), and 5 core user roles mapping to the school with correct credentials.
+2. **Database Execution & Verification**:
+   - Successfully executed `npx ts-node src/seed.ts` in the backend database instance to seed user accounts for `SUPER_ADMIN`, `SCHOOL_ADMIN`, `TEACHER`, `STUDENT`, and `PARENT`.
+   - Verified that the backend integration test suites compile and pass successfully (`npm test` is green) and TypeScript builds cleanly (`npm run build` succeeds).
+   - Documented all seeded user accounts, credentials, and system starting guides inside the root [README.md](file:///Users/aryandubey/project/personal-/School%20Management/README.md).
+
+---
+
 ## [2026-06-09] Dashboard Page Simplification
 
 ### What Was Done

@@ -1,49 +1,17 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import App from './App';
-import { AppThemeProvider } from './features/themes/components/AppThemeProvider';
-
-/*------------- Global Fetch Stub -------------*/
-
-const fetchStub = vi.fn((_url: string, options?: RequestInit) => {
-  try {
-    const body = options?.body ? JSON.parse(options.body as string) : {};
-    const email = body.email || 'superadmin@schoolos.com';
-    const roleName = email.includes('admin') ? 'SUPER_ADMIN' : email.includes('teacher') ? 'TEACHER' : 'STUDENT';
-    const label = email.includes('admin') ? 'Admin' : email.includes('teacher') ? 'Teacher' : 'Student';
-
-    return Promise.resolve({
-      ok: true,
-      json: () => Promise.resolve({
-        success: true,
-        data: {
-          token: 'mock-jwt-token',
-          user: {
-            _id: 'mock-user-id',
-            name: `Demo ${label}`,
-            email: email,
-            userCode: roleName === 'SUPER_ADMIN' ? 'SA-01' : roleName === 'TEACHER' ? 'T-202' : 'ST-505',
-            role: { name: roleName, access: roleName === 'SUPER_ADMIN' ? ['ALL'] : ['READ'] },
-            isActive: true,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          }
-        }
-      })
-    } as Response);
-  } catch (error) {
-    return Promise.reject(error);
-  }
-});
-
-vi.stubGlobal('fetch', fetchStub);
-
-/*------------- Integration Tests -------------*/
+import { describe, it, expect, beforeEach } from 'vitest';
+import App from '../App';
+import { AppThemeProvider } from '../features/themes/components/AppThemeProvider';
+import { store } from '../api/store';
+import { baseApi } from '../api/baseApi';
+import { fetchStub, resetMockSchools } from './mockFetch';
 
 describe('App Authentication and Dashboard Lifecycle', () => {
   beforeEach(() => {
     localStorage.clear();
     fetchStub.mockClear();
+    resetMockSchools();
+    store.dispatch(baseApi.util.resetApiState());
   });
 
   it('renders login page by default and allows logging in via Admin demo credentials', async () => {

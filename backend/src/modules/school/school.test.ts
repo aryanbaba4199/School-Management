@@ -5,6 +5,8 @@ import { SchoolModel } from './school.model';
 /*------------- Jest Mongoose Mocks -------------*/
 
 jest.mock('./school.model');
+jest.mock('../user/user.service');
+jest.mock('./draft.model');
 
 describe('School Module API Endpoints', () => {
   beforeEach(() => {
@@ -13,6 +15,9 @@ describe('School Module API Endpoints', () => {
 
   describe('POST /api/schools', () => {
     const validSchool = {
+      adminName: 'Demo Admin',
+      adminEmail: 'schooladmin@schoolos.com',
+      adminPassword: 'password123',
       name: 'Orchard Academy',
       code: 'ORCHARD-BANGALORE',
       subdomain: 'orchard-bangalore',

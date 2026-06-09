@@ -13,7 +13,7 @@ export interface SelectOption {
 
 interface FormSelectFieldProps<TFieldValues extends FieldValues> {
   name: Path<TFieldValues>;
-  control: Control<TFieldValues>;
+  control: Control<TFieldValues, any, any>;
   label: string;
   options: SelectOption[];
   disabled?: boolean;

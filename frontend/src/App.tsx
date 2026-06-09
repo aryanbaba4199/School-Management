@@ -1,9 +1,13 @@
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { store } from './api/store';
 import { AuthProvider, useAuth } from './common/hooks/useAuth';
 import { ACLProvider } from './common/ACL/ACLProvider';
 import { NotifierProvider } from './common/Notifier/NotifierProvider';
 import { DialogProvider } from './common/Dialogs/dialog.provider';
 import { LoginPage } from './features/auth/pages/LoginPage';
 import { DashboardPage } from './features/dashboard/pages/DashboardPage';
+import { SchoolsPage } from './features/schools';
 import { MainLayout } from '@common/navbar';
 
 /*------------- Conditional App Shell -------------*/
@@ -19,7 +23,11 @@ function AppContent() {
   // If authenticated, display the main School OS dashboard page within MainLayout
   return (
     <MainLayout>
-      <DashboardPage />
+      <Routes>
+        <Route path="/" element={<DashboardPage />} />
+        <Route path="/schools" element={<SchoolsPage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </MainLayout>
   );
 }
@@ -41,10 +49,14 @@ function AuthDependentProviders({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <AuthDependentProviders>
-        <AppContent />
-      </AuthDependentProviders>
-    </AuthProvider>
+    <Provider store={store}>
+      <BrowserRouter>
+        <AuthProvider>
+          <AuthDependentProviders>
+            <AppContent />
+          </AuthDependentProviders>
+        </AuthProvider>
+      </BrowserRouter>
+    </Provider>
   );
 }
