@@ -4,6 +4,7 @@ import { NotifierProvider } from './common/Notifier/NotifierProvider';
 import { DialogProvider } from './common/Dialogs/dialog.provider';
 import { LoginPage } from './features/auth/pages/LoginPage';
 import { DashboardPage } from './features/dashboard/pages/DashboardPage';
+import { MainLayout } from '@common/navbar';
 
 /*------------- Conditional App Shell -------------*/
 
@@ -15,8 +16,12 @@ function AppContent() {
     return <LoginPage />;
   }
 
-  // If authenticated, display the main School OS dashboard page
-  return <DashboardPage />;
+  // If authenticated, display the main School OS dashboard page within MainLayout
+  return (
+    <MainLayout>
+      <DashboardPage />
+    </MainLayout>
+  );
 }
 
 /*------------- Providers Wrapper -------------*/

@@ -76,15 +76,16 @@ describe('App Authentication and Dashboard Lifecycle', () => {
       expect(screen.getByText('School OS Ecosystem')).toBeInTheDocument();
     });
 
-    expect(screen.getByText('Schools Management')).toBeInTheDocument();
-    expect(screen.getByText('Greenwood International School')).toBeInTheDocument();
-    expect(screen.getByText('Saint Xavier Academy')).toBeInTheDocument();
+    expect(screen.getByText('Welcome to Dashboard')).toBeInTheDocument();
     expect(screen.getByTestId('profile-user')).toHaveTextContent('Demo Admin (SUPER_ADMIN)');
     expect(screen.getByText('Admin Control Panel')).toBeInTheDocument();
 
     // 5. Test Logout functionality
-    const logoutButton = screen.getByRole('button', { name: 'Logout' });
-    fireEvent.click(logoutButton);
+    const avatarBtn = screen.getByTestId('avatar-menu-button');
+    fireEvent.click(avatarBtn);
+
+    const logoutItem = screen.getByTestId('logout-menu-item');
+    fireEvent.click(logoutItem);
 
     // Verify redirected back to Login
     await waitFor(() => {

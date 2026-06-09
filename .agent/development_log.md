@@ -4,17 +4,39 @@ This file tracks chronological updates, architectural decisions, and setups perf
 
 ---
 
-## [2026-06-09] Frontend Authentication Feature (LoginPage & AdSection)
+## [2026-06-09] Dashboard Page Simplification
 
 ### What Was Done
-1. **Split-Screen Login Design**:
+1. **Dashboard Content Cleanup**:
+   - Simplified [DashboardPage.tsx](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/features/dashboard/pages/DashboardPage.tsx) by removing the mock school records datatable, pagination, exporting utilities, and sorting configurations.
+   - Replaced it with a clean "Welcome to Dashboard" header and a profile detail overview, maintaining the SUPER_ADMIN control panel checks.
+2. **Test Integration Mappings**:
+   - Updated integration test assertions in [App.test.tsx](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/App.test.tsx) to check for "Welcome to Dashboard" instead of the deleted school listing details.
+   - Verified that the Vitest test suites compile and pass successfully (`npm test` is green) and production build compiles cleanly without errors (`npm run build` succeeds).
+
+---
+
+## [2026-06-09] Frontend Layout shell (Navbar, Sidebar & Login Page)
+
+### What Was Done
+1. **Application Shell & Navigation (Common Module Refactor)**:
+   - Extracted and reorganized authenticated layout components into [common/navbar](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/common/navbar/), splitting them into modular sections:
+     - `components/`: [Navbar.tsx](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/common/navbar/components/Navbar.tsx), [Sidebar.tsx](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/common/navbar/components/Sidebar.tsx), [MainLayout.tsx](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/common/navbar/components/MainLayout.tsx), and [Menus.tsx](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/common/navbar/components/Menus.tsx).
+     - `types/`: [navbar.types.ts](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/common/navbar/types/navbar.types.ts).
+     - `styles/`: [navbar.styles.ts](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/common/navbar/styles/navbar.styles.ts).
+     - `hooks/`: [useSidebar.ts](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/common/navbar/hooks/useSidebar.ts).
+   - Created `Menus.tsx` containing the `ProfileSection` card rendering (showing user details in the sidebar) and the collapsible menu items renderer supporting future nested parent-child submenus (e.g. Reports -> Tutor/User Reports).
+   - Added an entry point [index.ts](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/common/navbar/index.ts) exporting all common shell components and states.
+2. **Path Alias Imports (`@common/*`)**:
+   - Configured TypeScript paths in [tsconfig.app.json](file:///Users/aryandubey/project/personal-/School%20Management/frontend/tsconfig.app.json) and Vite aliases in [vite.config.ts](file:///Users/aryandubey/project/personal-/School%20Management/frontend/vite.config.ts) mapping the `@common/*` prefix.
+   - Refactored all source files (like [App.tsx](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/App.tsx), [DashboardPage.tsx](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/features/dashboard/pages/DashboardPage.tsx), and [LoginForm.tsx](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/features/auth/components/LoginForm.tsx)) to import shared components, types, and hooks using path aliases rather than long relative paths.
+3. **Split-Screen Login Design**:
    - Designed and built the responsive [LoginPage](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/features/auth/pages/LoginPage.tsx) incorporating a 70% left-side [AdSection](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/features/auth/components/AdSection.tsx) (hidden on mobile devices) and a 30% right-side [LoginForm](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/features/auth/components/LoginForm.tsx) (taking 100% width on mobile).
    - Designed a visually premium `AdSection` featuring styled linear gradients, floating background blobs, auto-playing product spotlight carousels, and glassmorphic detail cards.
    - Designed a clean, secure `LoginForm` utilizing React Hook Form and Yup validation, integrating show/hide password, server authentication requests, and rapid-selection demo account credentials.
-2. **Dashboard Refactoring (200 Lines Constraint Compliance)**:
-   - Extracted [mockSchools](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/features/dashboard/constants/mockSchools.ts) data, [DashboardHeader](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/features/dashboard/components/DashboardHeader.tsx) component, and the main [DashboardPage](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/features/dashboard/pages/DashboardPage.tsx) from the root component to keep all files strictly under 200 lines.
-   - Refactored [App.tsx](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/App.tsx) to dynamically render `<LoginPage />` or `<DashboardPage />` depending on the session state.
-3. **Testing & Build Verification**:
+4. **Dashboard Refactoring (200 Lines Constraint Compliance)**:
+   - Extracted [mockSchools](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/features/dashboard/constants/mockSchools.ts) data, and the main [DashboardPage](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/features/dashboard/pages/DashboardPage.tsx) from the root component. Wrapped the dashboard in `MainLayout` within [App.tsx](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/App.tsx) to dynamically render based on authentication state, keeping all files strictly under 200 lines.
+5. **Testing & Build Verification**:
    - Updated [setupTests.ts](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/setupTests.ts) to define a robust cross-platform polyfill for `localStorage.clear()` in JS-DOM.
    - Rewrote integration tests in [App.test.tsx](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/App.test.tsx) to assert login renders, quick-login functions, transitions to dashboard, role checks, and logout.
    - Verified that the Vitest test suites compile and pass successfully (`npm test` is green) and production build compiles cleanly without errors (`npm run build` succeeds).

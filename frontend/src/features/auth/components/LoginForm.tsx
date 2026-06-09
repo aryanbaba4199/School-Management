@@ -7,8 +7,8 @@ import {
 } from '@mui/material';
 import { FaEye, FaEyeSlash, FaSchool } from 'react-icons/fa';
 import { loginSchema, type LoginFormData } from '../forms/login.schema';
-import { useAuth } from '../../../common/hooks/useAuth';
-import type { RoleName } from '../../../common/ACL/ACLProvider';
+import { useAuth } from '@common/hooks/useAuth';
+import type { RoleName } from '@common/ACL/ACLProvider';
 
 /*------------- Demo Account Details -------------*/
 const DEMO_ACCOUNTS = [
