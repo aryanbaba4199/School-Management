@@ -12,11 +12,11 @@ export interface ISchool extends Document {
   address?: string;
   district?: Types.ObjectId;
   state?: Types.ObjectId;
-  country: string;
+  country: Types.ObjectId;
   pincode?: number;
   logo?: string;
   website?: string;
-  boardType: 'CBSE' | 'ICSE' | 'STATE' | 'IB' | 'OTHER';
+  boardType: Types.ObjectId;
   subscriptionPlan: Types.ObjectId;
   billingCycle: 'MONTHLY' | 'YEARLY';
   subscriptionStartDate?: Date;
@@ -90,9 +90,10 @@ const SchoolSchema = new Schema<ISchool>(
       index: true,
     },
     country: {
-      type: String,
-      default: 'India',
-      trim: true,
+      type: Schema.Types.ObjectId,
+      ref: 'Country',
+      required: true,
+      index: true,
     },
     pincode: {
       type: Number,
@@ -106,9 +107,10 @@ const SchoolSchema = new Schema<ISchool>(
       trim: true,
     },
     boardType: {
-      type: String,
-      enum: ['CBSE', 'ICSE', 'STATE', 'IB', 'OTHER'],
-      default: 'CBSE',
+      type: Schema.Types.ObjectId,
+      ref: 'BoardType',
+      required: true,
+      index: true,
     },
     subscriptionPlan: {
       type: Schema.Types.ObjectId,

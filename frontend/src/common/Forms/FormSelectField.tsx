@@ -18,6 +18,8 @@ interface FormSelectFieldProps<TFieldValues extends FieldValues> {
   options: SelectOption[];
   disabled?: boolean;
   required?: boolean;
+  onAddClick?: () => void;
+  addLabel?: string;
 }
 
 /*------------- FormSelectField Component -------------*/
@@ -29,6 +31,8 @@ export function FormSelectField<TFieldValues extends FieldValues>({
   options,
   disabled = false,
   required = false,
+  onAddClick,
+  addLabel = '➕ Add New...',
 }: FormSelectFieldProps<TFieldValues>) {
   return (
     <Controller
@@ -55,6 +59,13 @@ export function FormSelectField<TFieldValues extends FieldValues>({
           </InputLabel>
           <Select
             {...field}
+            onChange={(e) => {
+              if ((e.target.value as string) === '__ADD_NEW__') {
+                if (onAddClick) onAddClick();
+                return; // Do not update field value
+              }
+              field.onChange(e);
+            }}
             labelId={`${name}-label`}
             label={label}
             notched
@@ -66,6 +77,11 @@ export function FormSelectField<TFieldValues extends FieldValues>({
                 {opt.label}
               </MenuItem>
             ))}
+            {onAddClick && (
+              <MenuItem value="__ADD_NEW__" sx={{ color: 'var(--color-primary-main)', fontWeight: 600 }}>
+                {addLabel}
+              </MenuItem>
+            )}
           </Select>
           {error && <FormHelperText>{error.message}</FormHelperText>}
         </FormControl>

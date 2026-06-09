@@ -11,7 +11,7 @@ import UserDetailsDialog from '../components/UserDetailsDialog';
 import SchoolDetailsDialog from '../components/SchoolDetailsDialog';
 import ConfirmationDialog from '../components/ConfirmationDialog';
 import SchoolFormDialogWrapper from './SchoolFormDialogWrapper';
-import { PlanFormDialog } from '../../features/plans/components/PlanFormDialog';
+import { PlanFormDialog } from '../../features/app-management/plan-management/components/PlanFormDialog';
 import PasscodeDialog from '../components/PasscodeDialog';
 
 /*------------- Dialog Provider Component -------------*/

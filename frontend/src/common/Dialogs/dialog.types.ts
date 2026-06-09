@@ -1,6 +1,6 @@
 import type { SchoolFormData } from '../../features/schools/schema/school.schema';
-import type { PlanFormData } from '../../features/plans/schema/plan.schema';
-import type { ISubscriptionPlan } from '../../features/plans/types/plans.types';
+import type { PlanFormData } from '../../features/app-management/plan-management/schema/plan.schema';
+import type { ISubscriptionPlan } from '../../features/app-management/plan-management/types/plans.types';
 import type { ISchool } from '../../features/schools/types/schools.types';
 
 /*------------- Dialog Types Definitions -------------*/

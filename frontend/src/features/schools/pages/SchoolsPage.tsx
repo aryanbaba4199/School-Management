@@ -42,6 +42,7 @@ export function SchoolsPage() {
       />
       
       <Datatable
+        tableName="schools_table"
         columns={columns}
         data={schools}
         loading={isLoading}

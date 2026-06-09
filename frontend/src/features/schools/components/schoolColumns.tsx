@@ -13,7 +13,30 @@ export const getSchoolColumns = ({ onEdit, onToggleDeactivate, onDelete }: GetSc
   { id: 'name', label: 'School Name', sortable: true },
   { id: 'code', label: 'Code', sortable: true },
   { id: 'subdomain', label: 'Subdomain', sortable: true },
-  { id: 'boardType', label: 'Board', sortable: true },
+  { 
+    id: 'country', 
+    label: 'Country', 
+    sortable: true,
+    render: (row) => typeof row.country === 'object' ? row.country.name : String(row.country)
+  },
+  { 
+    id: 'state', 
+    label: 'State', 
+    sortable: true,
+    render: (row) => row.state ? (typeof row.state === 'object' ? row.state.name : String(row.state)) : '-'
+  },
+  { 
+    id: 'district', 
+    label: 'District', 
+    sortable: true,
+    render: (row) => row.district ? (typeof row.district === 'object' ? row.district.name : String(row.district)) : '-'
+  },
+  { 
+    id: 'boardType', 
+    label: 'Board', 
+    sortable: true,
+    render: (row) => typeof row.boardType === 'object' ? (row.boardType.acronym || row.boardType.name) : String(row.boardType)
+  },
   {
     id: 'subscriptionPlan',
     label: 'Plan',

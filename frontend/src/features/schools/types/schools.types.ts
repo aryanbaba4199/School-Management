@@ -16,11 +16,11 @@ export interface ISchool {
   address?: string;
   district?: { _id: string; name: string; code: string } | string;
   state?: { _id: string; name: string; code: string } | string;
-  country: string;
+  country: { _id: string; name: string; code: string } | string;
   pincode?: number;
   logo?: string;
   website?: string;
-  boardType: 'CBSE' | 'ICSE' | 'STATE' | 'IB' | 'OTHER';
+  boardType: { _id: string; name: string; acronym: string } | string;
   subscriptionPlan: { _id: string; name: string; code: string } | string;
   billingCycle: 'MONTHLY' | 'YEARLY';
   subscriptionStartDate?: string;
@@ -48,7 +48,8 @@ export interface ISchoolDraft {
     address?: string;
     state?: string;
     district?: string;
-    boardType?: 'CBSE' | 'ICSE' | 'STATE' | 'IB' | 'OTHER';
+    country?: string;
+    boardType?: string;
   };
   subscriptionDetails?: {
     subscriptionPlan?: string;
@@ -67,11 +68,15 @@ export interface MasterOption {
   _id: string;
   name: string;
   code?: string;
+  mobileDigits?: number;
+  dialCode?: string;
 }
 
-export const MOCK_PLANS = [
-  { _id: '60f7c223405c102c98d6c810', name: 'Pro Plan' },
-  { _id: '60f7c223405c102c98d6c811', name: 'Basic Plan' }
+import type { ISubscriptionPlan } from '../../app-management/plan-management/types/plans.types';
+
+export const MOCK_PLANS: ISubscriptionPlan[] = [
+  { _id: '60f7c223405c102c98d6c810', name: 'Pro Plan', code: 'PRO', price: { monthly: 999, yearly: 9999 }, maxStudents: 1000, features: { attendanceEnabled: true, onlineExamEnabled: true, aiAnalyticsEnabled: true, parentAppEnabled: true }, isActive: true },
+  { _id: '60f7c223405c102c98d6c811', name: 'Basic Plan', code: 'BASIC', price: { monthly: 499, yearly: 4999 }, maxStudents: 500, features: { attendanceEnabled: true, onlineExamEnabled: false, aiAnalyticsEnabled: false, parentAppEnabled: true }, isActive: true }
 ];
 
 export const MOCK_STATES = [

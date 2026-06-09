@@ -8,6 +8,59 @@ const masterService = new MasterService();
 
 export class MasterController {
   /**
+   * HTTP POST /api/masters/countries
+   */
+  async createCountry(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const country = await masterService.createCountry(req.body);
+      sendSuccess(res, 201, country);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create Country';
+      sendError(res, 400, errorMessage);
+    }
+  }
+
+  /**
+   * HTTP GET /api/masters/countries
+   */
+  async getCountries(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const countries = await masterService.findAllCountries();
+      sendSuccess(res, 200, countries);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to fetch Countries';
+      sendError(res, 500, errorMessage);
+    }
+  }
+
+  /**
+   * HTTP POST /api/masters/board-types
+   */
+  async createBoardType(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const boardType = await masterService.createBoardType(req.body);
+      sendSuccess(res, 201, boardType);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create Board Type';
+      sendError(res, 400, errorMessage);
+    }
+  }
+
+  /**
+   * HTTP GET /api/masters/board-types
+   */
+  async getBoardTypes(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const countryId = req.query.countryId as string | undefined;
+      const boards = await masterService.findBoardTypes(countryId);
+      sendSuccess(res, 200, boards);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to fetch Board Types';
+      sendError(res, 500, errorMessage);
+    }
+  }
+
+  /**
    * HTTP POST /api/masters/states
    */
   async createState(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -25,7 +78,8 @@ export class MasterController {
    */
   async getStates(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const states = await masterService.findAllStates();
+      const countryId = req.query.countryId as string | undefined;
+      const states = await masterService.findAllStates(countryId);
       sendSuccess(res, 200, states);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to fetch States';

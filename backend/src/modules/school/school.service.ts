@@ -47,6 +47,8 @@ export class SchoolService {
       code: code.toUpperCase(),
       subdomain: subdomain.toLowerCase(),
       email: email.toLowerCase(),
+      country: new Types.ObjectId(schoolData.country),
+      boardType: new Types.ObjectId(schoolData.boardType),
       subscriptionPlan: new Types.ObjectId(schoolData.subscriptionPlan),
       subscriptionStartDate,
       subscriptionEndDate,
@@ -80,7 +82,13 @@ export class SchoolService {
     const skip = (page - 1) * limit;
 
     const [schools, totalCount] = await Promise.all([
-      SchoolModel.find().skip(skip).limit(limit).sort({ createdAt: -1 }),
+      SchoolModel.find()
+        .populate('country', 'name code')
+        .populate('state', 'name code')
+        .populate('district', 'name code')
+        .populate('boardType', 'name acronym')
+        .populate('subscriptionPlan', 'name')
+        .skip(skip).limit(limit).sort({ createdAt: -1 }),
       SchoolModel.countDocuments(),
     ]);
 
@@ -135,7 +143,8 @@ export class SchoolService {
     if (input.address !== undefined) school.address = input.address;
     if (input.state) school.state = new Types.ObjectId(input.state);
     if (input.district) school.district = new Types.ObjectId(input.district);
-    if (input.boardType) school.boardType = input.boardType;
+    if (input.country) school.country = new Types.ObjectId(input.country);
+    if (input.boardType) school.boardType = new Types.ObjectId(input.boardType);
     if (input.maxStudents) school.maxStudents = input.maxStudents;
     
     // Handle Subscription/Billing Cycle updates

@@ -1,4 +1,5 @@
-import { useState, MouseEvent, ReactNode } from 'react';
+import { useState } from 'react';
+import type { MouseEvent, ReactNode } from 'react';
 import { IconButton, Menu, MenuItem, ListItemIcon, ListItemText, Tooltip } from '@mui/material';
 import { FaEllipsisV } from 'react-icons/fa';
 
@@ -47,9 +48,6 @@ export function ActionMenu({ items }: ActionMenuProps) {
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
-        MenuListProps={{
-          'aria-labelledby': 'action-button',
-        }}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'right',

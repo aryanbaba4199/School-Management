@@ -1,16 +1,32 @@
-import type { Control } from 'react-hook-form';
+import { useWatch, type Control } from 'react-hook-form';
 import { Grid, Typography, Box } from '@mui/material';
 import { FormSelectField, FormTextField, FormCheckboxField } from '@common/Forms';
 import type { SchoolFormData } from '../../schema/school.schema';
-import { type MasterOption } from '../../types/schools.types';
+import type { ISubscriptionPlan } from '../../../app-management/plan-management/types/plans.types';
 
 interface StepSubscriptionProps {
   control: Control<SchoolFormData>;
-  plans: MasterOption[];
+  plans: ISubscriptionPlan[];
 }
 
 export function StepSubscription({ control, plans }: StepSubscriptionProps) {
-  const mapToOptions = (opts: MasterOption[]) => opts.map(o => ({ value: o._id, label: o.name }));
+  const mapToOptions = (opts: ISubscriptionPlan[]) => opts.map(o => ({ value: o._id, label: o.name }));
+  
+  const selectedPlanId = useWatch({ control, name: 'subscriptionPlan' });
+  const selectedPlan = plans.find(p => p._id === selectedPlanId);
+
+  const getBillingOptions = () => {
+    if (!selectedPlan || !selectedPlan.price) {
+      return [
+        { value: 'MONTHLY', label: 'Monthly' },
+        { value: 'YEARLY', label: 'Yearly' }
+      ];
+    }
+    return [
+      { value: 'MONTHLY', label: `Monthly (₹${selectedPlan.price.monthly.toLocaleString('en-IN')}/mo)` },
+      { value: 'YEARLY', label: `Yearly (₹${selectedPlan.price.yearly.toLocaleString('en-IN')}/yr)` }
+    ];
+  };
 
   return (
     <Box sx={{ mt: 1 }}>
@@ -26,10 +42,7 @@ export function StepSubscription({ control, plans }: StepSubscriptionProps) {
             name="billingCycle" 
             control={control} 
             label="Billing Cycle" 
-            options={[
-              { value: 'MONTHLY', label: 'Monthly' },
-              { value: 'YEARLY', label: 'Yearly' }
-            ]} 
+            options={getBillingOptions()} 
             required 
           />
         </Grid>

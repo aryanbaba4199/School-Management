@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -15,8 +15,11 @@ import {
   CircularProgress,
   Typography,
   TableSortLabel,
+  Checkbox,
+  Box,
+  Tooltip
 } from '@mui/material';
-import { FaEllipsisV } from 'react-icons/fa';
+import { FaEllipsisV, FaColumns } from 'react-icons/fa';
 import styled from 'styled-components';
 import type { Column, ActionItem } from '../types/datatable.types';
 
@@ -45,6 +48,7 @@ interface DatatableProps<T> {
   sortColumn?: string;
   sortDirection?: 'asc' | 'desc';
   onSort?: (columnId: string) => void;
+  tableName?: string;
 }
 
 export default function Datatable<T extends { _id: string }>({
@@ -56,9 +60,47 @@ export default function Datatable<T extends { _id: string }>({
   sortColumn,
   sortDirection,
   onSort,
+  tableName,
 }: DatatableProps<T>) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [activeRow, setActiveRow] = useState<T | null>(null);
+  
+  const [columnsAnchorEl, setColumnsAnchorEl] = useState<null | HTMLElement>(null);
+  const [visibleColumnIds, setVisibleColumnIds] = useState<string[]>(columns.map(c => c.id));
+
+  useEffect(() => {
+    if (tableName) {
+      const stored = localStorage.getItem(`datatable_cols_${tableName}`);
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setVisibleColumnIds(parsed);
+          }
+        } catch (err) {}
+      }
+    }
+  }, [tableName]);
+
+  const handleToggleColumn = (colId: string) => {
+    let newIds = [...visibleColumnIds];
+    if (newIds.includes(colId)) {
+      newIds = newIds.filter(id => id !== colId);
+      if (newIds.length === 0) return; // Prevent hiding all columns
+    } else {
+      newIds.push(colId);
+    }
+    
+    // Sort newIds based on original column order
+    newIds = columns.map(c => c.id).filter(id => newIds.includes(id));
+    
+    setVisibleColumnIds(newIds);
+    if (tableName) {
+      localStorage.setItem(`datatable_cols_${tableName}`, JSON.stringify(newIds));
+    }
+  };
+
+  const visibleColumns = columns.filter(c => visibleColumnIds.includes(c.id));
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, row: T) => {
     event.stopPropagation();
@@ -89,10 +131,19 @@ export default function Datatable<T extends { _id: string }>({
         overflow: 'hidden',
       }}
     >
+      {tableName && (
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 1, borderBottom: '1px solid var(--color-border-default)' }}>
+          <Tooltip title="Select Columns">
+            <IconButton onClick={(e) => setColumnsAnchorEl(e.currentTarget)}>
+              <FaColumns style={{ fontSize: 16, color: 'var(--color-text-secondary)' }} />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      )}
       <Table sx={{ minWidth: 650 }}>
         <TableHead>
           <TableRow>
-            {columns.map((col) => (
+            {visibleColumns.map((col) => (
               <StyledHeaderCell key={col.id} align={col.align || 'left'}>
                 {col.sortable && onSort ? (
                   <TableSortLabel
@@ -113,13 +164,13 @@ export default function Datatable<T extends { _id: string }>({
         <TableBody>
           {loading ? (
             <TableRow>
-              <TableCell colSpan={columns.length + (actions.length > 0 ? 1 : 0)} align="center" sx={{ py: 6 }}>
+              <TableCell colSpan={visibleColumns.length + (actions.length > 0 ? 1 : 0)} align="center" sx={{ py: 6 }}>
                 <CircularProgress color="primary" />
               </TableCell>
             </TableRow>
           ) : data.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={columns.length + (actions.length > 0 ? 1 : 0)} align="center" sx={{ py: 6 }}>
+              <TableCell colSpan={visibleColumns.length + (actions.length > 0 ? 1 : 0)} align="center" sx={{ py: 6 }}>
                 <Typography variant="body1" color="textSecondary">
                   No records found.
                 </Typography>
@@ -128,7 +179,7 @@ export default function Datatable<T extends { _id: string }>({
           ) : (
             data.map((row) => (
               <StyledTableRow key={row._id} onClick={() => onRowClick?.(row)}>
-                {columns.map((col) => {
+                {visibleColumns.map((col) => {
                   const cellValue = row[col.id as keyof T];
                   return (
                     <TableCell key={col.id} align={col.align || 'left'} sx={{ color: 'var(--color-text-primary)' }}>
@@ -156,6 +207,26 @@ export default function Datatable<T extends { _id: string }>({
             <ListItemText sx={{ color: action.color ? `var(--color-${action.color}-main)` : 'inherit' }}>
               {action.label}
             </ListItemText>
+          </MenuItem>
+        ))}
+      </Menu>
+
+      <Menu
+        anchorEl={columnsAnchorEl}
+        open={Boolean(columnsAnchorEl)}
+        onClose={() => setColumnsAnchorEl(null)}
+      >
+        {columns.map((col) => (
+          <MenuItem key={col.id} onClick={(e) => { e.stopPropagation(); handleToggleColumn(col.id); }}>
+            <ListItemIcon>
+              <Checkbox 
+                checked={visibleColumnIds.includes(col.id)} 
+                disableRipple 
+                size="small" 
+                sx={{ p: 0 }}
+              />
+            </ListItemIcon>
+            <ListItemText>{col.label}</ListItemText>
           </MenuItem>
         ))}
       </Menu>

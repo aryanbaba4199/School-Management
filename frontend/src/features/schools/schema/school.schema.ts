@@ -41,7 +41,16 @@ export const schoolSchema = yup.object({
   phone: yup
     .string()
     .required('Phone number is required')
-    .matches(/^[0-9]{10}$/, 'Phone number must be exactly 10 digits'),
+    .matches(/^[0-9]+$/, 'Phone number must contain only digits')
+    .test('len', 'Invalid phone number length', function (val) {
+      const mobileDigits = this.options.context?.mobileDigits;
+      if (!val || !mobileDigits) return true;
+      return val.length === mobileDigits;
+    }),
+  country: yup
+    .string()
+    .required('Country is required')
+    .matches(ObjectIdRegex, 'Invalid Country ID'),
   countryCode: yup
     .string()
     .default('+91'),
@@ -61,8 +70,8 @@ export const schoolSchema = yup.object({
     .optional(),
   boardType: yup
     .string()
-    .oneOf(['CBSE', 'ICSE', 'STATE', 'IB', 'OTHER'], 'Invalid board type')
-    .default('CBSE'),
+    .required('Board Type is required')
+    .matches(ObjectIdRegex, 'Invalid Board Type ID'),
   subscriptionPlan: yup
     .string()
     .required('Subscription plan is required')

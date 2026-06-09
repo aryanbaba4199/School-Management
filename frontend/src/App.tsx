@@ -8,7 +8,7 @@ import { DialogProvider } from './common/Dialogs/dialog.provider';
 import { LoginPage } from './features/auth/pages/LoginPage';
 import { DashboardPage } from './features/dashboard/pages/DashboardPage';
 import { SchoolsPage } from './features/schools';
-import { PlansPage } from './features/plans/pages/PlansPage';
+import { PlansPage } from './features/app-management/plan-management/pages/PlansPage';
 import { MainLayout } from '@common/navbar';
 
 /*------------- Conditional App Shell -------------*/

@@ -1,29 +1,23 @@
 import { Schema, model, Document, Types } from 'mongoose';
 
-/*------------- State Document Interface -------------*/
-
-export interface IState extends Document {
+export interface IBoardType extends Document {
   name: string;
-  code: string;
+  acronym: string;
   countryId: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
 
-/*------------- State Schema Definition -------------*/
-
-const StateSchema = new Schema<IState>(
+const BoardTypeSchema = new Schema<IBoardType>(
   {
     name: {
       type: String,
       required: true,
-      unique: true,
       trim: true,
     },
-    code: {
+    acronym: {
       type: String,
       required: true,
-      unique: true,
       uppercase: true,
       trim: true,
       index: true,
@@ -40,4 +34,4 @@ const StateSchema = new Schema<IState>(
   }
 );
 
-export const StateModel = model<IState>('State', StateSchema);
+export const BoardTypeModel = model<IBoardType>('BoardType', BoardTypeSchema);

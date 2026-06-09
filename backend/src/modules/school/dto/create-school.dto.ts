@@ -33,7 +33,7 @@ export const CreateSchoolSchema = z.object({
       .email('Invalid email address format'),
 
     phone: z.string({ message: 'Phone number must be a string' })
-      .regex(/^[0-9]{10}$/, 'Phone number must be exactly 10 digits'),
+      .regex(/^[0-9]+$/, 'Phone number must contain only digits'),
 
     countryCode: z.string().default('+91').optional(),
 
@@ -47,12 +47,14 @@ export const CreateSchoolSchema = z.object({
       .regex(/^[0-9a-fA-F]{24}$/, 'Invalid State ID format (must be a 24-character hex string)')
       .optional(),
       
-    country: z.string().max(100, 'Country name cannot exceed 100 characters').default('India').optional(),
+    country: z.string()
+      .regex(/^[0-9a-fA-F]{24}$/, 'Invalid Country ID format (must be a 24-character hex string)'),
     pincode: z.number().int().optional(),
     logo: z.string().url('Logo must be a valid URL').or(z.string().max(250)).optional(),
     website: z.string().url('Website must be a valid URL').or(z.string().max(250)).optional(),
 
-    boardType: z.enum(['CBSE', 'ICSE', 'STATE', 'IB', 'OTHER']).default('CBSE').optional(),
+    boardType: z.string()
+      .regex(/^[0-9a-fA-F]{24}$/, 'Invalid Board Type ID format (must be a 24-character hex string)'),
     
     subscriptionPlan: z.string({ message: 'Subscription Plan ID is required' })
       .regex(/^[0-9a-fA-F]{24}$/, 'Invalid Subscription Plan ID format (must be a 24-character hex string)'),

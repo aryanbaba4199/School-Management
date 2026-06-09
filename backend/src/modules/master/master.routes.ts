@@ -1,11 +1,13 @@
 import { Router } from 'express';
 import { MasterController } from './master.controller';
-import { 
+import {
   CreateStateSchema, 
   CreateDistrictSchema, 
   CreateCitySchema, 
   CreateSubscriptionPlanSchema,
-  UpdateSubscriptionPlanSchema 
+  UpdateSubscriptionPlanSchema,
+  CreateCountrySchema,
+  CreateBoardTypeSchema
 } from './dto/create-master.dto';
 import { validate } from '../../common/middleware/validation.middleware';
 import { authenticate, requireRoles } from '../../common/middleware/auth.middleware';
@@ -14,6 +16,14 @@ import { authenticate, requireRoles } from '../../common/middleware/auth.middlew
 
 const router = Router();
 const controller = new MasterController();
+
+// Country Routes
+router.post('/countries', validate(CreateCountrySchema), controller.createCountry);
+router.get('/countries', controller.getCountries);
+
+// Board Type Routes
+router.post('/board-types', validate(CreateBoardTypeSchema), controller.createBoardType);
+router.get('/board-types', controller.getBoardTypes);
 
 // State Routes
 router.post('/states', validate(CreateStateSchema), controller.createState);

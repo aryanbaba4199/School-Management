@@ -1,7 +1,7 @@
 import { baseApi } from './baseApi';
 import type { MasterOption } from '../features/schools/types/schools.types';
-import type { ISubscriptionPlan } from '../features/plans/types/plans.types';
-import type { PlanFormData } from '../features/plans/schema/plan.schema';
+import type { ISubscriptionPlan } from '../features/app-management/plan-management/types/plans.types';
+import type { PlanFormData } from '../features/app-management/plan-management/schema/plan.schema';
 
 export const masterApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -9,15 +9,39 @@ export const masterApi = baseApi.injectEndpoints({
       query: () => '/masters/subscription-plans',
       providesTags: ['SubscriptionPlan'],
     }),
-    getStates: builder.query<{ success: boolean; data: MasterOption[] }, void>({
-      query: () => '/masters/states',
+    getCountries: builder.query<{ success: boolean; data: MasterOption[] }, void>({
+      query: () => '/masters/countries',
+      providesTags: ['Country'],
+    }),
+    getBoardTypes: builder.query<{ success: boolean; data: MasterOption[] }, string>({
+      query: (countryId) => `/masters/board-types?countryId=${countryId}`,
+      providesTags: ['BoardType'],
+    }),
+    getStates: builder.query<{ success: boolean; data: MasterOption[] }, string>({
+      query: (countryId) => `/masters/states?countryId=${countryId}`,
       providesTags: ['State'],
     }),
     getDistricts: builder.query<{ success: boolean; data: MasterOption[] }, string>({
       query: (stateId) => `/masters/districts?stateId=${stateId}`,
       providesTags: ['District'],
     }),
-    createState: builder.mutation<{ success: boolean; data: MasterOption }, { name: string; code: string }>({
+    createCountry: builder.mutation<{ success: boolean; data: MasterOption }, { name: string; code: string; dialCode: string; mobileDigits: number; currency: string }>({
+      query: (body) => ({
+        url: '/masters/countries',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Country'],
+    }),
+    createBoardType: builder.mutation<{ success: boolean; data: MasterOption }, { name: string; acronym: string; countryId: string }>({
+      query: (body) => ({
+        url: '/masters/board-types',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['BoardType'],
+    }),
+    createState: builder.mutation<{ success: boolean; data: MasterOption }, { name: string; code: string; countryId: string }>({
       query: (body) => ({
         url: '/masters/states',
         method: 'POST',
@@ -61,8 +85,12 @@ export const masterApi = baseApi.injectEndpoints({
 
 export const {
   useGetSubscriptionPlansQuery,
+  useGetCountriesQuery,
+  useGetBoardTypesQuery,
   useGetStatesQuery,
   useGetDistrictsQuery,
+  useCreateCountryMutation,
+  useCreateBoardTypeMutation,
   useCreateStateMutation,
   useCreateDistrictMutation,
   useCreateSubscriptionPlanMutation,

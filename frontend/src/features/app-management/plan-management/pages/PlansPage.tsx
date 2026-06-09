@@ -5,7 +5,7 @@ import {
   useCreateSubscriptionPlanMutation, 
   useUpdateSubscriptionPlanMutation, 
   useDeleteSubscriptionPlanMutation 
-} from '../../../api/masterApi';
+} from '../../../../api/masterApi';
 import { useNotifier } from '@common/Notifier/NotifierProvider';
 import { useDialog } from '@common/Dialogs/dialog.provider';
 import { PlansTable } from '../components/PlansTable';

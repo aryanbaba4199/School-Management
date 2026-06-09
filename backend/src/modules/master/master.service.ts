@@ -1,14 +1,95 @@
 import { StateModel, IState } from './models/state.model';
 import { DistrictModel, IDistrict } from './models/district.model';
 import { CityModel, ICity } from './models/city.model';
+import { CountryModel, ICountry } from './models/country.model';
+import { BoardTypeModel, IBoardType } from './models/board-type.model';
 import { SubscriptionPlanModel, ISubscriptionPlan } from './models/subscription-plan.model';
-import { CreateStateInput, CreateDistrictInput, CreateCityInput, CreateSubscriptionPlanInput } from './dto/create-master.dto';
+import { CreateStateInput, CreateDistrictInput, CreateCityInput, CreateSubscriptionPlanInput, CreateCountryInput, CreateBoardTypeInput } from './dto/create-master.dto';
 import { Types } from 'mongoose';
 import { SchoolModel } from '../school/school.model';
 
 /*------------- Master Database Service -------------*/
 
 export class MasterService {
+  /**
+   * Creates a new Country.
+   */
+  async createCountry(input: CreateCountryInput): Promise<ICountry> {
+    const { name, code } = input;
+    
+    const existingName = await CountryModel.findOne({ name: new RegExp(`^${name}$`, 'i') });
+    if (existingName) {
+      throw new Error(`Country with name '${name}' already exists.`);
+    }
+
+    const existingCode = await CountryModel.findOne({ code: code.toUpperCase() });
+    if (existingCode) {
+      throw new Error(`Country code '${code}' is already taken.`);
+    }
+
+    const country = new CountryModel({
+      ...input,
+      code: code.toUpperCase(),
+      currency: input.currency.toUpperCase(),
+    });
+
+    return await country.save();
+  }
+
+  /**
+   * Fetches all Countries.
+   */
+  async findAllCountries(): Promise<ICountry[]> {
+    return await CountryModel.find().sort({ name: 1 });
+  }
+
+  /**
+   * Creates a new BoardType.
+   */
+  async createBoardType(input: CreateBoardTypeInput): Promise<IBoardType> {
+    const { name, acronym, countryId } = input;
+
+    const countryExists = await CountryModel.findById(countryId);
+    if (!countryExists) {
+      throw new Error(`Parent Country with ID '${countryId}' does not exist.`);
+    }
+
+    const existingName = await BoardTypeModel.findOne({
+      name: new RegExp(`^${name}$`, 'i'),
+      countryId: new Types.ObjectId(countryId),
+    });
+    if (existingName) {
+      throw new Error(`BoardType '${name}' already exists in this Country.`);
+    }
+
+    const existingAcronym = await BoardTypeModel.findOne({
+      acronym: acronym.toUpperCase(),
+      countryId: new Types.ObjectId(countryId),
+    });
+    if (existingAcronym) {
+      throw new Error(`BoardType Acronym '${acronym}' already exists in this Country.`);
+    }
+
+    const boardType = new BoardTypeModel({
+      name,
+      acronym: acronym.toUpperCase(),
+      countryId: new Types.ObjectId(countryId),
+    });
+
+    return await boardType.save();
+  }
+
+  /**
+   * Fetches BoardTypes. Filter by countryId if specified.
+   */
+  async findBoardTypes(countryId?: string): Promise<IBoardType[]> {
+    const filter: Record<string, unknown> = {};
+    if (countryId) {
+      filter.countryId = new Types.ObjectId(countryId);
+    }
+    return await BoardTypeModel.find(filter).populate('countryId', 'name code').sort({ name: 1 });
+  }
+
   /**
    * Creates a new State.
    */
@@ -28,16 +109,21 @@ export class MasterService {
     const state = new StateModel({
       name,
       code: code.toUpperCase(),
+      countryId: new Types.ObjectId(input.countryId),
     });
 
     return await state.save();
   }
 
   /**
-   * Fetches all States.
+   * Fetches all States. Filter by countryId if specified.
    */
-  async findAllStates(): Promise<IState[]> {
-    return await StateModel.find().sort({ name: 1 });
+  async findAllStates(countryId?: string): Promise<IState[]> {
+    const filter: Record<string, unknown> = {};
+    if (countryId) {
+      filter.countryId = new Types.ObjectId(countryId);
+    }
+    return await StateModel.find(filter).populate('countryId', 'name code').sort({ name: 1 });
   }
 
   /**
