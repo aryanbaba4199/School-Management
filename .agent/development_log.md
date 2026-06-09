@@ -4,6 +4,23 @@ This file tracks chronological updates, architectural decisions, and setups perf
 
 ---
 
+## [2026-06-09] Frontend Authentication Feature (LoginPage & AdSection)
+
+### What Was Done
+1. **Split-Screen Login Design**:
+   - Designed and built the responsive [LoginPage](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/features/auth/pages/LoginPage.tsx) incorporating a 70% left-side [AdSection](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/features/auth/components/AdSection.tsx) (hidden on mobile devices) and a 30% right-side [LoginForm](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/features/auth/components/LoginForm.tsx) (taking 100% width on mobile).
+   - Designed a visually premium `AdSection` featuring styled linear gradients, floating background blobs, auto-playing product spotlight carousels, and glassmorphic detail cards.
+   - Designed a clean, secure `LoginForm` utilizing React Hook Form and Yup validation, integrating show/hide password, server authentication requests, and rapid-selection demo account credentials.
+2. **Dashboard Refactoring (200 Lines Constraint Compliance)**:
+   - Extracted [mockSchools](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/features/dashboard/constants/mockSchools.ts) data, [DashboardHeader](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/features/dashboard/components/DashboardHeader.tsx) component, and the main [DashboardPage](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/features/dashboard/pages/DashboardPage.tsx) from the root component to keep all files strictly under 200 lines.
+   - Refactored [App.tsx](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/App.tsx) to dynamically render `<LoginPage />` or `<DashboardPage />` depending on the session state.
+3. **Testing & Build Verification**:
+   - Updated [setupTests.ts](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/setupTests.ts) to define a robust cross-platform polyfill for `localStorage.clear()` in JS-DOM.
+   - Rewrote integration tests in [App.test.tsx](file:///Users/aryandubey/project/personal-/School%20Management/frontend/src/App.test.tsx) to assert login renders, quick-login functions, transitions to dashboard, role checks, and logout.
+   - Verified that the Vitest test suites compile and pass successfully (`npm test` is green) and production build compiles cleanly without errors (`npm run build` succeeds).
+
+---
+
 ## [2026-06-09] Git Ignore Configuration
 
 ### What Was Done
