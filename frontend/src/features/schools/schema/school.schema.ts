@@ -67,6 +67,10 @@ export const schoolSchema = yup.object({
     .string()
     .required('Subscription plan is required')
     .matches(ObjectIdRegex, 'Invalid Subscription Plan ID'),
+  billingCycle: yup
+    .string()
+    .oneOf(['MONTHLY', 'YEARLY'], 'Invalid billing cycle')
+    .required('Billing cycle is required'),
   maxStudents: yup
     .number()
     .typeError('Capacity must be a number')

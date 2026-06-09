@@ -18,6 +18,7 @@ export interface ISchool extends Document {
   website?: string;
   boardType: 'CBSE' | 'ICSE' | 'STATE' | 'IB' | 'OTHER';
   subscriptionPlan: Types.ObjectId;
+  billingCycle: 'MONTHLY' | 'YEARLY';
   subscriptionStartDate?: Date;
   subscriptionEndDate?: Date;
   maxStudents: number;
@@ -114,6 +115,11 @@ const SchoolSchema = new Schema<ISchool>(
       ref: 'SubscriptionPlan',
       required: true,
       index: true,
+    },
+    billingCycle: {
+      type: String,
+      enum: ['MONTHLY', 'YEARLY'],
+      required: true,
     },
     subscriptionStartDate: {
       type: Date,

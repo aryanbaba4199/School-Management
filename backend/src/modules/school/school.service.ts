@@ -32,12 +32,24 @@ export class SchoolService {
       throw new Error(`A school with the email '${email}' is already registered.`);
     }
 
+    // Calculate Subscription Dates
+    const subscriptionStartDate = new Date();
+    const subscriptionEndDate = new Date(subscriptionStartDate);
+    if (schoolData.billingCycle === 'MONTHLY') {
+      subscriptionEndDate.setMonth(subscriptionEndDate.getMonth() + 1);
+    } else {
+      subscriptionEndDate.setFullYear(subscriptionEndDate.getFullYear() + 1);
+    }
+
     // Create and save new school
     const school = new SchoolModel({
       ...schoolData,
       code: code.toUpperCase(),
       subdomain: subdomain.toLowerCase(),
       email: email.toLowerCase(),
+      subscriptionPlan: new Types.ObjectId(schoolData.subscriptionPlan),
+      subscriptionStartDate,
+      subscriptionEndDate,
     });
 
     const savedSchool = await school.save();
@@ -125,6 +137,27 @@ export class SchoolService {
     if (input.district) school.district = new Types.ObjectId(input.district);
     if (input.boardType) school.boardType = input.boardType;
     if (input.maxStudents) school.maxStudents = input.maxStudents;
+    
+    // Handle Subscription/Billing Cycle updates
+    if (input.subscriptionPlan) {
+      school.subscriptionPlan = new Types.ObjectId(input.subscriptionPlan);
+    }
+    if (input.billingCycle) {
+      school.billingCycle = input.billingCycle;
+      // Recalculate end date if billing cycle changes or a new plan is assigned
+      if (input.subscriptionPlan || school.isModified('billingCycle')) {
+        const startDate = school.subscriptionStartDate || new Date();
+        const endDate = new Date(startDate);
+        if (input.billingCycle === 'MONTHLY') {
+          endDate.setMonth(endDate.getMonth() + 1);
+        } else {
+          endDate.setFullYear(endDate.getFullYear() + 1);
+        }
+        school.subscriptionStartDate = startDate;
+        school.subscriptionEndDate = endDate;
+      }
+    }
+
     if (input.settings) {
       school.settings = {
         ...school.settings,

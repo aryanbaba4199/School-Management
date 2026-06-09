@@ -18,10 +18,22 @@ export function StepSubscription({ control, plans }: StepSubscriptionProps) {
         Step 3: Subscription & Feature Setup
       </Typography>
       <Grid container spacing={2}>
-        <Grid size={{ xs: 12, sm: 6 }}>
+        <Grid size={{ xs: 12, sm: 4 }}>
           <FormSelectField name="subscriptionPlan" control={control} label="Plan" options={mapToOptions(plans)} required />
         </Grid>
-        <Grid size={{ xs: 12, sm: 6 }}>
+        <Grid size={{ xs: 12, sm: 4 }}>
+          <FormSelectField 
+            name="billingCycle" 
+            control={control} 
+            label="Billing Cycle" 
+            options={[
+              { value: 'MONTHLY', label: 'Monthly' },
+              { value: 'YEARLY', label: 'Yearly' }
+            ]} 
+            required 
+          />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 4 }}>
           <FormTextField name="maxStudents" control={control} label="Capacity Limit" type="number" required />
         </Grid>
         <Grid size={12}>

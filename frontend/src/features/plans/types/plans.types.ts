@@ -2,7 +2,10 @@ export interface ISubscriptionPlan {
   _id: string;
   name: string;
   code: string;
-  price: number;
+  price: {
+    monthly: number;
+    yearly: number;
+  };
   maxStudents: number;
   features: {
     attendanceEnabled: boolean;

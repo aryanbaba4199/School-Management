@@ -29,7 +29,7 @@ const STEPS = ['Admin Credentials', 'School Details', 'Subscription & Features']
 const STEP_FIELDS: (keyof SchoolFormData | string)[][] = [
   ['adminName', 'adminEmail', 'adminPassword'],
   ['name', 'code', 'subdomain', 'email', 'phone', 'countryCode', 'boardType', 'state', 'district', 'address'],
-  ['subscriptionPlan', 'maxStudents', 'settings.attendanceEnabled', 'settings.onlineExamEnabled', 'settings.aiAnalyticsEnabled', 'settings.parentAppEnabled'],
+  ['subscriptionPlan', 'billingCycle', 'maxStudents', 'settings.attendanceEnabled', 'settings.onlineExamEnabled', 'settings.aiAnalyticsEnabled', 'settings.parentAppEnabled'],
 ];
 
 export function SchoolForm({ school = null, onSubmit, onCancel }: SchoolFormProps) {
@@ -58,6 +58,7 @@ export function SchoolForm({ school = null, onSubmit, onCancel }: SchoolFormProp
       boardType: school.boardType,
       maxStudents: school.maxStudents,
       subscriptionPlan: typeof school.subscriptionPlan === 'object' ? school.subscriptionPlan._id : school.subscriptionPlan || '',
+      billingCycle: school.billingCycle || 'MONTHLY',
       settings: {
         attendanceEnabled: school.settings?.attendanceEnabled ?? true,
         onlineExamEnabled: school.settings?.onlineExamEnabled ?? false,
@@ -67,7 +68,7 @@ export function SchoolForm({ school = null, onSubmit, onCancel }: SchoolFormProp
     } : {
       adminName: '', adminEmail: '', adminPassword: '',
       name: '', code: '', subdomain: '', email: '', phone: '', countryCode: '+91', address: '',
-      boardType: 'CBSE', maxStudents: 500, subscriptionPlan: '60f7c223405c102c98d6c810',
+      boardType: 'CBSE', maxStudents: 500, subscriptionPlan: '60f7c223405c102c98d6c810', billingCycle: 'MONTHLY',
       settings: { attendanceEnabled: true, onlineExamEnabled: false, aiAnalyticsEnabled: false, parentAppEnabled: true }
     }
   });
@@ -131,6 +132,7 @@ export function SchoolForm({ school = null, onSubmit, onCancel }: SchoolFormProp
       district: draft.schoolDetails?.district || '',
       boardType: draft.schoolDetails?.boardType || 'CBSE',
       subscriptionPlan: draft.subscriptionDetails?.subscriptionPlan || '60f7c223405c102c98d6c810',
+      billingCycle: draft.subscriptionDetails?.billingCycle || 'MONTHLY',
       maxStudents: draft.subscriptionDetails?.maxStudents || 500,
       settings: draft.subscriptionDetails?.settings || {
         attendanceEnabled: true,
@@ -172,6 +174,7 @@ export function SchoolForm({ school = null, onSubmit, onCancel }: SchoolFormProp
             },
             subscriptionDetails: {
               subscriptionPlan: values.subscriptionPlan,
+              billingCycle: values.billingCycle,
               maxStudents: Number(values.maxStudents),
               settings: values.settings,
             }

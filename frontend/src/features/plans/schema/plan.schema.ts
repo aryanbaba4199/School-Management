@@ -12,11 +12,10 @@ export const planSchema = yup.object({
     .min(2, 'Plan code must be at least 2 characters')
     .max(20, 'Plan code cannot exceed 20 characters')
     .matches(/^[A-Z0-9_-]+$/, 'Plan code must be uppercase alphanumeric (hyphens/underscores allowed)'),
-  price: yup
-    .number()
-    .typeError('Price must be a number')
-    .required('Price is required')
-    .min(0, 'Price cannot be negative'),
+  price: yup.object({
+    monthly: yup.number().typeError('Monthly price must be a number').required('Monthly price is required').min(0, 'Monthly price cannot be negative'),
+    yearly: yup.number().typeError('Yearly price must be a number').required('Yearly price is required').min(0, 'Yearly price cannot be negative'),
+  }),
   maxStudents: yup
     .number()
     .typeError('Capacity limit must be a number')

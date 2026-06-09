@@ -19,7 +19,10 @@ export function PlanFormDialog({ onClose, onSubmit, plan, isLoading = false }: P
     defaultValues: {
       name: '',
       code: '',
-      price: 0,
+      price: {
+        monthly: 0,
+        yearly: 0,
+      },
       maxStudents: 500,
       features: {
         attendanceEnabled: true,
@@ -36,7 +39,10 @@ export function PlanFormDialog({ onClose, onSubmit, plan, isLoading = false }: P
       reset({
         name: plan.name,
         code: plan.code,
-        price: plan.price,
+        price: {
+          monthly: plan.price?.monthly ?? 0,
+          yearly: plan.price?.yearly ?? 0,
+        },
         maxStudents: plan.maxStudents,
         features: {
           attendanceEnabled: plan.features?.attendanceEnabled ?? true,
@@ -50,7 +56,10 @@ export function PlanFormDialog({ onClose, onSubmit, plan, isLoading = false }: P
       reset({
         name: '',
         code: '',
-        price: 0,
+        price: {
+          monthly: 0,
+          yearly: 0,
+        },
         maxStudents: 500,
         features: {
           attendanceEnabled: true,
@@ -77,11 +86,14 @@ export function PlanFormDialog({ onClose, onSubmit, plan, isLoading = false }: P
             <Grid size={{ xs: 12, sm: 6 }}>
               <FormTextField name="code" control={control} label="Plan Code" required disabled={!!plan || isLoading} />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <FormTextField name="price" control={control} label="Price (INR)" type="number" required disabled={isLoading} />
+            <Grid size={{ xs: 12, sm: 4 }}>
+              <FormTextField name="price.monthly" control={control} label="Monthly Price (INR)" type="number" required disabled={isLoading} />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <FormTextField name="maxStudents" control={control} label="Capacity Limit (Students)" type="number" required disabled={isLoading} />
+            <Grid size={{ xs: 12, sm: 4 }}>
+              <FormTextField name="price.yearly" control={control} label="Yearly Price (INR)" type="number" required disabled={isLoading} />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 4 }}>
+              <FormTextField name="maxStudents" control={control} label="Capacity Limit" type="number" required disabled={isLoading} />
             </Grid>
             
             <Grid size={12}>

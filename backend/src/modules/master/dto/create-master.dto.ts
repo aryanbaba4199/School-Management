@@ -64,8 +64,10 @@ export const CreateSubscriptionPlanSchema = z.object({
       .max(20, 'Plan code cannot exceed 20 characters')
       .regex(/^[A-Z0-9_-]+$/, 'Plan code must be uppercase alphanumeric (hyphens/underscores allowed)'),
       
-    price: z.number({ message: 'Price is required' })
-      .min(0, 'Price cannot be negative'),
+    price: z.object({
+      monthly: z.number({ message: 'Monthly price is required' }).min(0, 'Price cannot be negative'),
+      yearly: z.number({ message: 'Yearly price is required' }).min(0, 'Price cannot be negative'),
+    }),
       
     maxStudents: z.number().int().min(1).default(500).optional(),
     

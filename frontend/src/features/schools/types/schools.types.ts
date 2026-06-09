@@ -22,6 +22,7 @@ export interface ISchool {
   website?: string;
   boardType: 'CBSE' | 'ICSE' | 'STATE' | 'IB' | 'OTHER';
   subscriptionPlan: { _id: string; name: string; code: string } | string;
+  billingCycle: 'MONTHLY' | 'YEARLY';
   subscriptionStartDate?: string;
   subscriptionEndDate?: string;
   maxStudents: number;
@@ -51,6 +52,7 @@ export interface ISchoolDraft {
   };
   subscriptionDetails?: {
     subscriptionPlan?: string;
+    billingCycle?: 'MONTHLY' | 'YEARLY';
     maxStudents?: number;
     settings?: {
       attendanceEnabled?: boolean;
@@ -93,6 +95,7 @@ export const MOCK_SCHOOLS: ISchool[] = [
     countryCode: '+91',
     boardType: 'CBSE',
     subscriptionPlan: { _id: '60f7c223405c102c98d6c810', name: 'Pro Plan', code: 'PRO' },
+    billingCycle: 'YEARLY',
     maxStudents: 1500,
     isActive: true,
     isDeactive: false,
@@ -111,6 +114,7 @@ export const MOCK_SCHOOLS: ISchool[] = [
     countryCode: '+91',
     boardType: 'ICSE',
     subscriptionPlan: { _id: '60f7c223405c102c98d6c811', name: 'Basic Plan', code: 'BASIC' },
+    billingCycle: 'MONTHLY',
     maxStudents: 800,
     isActive: true,
     isDeactive: false,

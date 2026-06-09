@@ -57,6 +57,8 @@ export const CreateSchoolSchema = z.object({
     subscriptionPlan: z.string({ message: 'Subscription Plan ID is required' })
       .regex(/^[0-9a-fA-F]{24}$/, 'Invalid Subscription Plan ID format (must be a 24-character hex string)'),
       
+    billingCycle: z.enum(['MONTHLY', 'YEARLY']),
+      
     subscriptionStartDate: z.string().datetime().or(z.date()).optional(),
     subscriptionEndDate: z.string().datetime().or(z.date()).optional(),
     maxStudents: z.number().int().min(1, 'Max students must be at least 1').default(500).optional(),

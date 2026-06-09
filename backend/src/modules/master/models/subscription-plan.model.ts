@@ -5,7 +5,10 @@ import { Schema, model, Document } from 'mongoose';
 export interface ISubscriptionPlan extends Document {
   name: string;
   code: string;
-  price: number;
+  price: {
+    monthly: number;
+    yearly: number;
+  };
   maxStudents: number;
   features: {
     attendanceEnabled: boolean;
@@ -37,9 +40,16 @@ const SubscriptionPlanSchema = new Schema<ISubscriptionPlan>(
       index: true,
     },
     price: {
-      type: Number,
-      required: true,
-      min: 0,
+      monthly: {
+        type: Number,
+        required: true,
+        min: 0,
+      },
+      yearly: {
+        type: Number,
+        required: true,
+        min: 0,
+      },
     },
     maxStudents: {
       type: Number,
