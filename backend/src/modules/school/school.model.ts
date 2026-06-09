@@ -1,0 +1,155 @@
+import { Schema, model, Document, Types } from 'mongoose';
+
+/*------------- Mongoose Document Interface -------------*/
+
+export interface ISchool extends Document {
+  name: string;
+  code: string;
+  subdomain: string;
+  email: string;
+  phone: string;
+  address?: string;
+  city?: Types.ObjectId;
+  district?: Types.ObjectId;
+  state?: Types.ObjectId;
+  country: string;
+  pincode?: number;
+  logo?: string;
+  website?: string;
+  boardType: 'CBSE' | 'ICSE' | 'STATE' | 'IB' | 'OTHER';
+  subscriptionPlan: Types.ObjectId;
+  subscriptionStartDate?: Date;
+  subscriptionEndDate?: Date;
+  maxStudents: number;
+  isActive: boolean;
+  settings: {
+    attendanceEnabled: boolean;
+    onlineExamEnabled: boolean;
+    aiAnalyticsEnabled: boolean;
+    parentAppEnabled: boolean;
+  };
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+/*------------- Mongoose Schema Definition -------------*/
+
+const SchoolSchema = new Schema<ISchool>(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    code: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      uppercase: true,
+      index: true,
+    },
+    subdomain: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+      index: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      lowercase: true,
+      trim: true,
+    },
+    phone: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    address: {
+      type: String,
+      trim: true,
+    },
+    city: {
+      type: Schema.Types.ObjectId,
+      ref: 'City',
+      index: true,
+    },
+    district: {
+      type: Schema.Types.ObjectId,
+      ref: 'District',
+      index: true,
+    },
+    state: {
+      type: Schema.Types.ObjectId,
+      ref: 'State',
+      index: true,
+    },
+    country: {
+      type: String,
+      default: 'India',
+      trim: true,
+    },
+    pincode: {
+      type: Number,
+    },
+    logo: {
+      type: String,
+      trim: true,
+    },
+    website: {
+      type: String,
+      trim: true,
+    },
+    boardType: {
+      type: String,
+      enum: ['CBSE', 'ICSE', 'STATE', 'IB', 'OTHER'],
+      default: 'CBSE',
+    },
+    subscriptionPlan: {
+      type: Schema.Types.ObjectId,
+      ref: 'SubscriptionPlan',
+      required: true,
+      index: true,
+    },
+    subscriptionStartDate: {
+      type: Date,
+    },
+    subscriptionEndDate: {
+      type: Date,
+    },
+    maxStudents: {
+      type: Number,
+      default: 500,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    settings: {
+      attendanceEnabled: {
+        type: Boolean,
+        default: true,
+      },
+      onlineExamEnabled: {
+        type: Boolean,
+        default: false,
+      },
+      aiAnalyticsEnabled: {
+        type: Boolean,
+        default: false,
+      },
+      parentAppEnabled: {
+        type: Boolean,
+        default: true,
+      },
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+export const SchoolModel = model<ISchool>('School', SchoolSchema);
