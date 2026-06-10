@@ -7,6 +7,7 @@ export interface TeacherFormData {
   userCode: string;
   phone?: string;
   subjects?: string[];
+  schoolId?: string;
   address?: {
     street?: string;
     state?: string;
@@ -41,6 +42,7 @@ export const teacherSchema = yup.object({
     .optional()
     .matches(/^[0-9]*$/, 'Phone number must contain only digits'),
   subjects: yup.array().of(yup.string().required()).optional(),
+  schoolId: yup.string().optional(),
   address: yup.object({
     street: yup.string().max(150).optional(),
     state: yup.string().optional(),

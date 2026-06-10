@@ -71,7 +71,7 @@ export function ClassFormDialog({ onClose, onSubmit, classObj, isLoading = false
                 <FormSelectField
                   name="schoolId"
                   control={control}
-                  label="School *"
+                  label="Institute *"
                   options={schoolOptions}
                   disabled={isLoading}
                 />

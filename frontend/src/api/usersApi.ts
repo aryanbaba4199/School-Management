@@ -9,7 +9,7 @@ export interface ISchoolUser {
     name: 'SUPER_ADMIN' | 'SCHOOL_ADMIN' | 'TEACHER' | 'STUDENT' | 'PARENT';
     access: string[];
   };
-  schoolId?: string;
+  schoolId?: string | { _id: string; name: string; code: string };
   phone?: string;
   isActive: boolean;
   address?: {

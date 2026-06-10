@@ -9,6 +9,7 @@ interface GetParentColumnsProps {
   onEdit: (parent: ISchoolUser) => void;
   onToggleDeactivate: (parent: ISchoolUser) => void;
   onDelete: (parent: ISchoolUser) => void;
+  isSuperAdmin?: boolean;
 }
 
 export function ParentAction({
@@ -48,7 +49,7 @@ export function ParentAction({
   return <ActionMenu items={actions} />;
 }
 
-export const getParentColumns = ({ onEdit, onToggleDeactivate, onDelete }: GetParentColumnsProps): Column<ISchoolUser>[] => [
+export const getParentColumns = ({ onEdit, onToggleDeactivate, onDelete, isSuperAdmin = false }: GetParentColumnsProps): Column<ISchoolUser>[] => [
   {
     id: 'name',
     label: 'Parent/Guardian Name',
@@ -64,6 +65,22 @@ export const getParentColumns = ({ onEdit, onToggleDeactivate, onDelete }: GetPa
       </Box>
     )
   },
+  ...(isSuperAdmin
+    ? [
+        {
+          id: 'schoolId',
+          label: 'Institute',
+          sortable: false,
+          render: (row: ISchoolUser) => {
+            const school = row.schoolId;
+            if (school && typeof school === 'object') {
+              return `${school.name} (${school.code})`;
+            }
+            return '-';
+          },
+        },
+      ]
+    : []),
   { id: 'userCode', label: 'Guardian ID', sortable: true },
   { 
     id: 'childrenIds', 

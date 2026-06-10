@@ -1,8 +1,12 @@
 import { PageWrapper, Datatable, DatatableHeader, DatatableFooter } from '@common/Datatable';
 import { useTeachers } from '../hooks/useTeachers';
 import { getTeacherColumns } from '../components/teacherColumns';
+import { useAuth } from '@common/hooks/useAuth';
 
 export function TeachersPage() {
+  const { user } = useAuth();
+  const isSuperAdmin = user?.role?.name === 'SUPER_ADMIN';
+
   const {
     teachers,
     totalCount,
@@ -26,12 +30,13 @@ export function TeachersPage() {
   const columns = getTeacherColumns({
     onEdit: handleEdit,
     onToggleDeactivate: handleToggleDeactivate,
-    onDelete: handleDelete
+    onDelete: handleDelete,
+    isSuperAdmin
   });
 
   return (
     <PageWrapper 
-      title="Teachers Management" 
+      title="Tutors Management" 
       onCreate={() => openDialog('TEACHER_FORM', { onSubmit: handleCreateTeacher })} 
       createLabel="Add Teacher"
     >

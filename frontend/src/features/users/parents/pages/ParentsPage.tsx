@@ -1,8 +1,12 @@
 import { PageWrapper, Datatable, DatatableHeader, DatatableFooter } from '@common/Datatable';
 import { useParents } from '../hooks/useParents';
 import { getParentColumns } from '../components/parentColumns';
+import { useAuth } from '@common/hooks/useAuth';
 
 export function ParentsPage() {
+  const { user } = useAuth();
+  const isSuperAdmin = user?.role?.name === 'SUPER_ADMIN';
+
   const {
     parents,
     totalCount,
@@ -26,7 +30,8 @@ export function ParentsPage() {
   const columns = getParentColumns({
     onEdit: handleEdit,
     onToggleDeactivate: handleToggleDeactivate,
-    onDelete: handleDelete
+    onDelete: handleDelete,
+    isSuperAdmin
   });
 
   return (

@@ -6,6 +6,8 @@ import { DialogTitle, DialogContent, DialogActions, Button, Grid, Box } from '@m
 import { FormTextField, FormSelectField } from '@common/Forms';
 import { useGetStatesQuery, useGetDistrictsQuery } from '../../../../api/masterApi';
 import { useGetSubjectsQuery } from '../../../../api/subjectsApi';
+import { useGetSchoolsQuery } from '../../../../api/schoolsApi';
+import { useAuth } from '@common/hooks/useAuth';
 import { teacherSchema, type TeacherFormData } from '../schema/teacher.schema';
 import type { ISchoolUser } from '../../../../api/usersApi';
 
@@ -17,6 +19,15 @@ interface TeacherFormDialogProps {
 }
 
 export function TeacherFormDialog({ onClose, onSubmit, user, isLoading = false }: TeacherFormDialogProps) {
+  const { user: currentUser } = useAuth();
+  const isSuperAdmin = currentUser?.role?.name === 'SUPER_ADMIN';
+
+  const { data: schoolsRes } = useGetSchoolsQuery(undefined, { skip: !isSuperAdmin });
+  const schoolOptions = (schoolsRes?.success ? schoolsRes.data : []).map((s) => ({
+    value: s._id,
+    label: `${s.name} (${s.code})`,
+  }));
+
   const { handleSubmit, control, watch, reset } = useForm<TeacherFormData>({
     resolver: yupResolver(teacherSchema) as unknown as Resolver<TeacherFormData>,
     defaultValues: {
@@ -26,6 +37,7 @@ export function TeacherFormDialog({ onClose, onSubmit, user, isLoading = false }
       userCode: '',
       phone: '',
       subjects: [],
+      schoolId: '',
       address: {
         street: '',
         state: '',
@@ -58,6 +70,7 @@ export function TeacherFormDialog({ onClose, onSubmit, user, isLoading = false }
         userCode: user.userCode,
         phone: user.phone || '',
         subjects: user.subjects?.map((s) => (typeof s === 'object' ? s._id : s)) || [],
+        schoolId: typeof user.schoolId === 'object' ? user.schoolId?._id : user.schoolId || '',
         address: {
           street: user.address?.street || '',
           state: typeof user.address?.state === 'object' ? user.address.state._id : user.address?.state || '',
@@ -77,6 +90,7 @@ export function TeacherFormDialog({ onClose, onSubmit, user, isLoading = false }
       userCode: formData.userCode,
       phone: formData.phone || undefined,
       subjects: formData.subjects || undefined,
+      schoolId: isSuperAdmin && formData.schoolId ? formData.schoolId : undefined,
       address: formData.address
         ? {
             street: formData.address.street || undefined,
@@ -99,11 +113,22 @@ export function TeacherFormDialog({ onClose, onSubmit, user, isLoading = false }
   return (
     <>
       <DialogTitle sx={{ fontWeight: 800, borderBottom: '1px solid var(--color-border-default)', pb: 2 }}>
-        {user ? 'Edit Teacher Details' : 'Add New Teacher'}
+        {user ? 'Edit Tutors Details' : 'Add New Teacher'}
       </DialogTitle>
       <DialogContent sx={{ pt: 3, pb: 2 }}>
         <Box component="form" noValidate sx={{ mt: 1 }}>
           <Grid container spacing={2.5}>
+            {isSuperAdmin && (
+              <Grid size={{ xs: 12 }}>
+                <FormSelectField
+                  name="schoolId"
+                  control={control}
+                  label="Institute *"
+                  options={schoolOptions}
+                  disabled={isLoading}
+                />
+              </Grid>
+            )}
             <Grid size={{ xs: 12, sm: 6 }}>
               <FormTextField name="name" control={control} label="Teacher Name" required disabled={isLoading} />
             </Grid>

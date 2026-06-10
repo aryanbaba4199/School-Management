@@ -1,8 +1,12 @@
 import { PageWrapper, Datatable, DatatableHeader, DatatableFooter } from '@common/Datatable';
 import { useStudents } from '../hooks/useStudents';
 import { getStudentColumns } from '../components/studentColumns';
+import { useAuth } from '@common/hooks/useAuth';
 
 export function StudentsPage() {
+  const { user } = useAuth();
+  const isSuperAdmin = user?.role?.name === 'SUPER_ADMIN';
+
   const {
     students,
     totalCount,
@@ -26,7 +30,8 @@ export function StudentsPage() {
   const columns = getStudentColumns({
     onEdit: handleEdit,
     onToggleDeactivate: handleToggleDeactivate,
-    onDelete: handleDelete
+    onDelete: handleDelete,
+    isSuperAdmin
   });
 
   return (

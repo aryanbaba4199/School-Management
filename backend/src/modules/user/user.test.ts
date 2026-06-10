@@ -182,7 +182,9 @@ describe('User Module API Endpoints', () => {
               populate: jest.fn().mockReturnValue({
                 populate: jest.fn().mockReturnValue({
                   populate: jest.fn().mockReturnValue({
-                    populate: jest.fn().mockResolvedValue(mockUserDbDoc),
+                    populate: jest.fn().mockReturnValue({
+                      populate: jest.fn().mockResolvedValue(mockUserDbDoc),
+                    }),
                   }),
                 }),
               }),
@@ -220,7 +222,9 @@ describe('User Module API Endpoints', () => {
                   populate: jest.fn().mockReturnValue({
                     populate: jest.fn().mockReturnValue({
                       populate: jest.fn().mockReturnValue({
-                        populate: jest.fn().mockResolvedValue(mockUsers),
+                        populate: jest.fn().mockReturnValue({
+                          populate: jest.fn().mockResolvedValue(mockUsers),
+                        }),
                       }),
                     }),
                   }),

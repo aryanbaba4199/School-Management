@@ -9,6 +9,7 @@ interface GetTeacherColumnsProps {
   onEdit: (teacher: ISchoolUser) => void;
   onToggleDeactivate: (teacher: ISchoolUser) => void;
   onDelete: (teacher: ISchoolUser) => void;
+  isSuperAdmin?: boolean;
 }
 
 export function TeacherAction({
@@ -48,10 +49,10 @@ export function TeacherAction({
   return <ActionMenu items={actions} />;
 }
 
-export const getTeacherColumns = ({ onEdit, onToggleDeactivate, onDelete }: GetTeacherColumnsProps): Column<ISchoolUser>[] => [
+export const getTeacherColumns = ({ onEdit, onToggleDeactivate, onDelete, isSuperAdmin = false }: GetTeacherColumnsProps): Column<ISchoolUser>[] => [
   {
     id: 'name',
-    label: 'Teacher Name',
+    label: 'Name',
     sortable: true,
     render: (row) => (
       <Box>
@@ -64,6 +65,22 @@ export const getTeacherColumns = ({ onEdit, onToggleDeactivate, onDelete }: GetT
       </Box>
     )
   },
+  ...(isSuperAdmin
+    ? [
+        {
+          id: 'schoolId',
+          label: 'Institute',
+          sortable: false,
+          render: (row: ISchoolUser) => {
+            const school = row.schoolId;
+            if (school && typeof school === 'object') {
+              return `${school.name}`;
+            }
+            return '-';
+          },
+        },
+      ]
+    : []),
   { id: 'userCode', label: 'Employee ID', sortable: true },
   { 
     id: 'subjects', 

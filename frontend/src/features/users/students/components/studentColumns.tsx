@@ -9,6 +9,7 @@ interface GetStudentColumnsProps {
   onEdit: (student: ISchoolUser) => void;
   onToggleDeactivate: (student: ISchoolUser) => void;
   onDelete: (student: ISchoolUser) => void;
+  isSuperAdmin?: boolean;
 }
 
 export function StudentAction({
@@ -57,7 +58,7 @@ const CLASS_MAPPING: Record<string, string> = {
   '60f7c223405c102c98d6c824': 'Class 12-B'
 };
 
-export const getStudentColumns = ({ onEdit, onToggleDeactivate, onDelete }: GetStudentColumnsProps): Column<ISchoolUser>[] => [
+export const getStudentColumns = ({ onEdit, onToggleDeactivate, onDelete, isSuperAdmin = false }: GetStudentColumnsProps): Column<ISchoolUser>[] => [
   {
     id: 'name',
     label: 'Student Name',
@@ -73,6 +74,22 @@ export const getStudentColumns = ({ onEdit, onToggleDeactivate, onDelete }: GetS
       </Box>
     )
   },
+  ...(isSuperAdmin
+    ? [
+        {
+          id: 'schoolId',
+          label: 'Institute',
+          sortable: false,
+          render: (row: ISchoolUser) => {
+            const school = row.schoolId;
+            if (school && typeof school === 'object') {
+              return `${school.name} (${school.code})`;
+            }
+            return '-';
+          },
+        },
+      ]
+    : []),
   { id: 'userCode', label: 'Admission No.', sortable: true },
   { 
     id: 'classId', 

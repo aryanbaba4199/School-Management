@@ -92,6 +92,7 @@ export class UserService {
   async findUserById(id: string): Promise<IUser | null> {
     return await UserModel.findById(id)
       .select('-password')
+      .populate('schoolId', 'name code')
       .populate('parentId', 'name email userCode role')
       .populate('childrenIds', 'name email userCode role')
       .populate('address.city', 'name code')
@@ -114,6 +115,7 @@ export class UserService {
         .skip(skip)
         .limit(limit)
         .sort({ createdAt: -1 })
+        .populate('schoolId', 'name code')
         .populate('parentId', 'name email userCode role')
         .populate('childrenIds', 'name email userCode role')
         .populate('address.city', 'name code')
