@@ -89,6 +89,12 @@ export const schoolSchema = yup.object({
   shift: yup.string().optional(),
   startTime: yup.string().optional(),
   endTime: yup.string().optional(),
+  admissionFee: yup
+    .number()
+    .transform((value, originalValue) => (String(originalValue).trim() === '' ? undefined : value))
+    .typeError('Admission fee must be a number')
+    .min(0, 'Admission fee cannot be negative')
+    .optional(),
   settings: yup.object({
     attendanceEnabled: yup.boolean().default(true),
     onlineExamEnabled: yup.boolean().default(false),

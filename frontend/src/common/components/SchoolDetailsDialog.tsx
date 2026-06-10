@@ -48,6 +48,7 @@ interface MockSchool {
   boardType: string;
   subscriptionName: string;
   maxStudents: number;
+  admissionFee?: number;
   isActive: boolean;
   settings: {
     attendanceEnabled: boolean;
@@ -216,6 +217,11 @@ export default function SchoolDetailsDialog({ schoolId, onClose }: SchoolDetails
               <Typography variant="body2">
                 <strong>Capacity Limit:</strong> {school.maxStudents} Students
               </Typography>
+              {school.admissionFee !== undefined && (
+                <Typography variant="body2" sx={{ mt: 1 }}>
+                  <strong>Admission Fee:</strong> ₹{school.admissionFee}
+                </Typography>
+              )}
             </InfoBox>
           </Grid>
         </Grid>

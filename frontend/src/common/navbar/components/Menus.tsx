@@ -45,7 +45,15 @@ const MENU_ITEMS: MenuItemType[] = [
   { label: 'Attendance', icon: <FaUserCheck size={16} />, roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'], path: '/attendance' },
   { label: 'Exams & Marks', icon: <FaFileSignature size={16} />, roles: ['SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'], path: '/exams' },
   { label: 'Homeworks', icon: <FaBookOpen size={16} />, roles: ['TEACHER', 'STUDENT', 'PARENT'], path: '/homeworks' },
-  { label: 'Fees & Payments', icon: <FaCreditCard size={16} />, roles: ['SCHOOL_ADMIN', 'PARENT'], path: '/fees' },
+  {
+    label: 'Account Management',
+    icon: <FaCreditCard size={16} />,
+    roles: ['SCHOOL_ADMIN', 'SUPER_ADMIN'],
+    children: [
+      { label: 'Fees Management', roles: ['SCHOOL_ADMIN', 'SUPER_ADMIN'], path: '/account-management/fees' },
+      { label: 'Transaction Management', roles: ['SCHOOL_ADMIN', 'SUPER_ADMIN'], path: '/account-management/transactions' }
+    ]
+  },
   { label: 'Notifications', icon: <FaBell size={16} />, roles: ['ALL'], path: '/notifications' },
 ];
 

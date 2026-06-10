@@ -29,6 +29,7 @@ export interface ISchool extends Document {
   shift?: string;
   startTime?: string;
   endTime?: string;
+  admissionFee?: number;
   settings: {
     attendanceEnabled: boolean;
     onlineExamEnabled: boolean;
@@ -165,6 +166,11 @@ const SchoolSchema = new Schema<ISchool>(
     endTime: {
       type: String,
       trim: true,
+    },
+    admissionFee: {
+      type: Number,
+      default: 0,
+      min: 0,
     },
     settings: {
       attendanceEnabled: {

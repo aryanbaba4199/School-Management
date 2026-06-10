@@ -102,7 +102,7 @@ export function StepDetails({
         <Grid size={{ xs: 12, sm: 6 }}>
           <FormTextField name="phone" control={control} label="Phone Number" required />
         </Grid>
-        <Grid size={{ xs: 12, sm: 4 }}>
+        <Grid size={{ xs: 12, sm: 3 }}>
           <FormSelectField
             name="shift"
             control={control}
@@ -114,7 +114,7 @@ export function StepDetails({
             ]}
           />
         </Grid>
-        <Grid size={{ xs: 12, sm: 4 }}>
+        <Grid size={{ xs: 12, sm: 3 }}>
           <FormTextField
             name="startTime"
             control={control}
@@ -122,12 +122,20 @@ export function StepDetails({
             type="time"
           />
         </Grid>
-        <Grid size={{ xs: 12, sm: 4 }}>
+        <Grid size={{ xs: 12, sm: 3 }}>
           <FormTextField
             name="endTime"
             control={control}
             label="Operational End Time"
             type="time"
+          />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 3 }}>
+          <FormTextField
+            name="admissionFee"
+            control={control}
+            label="Admission Fee"
+            type="number"
           />
         </Grid>
       </Grid>

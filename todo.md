@@ -7,3 +7,10 @@ so in. subject show class that will be multiple support ( show in chips not drop
 
 
 /** -----------in class creation only selected subject should be shown in schedule------------------ */
+
+
+ok lets work in Account feature
+make a menu Account Management 
+and make two submenu for now 
+Fees Management, 
+Transaction Management, 

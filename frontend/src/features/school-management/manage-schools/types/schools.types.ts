@@ -33,6 +33,7 @@ export interface ISchool {
   shift?: string;
   startTime?: string;
   endTime?: string;
+  admissionFee?: number;
   settings: ISchoolSettings;
   createdAt: string;
   updatedAt: string;

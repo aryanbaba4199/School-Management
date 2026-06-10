@@ -68,6 +68,7 @@ export const CreateSchoolSchema = z.object({
     shift: z.string().max(50).optional(),
     startTime: z.string().max(20).optional(),
     endTime: z.string().max(20).optional(),
+    admissionFee: z.number().min(0, 'Admission fee cannot be negative').optional(),
 
     settings: z.object({
       attendanceEnabled: z.boolean().default(true).optional(),

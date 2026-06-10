@@ -9,6 +9,8 @@ import { PlansPage } from '../features/app-management/plan-management/pages/Plan
 import { StudentsPage } from '../features/users/students';
 import { TeachersPage } from '../features/users/teachers';
 import { ParentsPage } from '../features/users/parents';
+import { FeesPage } from '../features/account-management/fees';
+import { TransactionsPage } from '../features/account-management/transactions';
 import { MainLayout } from '@common/navbar';
 
 export function AppRoutes() {
@@ -51,6 +53,16 @@ export function AppRoutes() {
         <Route path="/user-management/students" element={<StudentsPage />} />
         <Route path="/user-management/teachers" element={<TeachersPage />} />
         <Route path="/user-management/parents" element={<ParentsPage />} />
+        <Route path="/account-management/fees" element={
+          user.role.name === 'SUPER_ADMIN' || user.role.name === 'SCHOOL_ADMIN' 
+            ? <FeesPage /> 
+            : <Navigate to="/" replace />
+        } />
+        <Route path="/account-management/transactions" element={
+          user.role.name === 'SUPER_ADMIN' || user.role.name === 'SCHOOL_ADMIN' 
+            ? <TransactionsPage /> 
+            : <Navigate to="/" replace />
+        } />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </MainLayout>
