@@ -4,7 +4,7 @@ import {
 } from '@mui/material';
 import { 
   FaChartPie, FaSchool, FaUsers, 
-  FaClipboardList, FaBook, FaUserCheck, FaFileSignature, FaBookOpen, 
+  FaUserCheck, FaFileSignature, FaBookOpen, 
   FaCreditCard, FaBell, FaChevronDown, FaChevronUp, FaCogs 
 } from 'react-icons/fa';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -22,7 +22,16 @@ const MENU_ITEMS: MenuItemType[] = [
       { label: 'Plans Management', roles: ['SUPER_ADMIN'], path: '/app-management/plans' }
     ]
   },
-  { label: 'Schools', icon: <FaSchool size={16} />, roles: ['SUPER_ADMIN'], path: '/schools' },
+  {
+    label: 'School Management',
+    icon: <FaSchool size={16} />,
+    roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN'],
+    children: [
+      { label: 'Manage Schools', roles: ['SUPER_ADMIN'], path: '/school-management/manage-schools' },
+      { label: 'Classes', roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN'], path: '/school-management/classes' },
+      { label: 'Subjects', roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN'], path: '/school-management/subjects' }
+    ]
+  },
   {
     label: 'User Management',
     icon: <FaUsers size={16} />,
@@ -33,8 +42,6 @@ const MENU_ITEMS: MenuItemType[] = [
       { label: 'Parents', roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN'], path: '/user-management/parents' }
     ]
   },
-  { label: 'Classes & Sections', icon: <FaClipboardList size={16} />, roles: ['SCHOOL_ADMIN', 'TEACHER'], path: '/classes' },
-  { label: 'Subjects', icon: <FaBook size={16} />, roles: ['SCHOOL_ADMIN', 'TEACHER'], path: '/subjects' },
   { label: 'Attendance', icon: <FaUserCheck size={16} />, roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'], path: '/attendance' },
   { label: 'Exams & Marks', icon: <FaFileSignature size={16} />, roles: ['SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'], path: '/exams' },
   { label: 'Homeworks', icon: <FaBookOpen size={16} />, roles: ['TEACHER', 'STUDENT', 'PARENT'], path: '/homeworks' },

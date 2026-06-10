@@ -5,8 +5,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { DialogTitle, DialogContent, DialogActions, Button, Grid, Box } from '@mui/material';
 import { FormTextField, FormSelectField } from '@common/Forms';
 import { useGetStatesQuery, useGetDistrictsQuery } from '../../../../api/masterApi';
+import { useGetSubjectsQuery } from '../../../../api/subjectsApi';
 import { teacherSchema, type TeacherFormData } from '../schema/teacher.schema';
-import { SUBJECT_MAPPING } from './teacherColumns';
 import type { ISchoolUser } from '../../../../api/usersApi';
 
 interface TeacherFormDialogProps {
@@ -15,8 +15,6 @@ interface TeacherFormDialogProps {
   user?: ISchoolUser | null;
   isLoading?: boolean;
 }
-
-const SUBJECT_OPTIONS = Object.entries(SUBJECT_MAPPING).map(([value, label]) => ({ value, label }));
 
 export function TeacherFormDialog({ onClose, onSubmit, user, isLoading = false }: TeacherFormDialogProps) {
   const { handleSubmit, control, watch, reset } = useForm<TeacherFormData>({
@@ -45,6 +43,12 @@ export function TeacherFormDialog({ onClose, onSubmit, user, isLoading = false }
   const { data: districtsRes } = useGetDistrictsQuery(selectedState || '');
   const districts = districtsRes?.success ? districtsRes.data : [];
 
+  const { data: subjectsRes } = useGetSubjectsQuery();
+  const subjectOptions = (subjectsRes?.success ? subjectsRes.data : []).map((s) => ({
+    value: s._id,
+    label: `${s.name} (${s.code})`,
+  }));
+
   useEffect(() => {
     if (user) {
       reset({
@@ -53,7 +57,7 @@ export function TeacherFormDialog({ onClose, onSubmit, user, isLoading = false }
         password: '',
         userCode: user.userCode,
         phone: user.phone || '',
-        subjects: user.subjects || [],
+        subjects: user.subjects?.map((s) => (typeof s === 'object' ? s._id : s)) || [],
         address: {
           street: user.address?.street || '',
           state: typeof user.address?.state === 'object' ? user.address.state._id : user.address?.state || '',
@@ -64,7 +68,7 @@ export function TeacherFormDialog({ onClose, onSubmit, user, isLoading = false }
     }
   }, [user, reset]);
 
-  const mapToOpts = (items: { _id: string; name: string }[]) => items.map(i => ({ value: i._id, label: i.name }));
+  const mapToOpts = (items: { _id: string; name: string }[]) => items.map((i) => ({ value: i._id, label: i.name }));
 
   const onFormSubmit = (formData: TeacherFormData) => {
     const submitPayload: Partial<ISchoolUser> & { password?: string } = {
@@ -73,12 +77,14 @@ export function TeacherFormDialog({ onClose, onSubmit, user, isLoading = false }
       userCode: formData.userCode,
       phone: formData.phone || undefined,
       subjects: formData.subjects || undefined,
-      address: formData.address ? {
-        street: formData.address.street || undefined,
-        state: formData.address.state || undefined,
-        district: formData.address.district || undefined,
-        pincode: formData.address.pincode || undefined,
-      } : undefined,
+      address: formData.address
+        ? {
+            street: formData.address.street || undefined,
+            state: formData.address.state || undefined,
+            district: formData.address.district || undefined,
+            pincode: formData.address.pincode || undefined,
+          }
+        : undefined,
       role: {
         name: 'TEACHER',
         access: [],
@@ -114,7 +120,7 @@ export function TeacherFormDialog({ onClose, onSubmit, user, isLoading = false }
               <FormTextField name="phone" control={control} label="Phone Number" disabled={isLoading} />
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
-              <FormSelectField name="subjects" control={control} label="Subjects" options={SUBJECT_OPTIONS} multiple disabled={isLoading} />
+              <FormSelectField name="subjects" control={control} label="Subjects" options={subjectOptions} multiple disabled={isLoading} />
             </Grid>
             <Grid size={{ xs: 12, sm: 12 }}>
               <FormTextField name="address.street" control={control} label="Street Address" disabled={isLoading} />

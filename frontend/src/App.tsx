@@ -1,45 +1,11 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { store } from './api/store';
 import { AuthProvider, useAuth } from './common/hooks/useAuth';
 import { ACLProvider } from './common/ACL/ACLProvider';
 import { NotifierProvider } from './common/Notifier/NotifierProvider';
 import { DialogProvider } from './common/Dialogs/dialog.provider';
-import { LoginPage } from './features/auth/pages/LoginPage';
-import { DashboardPage } from './features/dashboard/pages/DashboardPage';
-import { SchoolsPage, SchoolDetailsPage } from './features/schools';
-import { PlansPage } from './features/app-management/plan-management/pages/PlansPage';
-import { StudentsPage } from './features/users/students';
-import { TeachersPage } from './features/users/teachers';
-import { ParentsPage } from './features/users/parents';
-import { MainLayout } from '@common/navbar';
-
-/*------------- Conditional App Shell -------------*/
-
-function AppContent() {
-  const { user } = useAuth();
-
-  // If user is not authenticated, display the split login page
-  if (!user) {
-    return <LoginPage />;
-  }
-
-  // If authenticated, display the main School OS dashboard page within MainLayout
-  return (
-    <MainLayout>
-      <Routes>
-        <Route path="/" element={<DashboardPage />} />
-        <Route path="/schools" element={<SchoolsPage />} />
-        <Route path="/schools/:id" element={<SchoolDetailsPage />} />
-        <Route path="/app-management/plans" element={user.role.name === 'SUPER_ADMIN' ? <PlansPage /> : <Navigate to="/" replace />} />
-        <Route path="/user-management/students" element={<StudentsPage />} />
-        <Route path="/user-management/teachers" element={<TeachersPage />} />
-        <Route path="/user-management/parents" element={<ParentsPage />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </MainLayout>
-  );
-}
+import { AppRoutes } from './routing';
 
 /*------------- Providers Wrapper -------------*/
 
@@ -62,7 +28,7 @@ export default function App() {
       <BrowserRouter>
         <AuthProvider>
           <AuthDependentProviders>
-            <AppContent />
+            <AppRoutes />
           </AuthDependentProviders>
         </AuthProvider>
       </BrowserRouter>

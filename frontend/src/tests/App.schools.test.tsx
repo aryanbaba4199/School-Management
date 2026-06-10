@@ -32,9 +32,11 @@ describe('App Schools Navigation and Registration', () => {
       expect(screen.getByText('School OS Ecosystem')).toBeInTheDocument();
     });
 
-    // 2. Click on Schools tab in sidebar
-    const schoolsTab = screen.getAllByText('Schools')[0];
-    fireEvent.click(schoolsTab);
+    // 2. Click on School Management and then Manage Schools tab in sidebar
+    const schoolManagementMenu = screen.getAllByText('School Management')[0];
+    fireEvent.click(schoolManagementMenu);
+    const manageSchoolsTab = screen.getAllByText('Manage Schools')[0];
+    fireEvent.click(manageSchoolsTab);
 
     // Verify schools page loaded
     await waitFor(() => {
@@ -108,9 +110,11 @@ describe('App Schools Navigation and Registration', () => {
       expect(screen.getByText('School OS Ecosystem')).toBeInTheDocument();
     });
 
-    // 2. Click on Schools tab in sidebar
-    const schoolsTab = screen.getAllByText('Schools')[0];
-    fireEvent.click(schoolsTab);
+    // 2. Click on School Management and then Manage Schools tab in sidebar
+    const schoolManagementMenu = screen.getAllByText('School Management')[0];
+    fireEvent.click(schoolManagementMenu);
+    const manageSchoolsTab = screen.getAllByText('Manage Schools')[0];
+    fireEvent.click(manageSchoolsTab);
 
     // Verify schools page loaded
     await waitFor(() => {

@@ -1,6 +1,6 @@
 import { baseApi } from './baseApi';
-import type { ISchool, ISchoolDraft } from '../features/schools/types/schools.types';
-import type { SchoolFormData } from '../features/schools/schema/school.schema';
+import type { ISchool, ISchoolDraft } from '../features/school-management/manage-schools/types/schools.types';
+import type { SchoolFormData } from '../features/school-management/manage-schools/schema/school.schema';
 
 export const schoolsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({

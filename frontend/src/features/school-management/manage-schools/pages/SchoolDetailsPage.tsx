@@ -19,7 +19,7 @@ import {
   FaCheckCircle,
   FaTimesCircle,
 } from 'react-icons/fa';
-import { useGetSchoolByIdQuery } from '../../../api/schoolsApi';
+import { useGetSchoolByIdQuery } from '../../../../api/schoolsApi';
 import styled from 'styled-components';
 
 /*------------- Styled Components -------------*/
@@ -109,7 +109,7 @@ export function SchoolDetailsPage() {
     return (
       <Box sx={{ textAlign: 'center', py: 8 }}>
         <Typography variant="h6" color="error">Failed to load school details.</Typography>
-        <Button onClick={() => navigate('/schools')} startIcon={<FaArrowLeft />} sx={{ mt: 2 }}>
+        <Button onClick={() => navigate('/school-management/manage-schools')} startIcon={<FaArrowLeft />} sx={{ mt: 2 }}>
           Back to Schools
         </Button>
       </Box>
@@ -132,7 +132,7 @@ export function SchoolDetailsPage() {
       <HeaderBar>
         <Button
           startIcon={<FaArrowLeft />}
-          onClick={() => navigate('/schools')}
+          onClick={() => navigate('/school-management/manage-schools')}
           variant="outlined"
           size="small"
           sx={{ textTransform: 'none', borderRadius: '8px' }}

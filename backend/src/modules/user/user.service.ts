@@ -1,4 +1,5 @@
 import { UserModel, IUser } from './user.model';
+import { SubjectModel } from '../subject/subject.model';
 import { CreateUserInput, LoginInput, UpdateUserInput } from './dto/create-user.dto';
 import { hashPassword, verifyPassword } from '../../common/utils/crypto';
 import { generateToken } from '../../common/utils/jwt';
@@ -48,6 +49,14 @@ export class UserService {
     });
 
     const savedUser = await user.save();
+
+    if (input.role.name === 'TEACHER' && input.subjects && input.subjects.length > 0) {
+      await SubjectModel.updateMany(
+        { _id: { $in: input.subjects.map(s => new Types.ObjectId(s)) } },
+        { $addToSet: { teacherIds: savedUser._id } }
+      );
+    }
+
     const userObj = savedUser.toObject() as IUser;
     delete userObj.password;
     return userObj;
@@ -87,7 +96,8 @@ export class UserService {
       .populate('childrenIds', 'name email userCode role')
       .populate('address.city', 'name code')
       .populate('address.state', 'name code')
-      .populate('address.district', 'name code');
+      .populate('address.district', 'name code')
+      .populate('subjects', 'name code');
   }
 
   /**
@@ -108,7 +118,8 @@ export class UserService {
         .populate('childrenIds', 'name email userCode role')
         .populate('address.city', 'name code')
         .populate('address.state', 'name code')
-        .populate('address.district', 'name code'),
+        .populate('address.district', 'name code')
+        .populate('subjects', 'name code'),
       UserModel.countDocuments(filter),
     ]);
 
@@ -150,7 +161,31 @@ export class UserService {
     if (input.childrenIds !== undefined) user.childrenIds = input.childrenIds.map(c => new Types.ObjectId(c));
     if (input.classId !== undefined) user.classId = input.classId ? new Types.ObjectId(input.classId) : undefined;
     if (input.sectionId !== undefined) user.sectionId = input.sectionId ? new Types.ObjectId(input.sectionId) : undefined;
-    if (input.subjects !== undefined) user.subjects = input.subjects.map(s => new Types.ObjectId(s));
+    if (input.subjects !== undefined) {
+      const oldSubjects = user.subjects?.map((s) => s.toString()) || [];
+      const newSubjects = input.subjects;
+
+      const added = newSubjects.filter((s) => !oldSubjects.includes(s));
+      const removed = oldSubjects.filter((s) => !newSubjects.includes(s));
+
+      user.subjects = newSubjects.map((s) => new Types.ObjectId(s));
+
+      if (user.role.name === 'TEACHER') {
+        if (removed.length > 0) {
+          await SubjectModel.updateMany(
+            { _id: { $in: removed.map((s) => new Types.ObjectId(s)) } },
+            { $pull: { teacherIds: user._id } }
+          );
+        }
+
+        if (added.length > 0) {
+          await SubjectModel.updateMany(
+            { _id: { $in: added.map((s) => new Types.ObjectId(s)) } },
+            { $addToSet: { teacherIds: user._id } }
+          );
+        }
+      }
+    }
 
     const savedUser = await user.save();
     const userObj = savedUser.toObject() as IUser;
@@ -184,6 +219,14 @@ export class UserService {
     if (schoolIdOverride && user.schoolId?.toString() !== schoolIdOverride) {
       throw new Error('Unauthorized access.');
     }
+
+    if (user.role.name === 'TEACHER') {
+      await SubjectModel.updateMany(
+        { teacherIds: user._id },
+        { $pull: { teacherIds: user._id } }
+      );
+    }
+
     await UserModel.findByIdAndDelete(id);
   }
 }

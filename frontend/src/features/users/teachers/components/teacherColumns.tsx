@@ -48,14 +48,6 @@ export function TeacherAction({
   return <ActionMenu items={actions} />;
 }
 
-export const SUBJECT_MAPPING: Record<string, string> = {
-  '60f7c223405c102c98d6c840': 'Mathematics',
-  '60f7c223405c102c98d6c841': 'Physics',
-  '60f7c223405c102c98d6c842': 'Chemistry',
-  '60f7c223405c102c98d6c843': 'English',
-  '60f7c223405c102c98d6c844': 'History'
-};
-
 export const getTeacherColumns = ({ onEdit, onToggleDeactivate, onDelete }: GetTeacherColumnsProps): Column<ISchoolUser>[] => [
   {
     id: 'name',
@@ -80,7 +72,7 @@ export const getTeacherColumns = ({ onEdit, onToggleDeactivate, onDelete }: GetT
     render: (row) => {
       if (!row.subjects || row.subjects.length === 0) return '-';
       return row.subjects
-        .map(s => SUBJECT_MAPPING[s] || 'Subject ' + s.substring(s.length - 4))
+        .map(s => (typeof s === 'object' ? s.name : s))
         .join(', ');
     }
   },

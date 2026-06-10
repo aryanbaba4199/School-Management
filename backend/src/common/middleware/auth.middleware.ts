@@ -8,6 +8,10 @@ declare global {
   namespace Express {
     interface Request {
       user?: AuthUserPayload;
+      /** Resolved tenant school ID. Set by injectSchoolId middleware.
+       *  - SUPER_ADMIN: undefined (access all schools)
+       *  - all other roles: their own schoolId from JWT token */
+      schoolId?: string;
     }
   }
 }
@@ -54,3 +58,28 @@ export function requireRoles(...roles: ('SUPER_ADMIN' | 'SCHOOL_ADMIN' | 'TEACHE
     next();
   };
 }
+
+/**
+ * Middleware to resolve and inject the tenant schoolId onto req.
+ * - SUPER_ADMIN: req.schoolId = undefined (unrestricted, can access all schools)
+ * - All other roles: req.schoolId = their schoolId from JWT token
+ * Must be used AFTER authenticate().
+ */
+export function injectSchoolId(req: Request, res: Response, next: NextFunction): void {
+  if (!req.user) {
+    sendError(res, 401, 'Authentication is required.');
+    return;
+  }
+
+  if (req.user.role !== 'SUPER_ADMIN') {
+    if (!req.user.schoolId) {
+      sendError(res, 403, 'No school assigned to this user account.');
+      return;
+    }
+    req.schoolId = req.user.schoolId;
+  }
+  // SUPER_ADMIN: req.schoolId stays undefined — no tenant restriction
+
+  next();
+}
+

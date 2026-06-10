@@ -2,7 +2,7 @@ import type { Control, FieldErrors } from 'react-hook-form';
 import { Grid, Typography, Box } from '@mui/material';
 import { FormTextField } from '@common/Forms';
 import type { SchoolFormData } from '../../schema/school.schema';
-import { useLazyGetDraftQuery } from '../../../../api/schoolsApi';
+import { useLazyGetDraftQuery } from '../../../../../api/schoolsApi';
 import { useNotifier } from '@common/Notifier/NotifierProvider';
 import type { ISchoolDraft } from '../../types/schools.types';
 

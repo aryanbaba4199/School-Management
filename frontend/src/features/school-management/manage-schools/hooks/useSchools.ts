@@ -7,7 +7,7 @@ import {
   useUpdateSchoolMutation,
   useDeactivateSchoolMutation,
   useDeleteSchoolMutation
-} from '../../../api/schoolsApi';
+} from '../../../../api/schoolsApi';
 import { type ISchool, MOCK_SCHOOLS } from '../types/schools.types';
 import type { SchoolFormData } from '../schema/school.schema';
 

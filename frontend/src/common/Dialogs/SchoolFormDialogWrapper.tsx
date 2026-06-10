@@ -1,7 +1,7 @@
 import { DialogTitle, DialogContent } from '@mui/material';
-import { SchoolForm } from '../../features/schools/components/SchoolForm';
-import type { SchoolFormData } from '../../features/schools/schema/school.schema';
-import type { ISchool } from '../../features/schools/types/schools.types';
+import { SchoolForm } from '../../features/school-management/manage-schools/components/SchoolForm';
+import type { SchoolFormData } from '../../features/school-management/manage-schools/schema/school.schema';
+import type { ISchool } from '../../features/school-management/manage-schools/types/schools.types';
 
 interface SchoolFormDialogWrapperProps {
   school?: ISchool | null;

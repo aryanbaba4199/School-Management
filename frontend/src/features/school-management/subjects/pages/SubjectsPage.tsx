@@ -1,12 +1,12 @@
 import { PageWrapper, Datatable, DatatableHeader, DatatableFooter } from '@common/Datatable';
-import { useNavigate } from 'react-router-dom';
-import { useSchools } from '../hooks/useSchools';
-import { getSchoolColumns } from '../components/schoolColumns';
+import { useSubjects } from '../hooks/useSubjects';
+import { getSubjectColumns } from '../components/subjectColumns';
 
-export function SchoolsPage() {
-  const navigate = useNavigate();
+/*------------- Subjects Page Component -------------*/
+
+export function SubjectsPage() {
   const {
-    schools,
+    subjects,
     totalCount,
     isLoading,
     search,
@@ -18,40 +18,33 @@ export function SchoolsPage() {
     sortColumn,
     sortDirection,
     handleSort,
-    handleCreateSchool,
+    handleCreateSubject,
     handleEdit,
-    handleToggleDeactivate,
     handleDelete,
-    openDialog
-  } = useSchools();
+    openDialog,
+  } = useSubjects();
 
-  const handleView = (school: Parameters<typeof getSchoolColumns>[0]['onView'] extends (s: infer S) => void ? S : never) => {
-    navigate(`/schools/${school._id}`);
-  };
-
-  const columns = getSchoolColumns({
-    onView: handleView,
+  const columns = getSubjectColumns({
     onEdit: handleEdit,
-    onToggleDeactivate: handleToggleDeactivate,
-    onDelete: handleDelete
+    onDelete: handleDelete,
   });
 
   return (
     <PageWrapper 
-      title="Schools Management" 
-      onCreate={() => openDialog('SCHOOL_FORM', { onSubmit: handleCreateSchool })} 
-      createLabel="Create School"
+      title="Subjects Management" 
+      onCreate={() => openDialog('SUBJECT_FORM', { onSubmit: handleCreateSubject })} 
+      createLabel="Create Subject"
     >
       <DatatableHeader 
         searchValue={search} 
         onSearchChange={(val) => { setSearch(val); setPage(0); }} 
-        searchPlaceholder="Search by name, code, or subdomain..." 
+        searchPlaceholder="Search by name or code..." 
       />
       
       <Datatable
-        tableName="schools_table"
+        tableName="subjects_table"
         columns={columns}
-        data={schools}
+        data={subjects}
         loading={isLoading}
         sortColumn={sortColumn}
         sortDirection={sortDirection}

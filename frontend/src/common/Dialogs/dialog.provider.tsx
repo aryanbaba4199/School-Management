@@ -17,6 +17,8 @@ import PasscodeDialog from '../components/PasscodeDialog';
 import { StudentFormDialog } from '../../features/users/students/components/StudentFormDialog';
 import { TeacherFormDialog } from '../../features/users/teachers/components/TeacherFormDialog';
 import { ParentFormDialog } from '../../features/users/parents/components/ParentFormDialog';
+import { ClassFormDialog } from '../../features/school-management/classes/components/ClassFormDialog';
+import { SubjectFormDialog } from '../../features/school-management/subjects/components/SubjectFormDialog';
 
 /*------------- Dialog Provider Component -------------*/
 
@@ -67,6 +69,10 @@ export function DialogProvider({ children }: { children: ReactNode }) {
         return <TeacherFormDialog {...(props as DialogPropsMap['TEACHER_FORM'])} onClose={closeDialog} />;
       case 'PARENT_FORM':
         return <ParentFormDialog {...(props as DialogPropsMap['PARENT_FORM'])} onClose={closeDialog} />;
+      case 'CLASS_FORM':
+        return <ClassFormDialog {...(props as DialogPropsMap['CLASS_FORM'])} onClose={closeDialog} />;
+      case 'SUBJECT_FORM':
+        return <SubjectFormDialog {...(props as DialogPropsMap['SUBJECT_FORM'])} onClose={closeDialog} />;
       default:
         return null;
     }

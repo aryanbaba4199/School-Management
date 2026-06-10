@@ -25,18 +25,9 @@ export class UserController {
    */
   async register(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const requester = req.user;
-      if (!requester) {
-        sendError(res, 401, 'Unauthorized request');
-        return;
-      }
-
-      let schoolIdOverride: string | undefined;
-      if (requester.role !== 'SUPER_ADMIN') {
-        schoolIdOverride = requester.schoolId;
-      }
-
-      const user = await userService.createUser(req.body, schoolIdOverride);
+      // req.schoolId is set by injectSchoolId for non-SUPER_ADMIN.
+      // SUPER_ADMIN can specify schoolId in the body.
+      const user = await userService.createUser(req.body, req.schoolId);
       sendSuccess(res, 201, user);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'User registration failed';
@@ -72,29 +63,14 @@ export class UserController {
    */
   async listUsers(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      if (!req.user) {
-        sendError(res, 401, 'Unauthorized request');
-        return;
-      }
-
       const page = Math.max(1, parseInt(req.query.page as string) || 1);
       const limit = Math.max(1, parseInt(req.query.limit as string) || 25);
       const role = req.query.role as string | undefined;
 
-      let filterSchoolId: string | undefined;
-      if (req.user.role !== 'SUPER_ADMIN') {
-        filterSchoolId = req.user.schoolId;
-      }
-
-      const { users, totalCount } = await userService.findUsers(filterSchoolId, role, page, limit);
+      const { users, totalCount } = await userService.findUsers(req.schoolId, role, page, limit);
       const totalPages = Math.ceil(totalCount / limit);
 
-      sendSuccess(res, 200, users, {
-        totalPages,
-        totalCount,
-        currentPage: page,
-        limit,
-      });
+      sendSuccess(res, 200, users, { totalPages, totalCount, currentPage: page, limit });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to fetch users';
       sendError(res, 500, errorMessage);
@@ -106,18 +82,7 @@ export class UserController {
    */
   async update(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const requester = req.user;
-      if (!requester) {
-        sendError(res, 401, 'Unauthorized request');
-        return;
-      }
-
-      let schoolIdOverride: string | undefined;
-      if (requester.role !== 'SUPER_ADMIN') {
-        schoolIdOverride = requester.schoolId;
-      }
-
-      const user = await userService.updateUser(req.params.id as string, req.body, schoolIdOverride);
+      const user = await userService.updateUser(req.params.id as string, req.body, req.schoolId);
       sendSuccess(res, 200, user);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'User update failed';
@@ -130,18 +95,7 @@ export class UserController {
    */
   async toggleStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const requester = req.user;
-      if (!requester) {
-        sendError(res, 401, 'Unauthorized request');
-        return;
-      }
-
-      let schoolIdOverride: string | undefined;
-      if (requester.role !== 'SUPER_ADMIN') {
-        schoolIdOverride = requester.schoolId;
-      }
-
-      const user = await userService.toggleUserStatus(req.params.id as string, schoolIdOverride);
+      const user = await userService.toggleUserStatus(req.params.id as string, req.schoolId);
       sendSuccess(res, 200, user);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to toggle status';
@@ -154,18 +108,7 @@ export class UserController {
    */
   async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const requester = req.user;
-      if (!requester) {
-        sendError(res, 401, 'Unauthorized request');
-        return;
-      }
-
-      let schoolIdOverride: string | undefined;
-      if (requester.role !== 'SUPER_ADMIN') {
-        schoolIdOverride = requester.schoolId;
-      }
-
-      await userService.deleteUser(req.params.id as string, schoolIdOverride);
+      await userService.deleteUser(req.params.id as string, req.schoolId);
       sendSuccess(res, 200, null);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'User deletion failed';

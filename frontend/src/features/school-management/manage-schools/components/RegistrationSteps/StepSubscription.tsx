@@ -2,7 +2,7 @@ import { useWatch, type Control } from 'react-hook-form';
 import { Grid, Typography, Box } from '@mui/material';
 import { FormSelectField, FormTextField, FormCheckboxField } from '@common/Forms';
 import type { SchoolFormData } from '../../schema/school.schema';
-import type { ISubscriptionPlan } from '../../../app-management/plan-management/types/plans.types';
+import type { ISubscriptionPlan } from '../../../../app-management/plan-management/types/plans.types';
 
 interface StepSubscriptionProps {
   control: Control<SchoolFormData>;

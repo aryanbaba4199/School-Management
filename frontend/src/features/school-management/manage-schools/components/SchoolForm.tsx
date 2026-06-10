@@ -7,7 +7,7 @@ import { schoolSchema, type SchoolFormData } from '../schema/school.schema';
 import { StepCredentials } from './RegistrationSteps/StepCredentials';
 import { StepDetails } from './RegistrationSteps/StepDetails';
 import { StepSubscription } from './RegistrationSteps/StepSubscription';
-import { useSaveDraftMutation } from '../../../api/schoolsApi';
+import { useSaveDraftMutation } from '../../../../api/schoolsApi';
 import type { ISchool, ISchoolDraft } from '../types/schools.types';
 import {
   useGetSubscriptionPlansQuery,
@@ -19,7 +19,7 @@ import {
   useCreateBoardTypeMutation,
   useCreateStateMutation,
   useCreateDistrictMutation,
-} from '../../../api/masterApi';
+} from '../../../../api/masterApi';
 import { MOCK_PLANS, MOCK_STATES, MOCK_DISTRICTS } from '../types/schools.types';
 import { useNotifier } from '@common/Notifier/NotifierProvider';
 import { MasterDataAddDialog } from './MasterDialogs/MasterDataAddDialog';

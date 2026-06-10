@@ -74,7 +74,7 @@ export interface MasterOption {
   dialCode?: string;
 }
 
-import type { ISubscriptionPlan } from '../../app-management/plan-management/types/plans.types';
+import type { ISubscriptionPlan } from '../../../app-management/plan-management/types/plans.types';
 
 export const MOCK_PLANS: ISubscriptionPlan[] = [
   { _id: '60f7c223405c102c98d6c810', name: 'Pro Plan', code: 'PRO', price: { monthly: 999, yearly: 9999 }, maxStudents: 1000, features: { attendanceEnabled: true, onlineExamEnabled: true, aiAnalyticsEnabled: true, parentAppEnabled: true }, isActive: true },

@@ -3,6 +3,8 @@ import cors from 'cors';
 import { SchoolModule } from './modules/school/school.module';
 import { MasterModule } from './modules/master/master.module';
 import { UserModule } from './modules/user/user.module';
+import { ClassModule } from './modules/class/class.module';
+import { SubjectModule } from './modules/subject/subject.module';
 
 /*------------- Express Application Configuration -------------*/
 
@@ -17,6 +19,8 @@ app.use(express.urlencoded({ extended: true }));
 SchoolModule.init(app);
 MasterModule.init(app);
 UserModule.init(app);
+ClassModule.init(app);
+SubjectModule.init(app);
 
 // Health check endpoint
 app.get('/health', (req: Request, res: Response) => {

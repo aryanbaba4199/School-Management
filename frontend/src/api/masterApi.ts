@@ -1,5 +1,5 @@
 import { baseApi } from './baseApi';
-import type { MasterOption } from '../features/schools/types/schools.types';
+import type { MasterOption } from '../features/school-management/manage-schools/types/schools.types';
 import type { ISubscriptionPlan } from '../features/app-management/plan-management/types/plans.types';
 import type { PlanFormData } from '../features/app-management/plan-management/schema/plan.schema';
 
