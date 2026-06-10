@@ -35,6 +35,7 @@ export function ClassesPage() {
     onView: (classObj) => navigate(`/school-management/classes/${classObj._id}`),
     onEdit: handleEdit,
     onDelete: handleDelete,
+    onTeacherClick: (teacherId) => navigate(`/user-management/teachers/${teacherId}`),
     isSuperAdmin,
   });
 

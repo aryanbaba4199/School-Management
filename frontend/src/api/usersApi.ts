@@ -41,6 +41,10 @@ export const usersApi = baseApi.injectEndpoints({
       },
       providesTags: ['User'],
     }),
+    getUserById: builder.query<{ success: boolean; data: ISchoolUser }, string>({
+      query: (id) => `/users/${id}`,
+      providesTags: (result, error, id) => [{ type: 'User', id }],
+    }),
     createUser: builder.mutation<{ success: boolean; data: ISchoolUser }, Partial<ISchoolUser> & { password?: string }>({
       query: (body) => ({
         url: '/users',
@@ -76,6 +80,7 @@ export const usersApi = baseApi.injectEndpoints({
 
 export const {
   useGetUsersQuery,
+  useGetUserByIdQuery,
   useCreateUserMutation,
   useUpdateUserMutation,
   useToggleUserStatusMutation,

@@ -7,7 +7,7 @@ import { ClassesPage, ClassDetailsPage } from '../features/school-management/cla
 import { SubjectsPage } from '../features/school-management/subjects';
 import { PlansPage } from '../features/app-management/plan-management/pages/PlansPage';
 import { StudentsPage } from '../features/users/students';
-import { TeachersPage } from '../features/users/teachers';
+import { TeachersPage, TeacherDetailsPage } from '../features/users/teachers';
 import { ParentsPage } from '../features/users/parents';
 import { MainLayout } from '@common/navbar';
 
@@ -62,6 +62,7 @@ export function AppRoutes() {
         />
         <Route path="/user-management/students" element={<StudentsPage />} />
         <Route path="/user-management/teachers" element={<TeachersPage />} />
+        <Route path="/user-management/teachers/:id" element={<TeacherDetailsPage />} />
         <Route path="/user-management/parents" element={<ParentsPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

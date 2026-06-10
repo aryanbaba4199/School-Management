@@ -59,6 +59,27 @@ export class UserController {
   }
 
   /**
+   * HTTP GET /api/users/:id
+   */
+  async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const user = await userService.findUserById(req.params.id);
+      if (!user) {
+        sendError(res, 404, 'User not found');
+        return;
+      }
+      if (req.schoolId && user.schoolId?.toString() !== req.schoolId) {
+        sendError(res, 403, 'Unauthorized access to user profile');
+        return;
+      }
+      sendSuccess(res, 200, user);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to fetch user';
+      sendError(res, 500, errorMessage);
+    }
+  }
+
+  /**
    * HTTP GET /api/users
    */
   async listUsers(req: Request, res: Response, next: NextFunction): Promise<void> {

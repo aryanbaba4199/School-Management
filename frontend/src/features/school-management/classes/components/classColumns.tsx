@@ -9,6 +9,7 @@ interface GetClassColumnsProps {
   onView: (classObj: IClass) => void;
   onEdit: (classObj: IClass) => void;
   onDelete: (classObj: IClass) => void;
+  onTeacherClick?: (teacherId: string) => void;
   isSuperAdmin?: boolean;
 }
 
@@ -46,7 +47,7 @@ export function ClassAction({
   return <ActionMenu items={actions} />;
 }
 
-export const getClassColumns = ({ onView, onEdit, onDelete, isSuperAdmin = false }: GetClassColumnsProps): Column<IClass>[] => [
+export const getClassColumns = ({ onView, onEdit, onDelete, onTeacherClick, isSuperAdmin = false }: GetClassColumnsProps): Column<IClass>[] => [
   {
     id: 'name',
     label: 'Class Name',
@@ -91,7 +92,16 @@ export const getClassColumns = ({ onView, onEdit, onDelete, isSuperAdmin = false
       if (teacher && typeof teacher === 'object' && 'name' in teacher) {
         return (
           <Box>
-            <Typography variant="body2" sx={{ fontWeight: 600, color: 'var(--color-text-primary)' }}>
+            <Typography 
+              variant="body2" 
+              onClick={() => onTeacherClick?.((teacher as any)._id)}
+              sx={{ 
+                fontWeight: 600, 
+                color: onTeacherClick ? 'var(--color-primary-main)' : 'var(--color-text-primary)',
+                cursor: onTeacherClick ? 'pointer' : 'default',
+                '&:hover': onTeacherClick ? { textDecoration: 'underline' } : {}
+              }}
+            >
               {(teacher as any).name}
             </Typography>
             <Typography variant="caption" sx={{ color: 'var(--color-text-secondary)' }}>
