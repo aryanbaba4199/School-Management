@@ -6,7 +6,7 @@ import { FormControlLabel, Checkbox, FormHelperText, FormControl } from '@mui/ma
 
 interface FormCheckboxFieldProps<TFieldValues extends FieldValues> {
   name: Path<TFieldValues>;
-  control: Control<TFieldValues, any, any>;
+  control: Control<TFieldValues>;
   label: string;
   disabled?: boolean;
 }

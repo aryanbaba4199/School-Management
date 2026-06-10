@@ -13,13 +13,14 @@ export interface SelectOption {
 
 interface FormSelectFieldProps<TFieldValues extends FieldValues> {
   name: Path<TFieldValues>;
-  control: Control<TFieldValues, any, any>;
+  control: Control<TFieldValues>;
   label: string;
   options: SelectOption[];
   disabled?: boolean;
   required?: boolean;
   onAddClick?: () => void;
   addLabel?: string;
+  multiple?: boolean;
 }
 
 /*------------- FormSelectField Component -------------*/
@@ -33,6 +34,7 @@ export function FormSelectField<TFieldValues extends FieldValues>({
   required = false,
   onAddClick,
   addLabel = '➕ Add New...',
+  multiple = false,
 }: FormSelectFieldProps<TFieldValues>) {
   return (
     <Controller
@@ -59,7 +61,12 @@ export function FormSelectField<TFieldValues extends FieldValues>({
           </InputLabel>
           <Select
             {...field}
+            multiple={multiple}
             onChange={(e) => {
+              if (multiple) {
+                field.onChange(e.target.value);
+                return;
+              }
               if ((e.target.value as string) === '__ADD_NEW__') {
                 if (onAddClick) onAddClick();
                 return; // Do not update field value
@@ -69,7 +76,7 @@ export function FormSelectField<TFieldValues extends FieldValues>({
             labelId={`${name}-label`}
             label={label}
             notched
-            value={field.value ?? ''}
+            value={field.value ?? (multiple ? [] : '')}
             style={{ color: 'var(--color-text-primary)' }}
           >
             {options.map((opt) => (
@@ -77,7 +84,7 @@ export function FormSelectField<TFieldValues extends FieldValues>({
                 {opt.label}
               </MenuItem>
             ))}
-            {onAddClick && (
+            {onAddClick && !multiple && (
               <MenuItem value="__ADD_NEW__" sx={{ color: 'var(--color-primary-main)', fontWeight: 600 }}>
                 {addLabel}
               </MenuItem>

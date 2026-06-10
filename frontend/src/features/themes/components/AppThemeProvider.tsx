@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { ThemeProvider as MuiThemeProvider, createTheme } from '@mui/material/styles';
@@ -24,7 +25,7 @@ export function AppThemeProvider({ children }: { children: ReactNode }) {
         const saved = window.localStorage.getItem('theme-mode');
         return (saved as ThemeMode) || 'dark';
       }
-    } catch (error) {
+    } catch {
       console.warn('LocalStorage is not accessible. Defaulting to dark theme.');
     }
     return 'dark';
@@ -39,7 +40,7 @@ export function AppThemeProvider({ children }: { children: ReactNode }) {
       ) {
         window.localStorage.setItem('theme-mode', mode);
       }
-    } catch (error) {
+    } catch {
       // Ignore writing failures in restricted environments
     }
   }, [mode]);

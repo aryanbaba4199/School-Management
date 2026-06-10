@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import type { DefaultValues } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Stepper, Step, StepLabel, Box, Button, CircularProgress } from '@mui/material';
 import { schoolSchema, type SchoolFormData } from '../schema/school.schema';
@@ -22,6 +23,7 @@ import {
 import { MOCK_PLANS, MOCK_STATES, MOCK_DISTRICTS } from '../types/schools.types';
 import { useNotifier } from '@common/Notifier/NotifierProvider';
 import { MasterDataAddDialog } from './MasterDialogs/MasterDataAddDialog';
+import type { MasterDataPayload } from './MasterDialogs/MasterDataAddDialog';
 
 interface SchoolFormProps {
   school?: ISchool | null;
@@ -58,9 +60,13 @@ export function SchoolForm({ school = null, onSubmit, onCancel }: SchoolFormProp
       const selectedCountryObj = countries.find(c => c._id === selectedCountryId);
       const mobileDigits = selectedCountryObj?.mobileDigits || 10;
       const configuredResolver = yupResolver(schoolSchema, { context: { mobileDigits } });
-      return configuredResolver(data as any, context, options as any);
+      return configuredResolver(
+        data as unknown as Parameters<typeof configuredResolver>[0],
+        context,
+        options as unknown as Parameters<typeof configuredResolver>[2]
+      );
     },
-    defaultValues: school ? {
+    defaultValues: (school ? {
       adminName: 'Edit Mode',
       adminEmail: school.email,
       adminPassword: 'password123',
@@ -78,6 +84,7 @@ export function SchoolForm({ school = null, onSubmit, onCancel }: SchoolFormProp
       maxStudents: school.maxStudents,
       subscriptionPlan: typeof school.subscriptionPlan === 'object' ? school.subscriptionPlan._id : school.subscriptionPlan || '',
       billingCycle: school.billingCycle || 'MONTHLY',
+      pincode: school.pincode,
       settings: {
         attendanceEnabled: school.settings?.attendanceEnabled ?? true,
         onlineExamEnabled: school.settings?.onlineExamEnabled ?? false,
@@ -87,9 +94,10 @@ export function SchoolForm({ school = null, onSubmit, onCancel }: SchoolFormProp
     } : {
       adminName: '', adminEmail: '', adminPassword: '',
       name: '', code: '', subdomain: '', email: '', phone: '', countryCode: '+91', address: '',
-      boardType: '', country: '', maxStudents: 500, subscriptionPlan: '60f7c223405c102c98d6c810', billingCycle: 'MONTHLY',
+      boardType: '60f7c223405c102c98d6c830', country: '60f7c223405c102c98d6c840', maxStudents: 500, subscriptionPlan: '60f7c223405c102c98d6c810', billingCycle: 'MONTHLY',
+      state: '', district: '', pincode: undefined,
       settings: { attendanceEnabled: true, onlineExamEnabled: false, aiAnalyticsEnabled: false, parentAppEnabled: true }
-    }
+    }) as DefaultValues<SchoolFormData>
   });
 
   const selectedCountry = watch('country');
@@ -105,19 +113,19 @@ export function SchoolForm({ school = null, onSubmit, onCancel }: SchoolFormProp
   const states = statesRes?.success ? statesRes.data : MOCK_STATES;
   const districts = (selectedState && districtsRes?.success) ? districtsRes.data : (selectedState ? (MOCK_DISTRICTS[selectedState] || []) : []);
 
-  const handleAddMasterData = async (data: any) => {
+  const handleAddMasterData = async (data: MasterDataPayload) => {
     try {
       if (dialogType === 'COUNTRY') {
-        await createCountry(data).unwrap();
+        await createCountry(data as unknown as { name: string; code: string; dialCode: string; mobileDigits: number; currency: string; }).unwrap();
         notifier.showSuccess('Country added successfully!');
       } else if (dialogType === 'BOARD') {
-        await createBoardType(data).unwrap();
+        await createBoardType(data as unknown as { name: string; acronym: string; countryId: string; }).unwrap();
         notifier.showSuccess('Board Type added successfully!');
       } else if (dialogType === 'STATE') {
-        await createState(data).unwrap();
+        await createState(data as unknown as { name: string; code: string; countryId: string; }).unwrap();
         notifier.showSuccess('State added successfully!');
       } else if (dialogType === 'DISTRICT') {
-        await createDistrict(data).unwrap();
+        await createDistrict(data as unknown as { name: string; code: string; stateId: string; }).unwrap();
         notifier.showSuccess('District added successfully!');
       }
       setDialogType(null);
@@ -194,7 +202,7 @@ export function SchoolForm({ school = null, onSubmit, onCancel }: SchoolFormProp
               settings: values.settings,
             }
           }).unwrap();
-        } catch (err) {
+        } catch {
           // continue even if auto-save fails
         }
       }

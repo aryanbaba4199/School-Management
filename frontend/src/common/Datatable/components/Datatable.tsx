@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   Table,
   TableBody,
@@ -66,21 +66,22 @@ export default function Datatable<T extends { _id: string }>({
   const [activeRow, setActiveRow] = useState<T | null>(null);
   
   const [columnsAnchorEl, setColumnsAnchorEl] = useState<null | HTMLElement>(null);
-  const [visibleColumnIds, setVisibleColumnIds] = useState<string[]>(columns.map(c => c.id));
-
-  useEffect(() => {
+  const [visibleColumnIds, setVisibleColumnIds] = useState<string[]>(() => {
     if (tableName) {
       const stored = localStorage.getItem(`datatable_cols_${tableName}`);
       if (stored) {
         try {
           const parsed = JSON.parse(stored);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            setVisibleColumnIds(parsed);
+            return parsed;
           }
-        } catch (err) {}
+        } catch {
+          // Ignore parse errors and fall back to default columns
+        }
       }
     }
-  }, [tableName]);
+    return columns.map(c => c.id);
+  });
 
   const handleToggleColumn = (colId: string) => {
     let newIds = [...visibleColumnIds];

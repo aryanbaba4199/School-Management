@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { useState, useMemo, useCallback, Suspense } from 'react';
 import type { ReactNode } from 'react';
 import { Dialog } from '@mui/material';
@@ -13,6 +14,9 @@ import ConfirmationDialog from '../components/ConfirmationDialog';
 import SchoolFormDialogWrapper from './SchoolFormDialogWrapper';
 import { PlanFormDialog } from '../../features/app-management/plan-management/components/PlanFormDialog';
 import PasscodeDialog from '../components/PasscodeDialog';
+import { StudentFormDialog } from '../../features/users/students/components/StudentFormDialog';
+import { TeacherFormDialog } from '../../features/users/teachers/components/TeacherFormDialog';
+import { ParentFormDialog } from '../../features/users/parents/components/ParentFormDialog';
 
 /*------------- Dialog Provider Component -------------*/
 
@@ -57,6 +61,12 @@ export function DialogProvider({ children }: { children: ReactNode }) {
         return <PlanFormDialog {...(props as DialogPropsMap['PLAN_FORM'])} onClose={closeDialog} />;
       case 'PASSCODE_PROMPT':
         return <PasscodeDialog {...(props as DialogPropsMap['PASSCODE_PROMPT'])} onClose={closeDialog} />;
+      case 'STUDENT_FORM':
+        return <StudentFormDialog {...(props as DialogPropsMap['STUDENT_FORM'])} onClose={closeDialog} />;
+      case 'TEACHER_FORM':
+        return <TeacherFormDialog {...(props as DialogPropsMap['TEACHER_FORM'])} onClose={closeDialog} />;
+      case 'PARENT_FORM':
+        return <ParentFormDialog {...(props as DialogPropsMap['PARENT_FORM'])} onClose={closeDialog} />;
       default:
         return null;
     }

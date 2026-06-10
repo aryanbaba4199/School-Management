@@ -47,7 +47,10 @@ describe('School Module API Endpoints', () => {
       phone: '9876543210',
       state: '507f1f77bcf86cd799439011',
       district: '507f1f77bcf86cd799439012',
+      country: '507f1f77bcf86cd799439014',
+      boardType: '507f1f77bcf86cd799439015',
       subscriptionPlan: '507f1f77bcf86cd799439013',
+      billingCycle: 'MONTHLY' as const,
     };
 
     it('should register a new school', async () => {

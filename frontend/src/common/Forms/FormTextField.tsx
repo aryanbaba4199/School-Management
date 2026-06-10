@@ -6,7 +6,7 @@ import { TextField } from '@mui/material';
 
 interface FormTextFieldProps<TFieldValues extends FieldValues> {
   name: Path<TFieldValues>;
-  control: Control<TFieldValues, any, any>;
+  control: Control<TFieldValues>;
   label: string;
   type?: string;
   placeholder?: string;

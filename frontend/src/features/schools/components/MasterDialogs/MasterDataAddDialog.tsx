@@ -4,20 +4,31 @@ import { FormTextField, FormSelectField } from '@common/Forms';
 import { Currencies } from '@common/constants/Currency';
 import { useGetCountriesQuery, useGetStatesQuery } from '../../../../api/masterApi';
 
+export interface MasterDataPayload {
+  name: string;
+  code?: string;
+  dialCode?: string;
+  mobileDigits?: number;
+  currency?: string;
+  acronym?: string;
+  countryId?: string;
+  stateId?: string;
+}
+
 type MasterType = 'COUNTRY' | 'STATE' | 'DISTRICT' | 'BOARD';
 
 interface MasterDataAddDialogProps {
   open: boolean;
   type: MasterType;
   onClose: () => void;
-  onSubmit: (data: any) => Promise<void>;
+  onSubmit: (data: MasterDataPayload) => Promise<void>;
   isLoading?: boolean;
   parentCountryId?: string;
   parentStateId?: string;
 }
 
 export function MasterDataAddDialog({ open, type, onClose, onSubmit, isLoading, parentCountryId, parentStateId }: MasterDataAddDialogProps) {
-  const { control, handleSubmit, reset, watch } = useForm({
+  const { control, handleSubmit, reset, watch } = useForm<MasterDataPayload>({
     defaultValues: {
       name: '',
       code: '',
@@ -56,7 +67,7 @@ export function MasterDataAddDialog({ open, type, onClose, onSubmit, isLoading, 
     onClose();
   };
 
-  const submitWrapper = async (data: any) => {
+  const submitWrapper = async (data: MasterDataPayload) => {
     await onSubmit(data);
     reset();
   };

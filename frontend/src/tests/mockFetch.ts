@@ -9,12 +9,12 @@ export const INITIAL_MOCK_SCHOOLS = [
     email: 'info@greenwood.edu',
     phone: '9876543210',
     countryCode: '+91',
-    boardType: 'CBSE',
+    boardType: { _id: '60f7c223405c102c98d6c830', name: 'Central Board of Secondary Education', acronym: 'CBSE' },
     subscriptionPlan: { _id: '60f7c223405c102c98d6c810', name: 'Pro Plan', code: 'PRO' },
     maxStudents: 1500,
     isActive: true,
     isDeactive: false,
-    country: 'India',
+    country: { _id: '60f7c223405c102c98d6c840', name: 'India' },
     settings: { attendanceEnabled: true, onlineExamEnabled: true, aiAnalyticsEnabled: true, parentAppEnabled: true },
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -27,12 +27,12 @@ export const INITIAL_MOCK_SCHOOLS = [
     email: 'contact@stxaviers.org',
     phone: '8765432109',
     countryCode: '+91',
-    boardType: 'ICSE',
+    boardType: { _id: '60f7c223405c102c98d6c831', name: 'Indian Certificate of Secondary Education', acronym: 'ICSE' },
     subscriptionPlan: { _id: '60f7c223405c102c98d6c811', name: 'Basic Plan', code: 'BASIC' },
     maxStudents: 800,
     isActive: true,
     isDeactive: false,
-    country: 'India',
+    country: { _id: '60f7c223405c102c98d6c840', name: 'India' },
     settings: { attendanceEnabled: true, onlineExamEnabled: false, aiAnalyticsEnabled: false, parentAppEnabled: true },
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -49,7 +49,15 @@ export const fetchStub = vi.fn(async (url: string | Request, options?: RequestIn
   const urlString = typeof url === 'string' ? url : url.url;
   const method = (options?.method || (typeof url === 'object' ? url.method : 'GET')).toUpperCase();
 
-  let parsedBody: any = null;
+  let parsedBody: {
+    email?: string;
+    passcode?: string;
+    name?: string;
+    code?: string;
+    subdomain?: string;
+    phone?: string;
+    subscriptionPlan?: string;
+  } | null = null;
   try {
     if (options?.body) {
       parsedBody = typeof options.body === 'string' ? JSON.parse(options.body) : options.body;
@@ -57,7 +65,7 @@ export const fetchStub = vi.fn(async (url: string | Request, options?: RequestIn
       const text = await url.clone().text();
       if (text) parsedBody = JSON.parse(text);
     }
-  } catch (e) {
+  } catch {
     // ignore
   }
 
@@ -126,9 +134,15 @@ export const fetchStub = vi.fn(async (url: string | Request, options?: RequestIn
         const schoolIndex = mockSchoolsList.findIndex(s => s._id === id);
         if (schoolIndex !== -1) {
           const updateData = parsedBody || {};
+          const existingPlan = mockSchoolsList[schoolIndex].subscriptionPlan;
+          const updatedPlan = typeof updateData.subscriptionPlan === 'string'
+            ? { _id: updateData.subscriptionPlan, name: 'Pro Plan', code: 'PRO' }
+            : existingPlan;
+
           mockSchoolsList[schoolIndex] = {
             ...mockSchoolsList[schoolIndex],
-            ...updateData
+            ...updateData,
+            subscriptionPlan: updatedPlan
           };
           return Promise.resolve(new Response(JSON.stringify({
             success: true,
@@ -144,7 +158,7 @@ export const fetchStub = vi.fn(async (url: string | Request, options?: RequestIn
       if (method === 'DELETE') {
         const match = urlString.match(/\/schools\/([^/]+)$/);
         const id = match ? match[1] : null;
-        let passcode = parsedBody?.passcode || '';
+        const passcode = parsedBody?.passcode || '';
 
         if (passcode !== '727798') {
           return Promise.resolve(new Response(JSON.stringify({
@@ -198,12 +212,12 @@ export const fetchStub = vi.fn(async (url: string | Request, options?: RequestIn
           email,
           phone,
           countryCode: '+91',
-          boardType: 'CBSE',
+          boardType: { _id: '60f7c223405c102c98d6c830', name: 'Central Board of Secondary Education', acronym: 'CBSE' },
           subscriptionPlan: { _id: subscriptionPlan, name: 'Pro Plan', code: 'PRO' },
           maxStudents: 500,
           isActive: true,
           isDeactive: false,
-          country: 'India',
+          country: { _id: '60f7c223405c102c98d6c840', name: 'India' },
           settings: { attendanceEnabled: true, onlineExamEnabled: false, aiAnalyticsEnabled: false, parentAppEnabled: true },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -234,6 +248,23 @@ export const fetchStub = vi.fn(async (url: string | Request, options?: RequestIn
       return Promise.resolve(new Response(JSON.stringify({
         success: true,
         data: [{ _id: '60f7c223405c102c98d6c820', name: 'Karnataka' }, { _id: '60f7c223405c102c98d6c821', name: 'Delhi' }]
+      }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+    }
+
+    if (urlString.includes('/api/masters/countries')) {
+      return Promise.resolve(new Response(JSON.stringify({
+        success: true,
+        data: [{ _id: '60f7c223405c102c98d6c840', name: 'India', dialCode: '+91', mobileDigits: 10 }]
+      }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+    }
+
+    if (urlString.includes('/api/masters/board-types')) {
+      return Promise.resolve(new Response(JSON.stringify({
+        success: true,
+        data: [
+          { _id: '60f7c223405c102c98d6c830', name: 'Central Board of Secondary Education', acronym: 'CBSE' },
+          { _id: '60f7c223405c102c98d6c831', name: 'Indian Certificate of Secondary Education', acronym: 'ICSE' }
+        ]
       }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
     }
 

@@ -11,12 +11,18 @@ export function Sidebar({ collapsed, mobileOpen, onClose }: SidebarProps) {
     if (location.pathname.startsWith('/app-management')) {
       return 'App Management';
     }
+    if (location.pathname.startsWith('/user-management')) {
+      return 'User Management';
+    }
     return null;
   });
 
   useEffect(() => {
     if (location.pathname.startsWith('/app-management')) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setOpenSubmenu('App Management');
+    } else if (location.pathname.startsWith('/user-management')) {
+      setOpenSubmenu('User Management');
     }
   }, [location.pathname]);
 

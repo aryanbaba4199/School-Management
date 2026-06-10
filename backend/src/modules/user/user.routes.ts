@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { UserController } from './user.controller';
-import { CreateUserSchema, LoginSchema } from './dto/create-user.dto';
+import { CreateUserSchema, LoginSchema, UpdateUserSchema } from './dto/create-user.dto';
 import { validate } from '../../common/middleware/validation.middleware';
 import { authenticate, requireRoles } from '../../common/middleware/auth.middleware';
 
@@ -16,5 +16,8 @@ router.post('/login', validate(LoginSchema), controller.login);
 router.get('/profile', authenticate, controller.getProfile);
 router.post('/', authenticate, requireRoles('SUPER_ADMIN', 'SCHOOL_ADMIN'), validate(CreateUserSchema), controller.register);
 router.get('/', authenticate, requireRoles('SUPER_ADMIN', 'SCHOOL_ADMIN'), controller.listUsers);
+router.put('/:id', authenticate, requireRoles('SUPER_ADMIN', 'SCHOOL_ADMIN'), validate(UpdateUserSchema), controller.update);
+router.patch('/:id/status', authenticate, requireRoles('SUPER_ADMIN', 'SCHOOL_ADMIN'), controller.toggleStatus);
+router.delete('/:id', authenticate, requireRoles('SUPER_ADMIN', 'SCHOOL_ADMIN'), controller.delete);
 
 export default router;

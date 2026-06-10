@@ -26,7 +26,7 @@ export function StepCredentials({ control, errors, onDraftLoaded }: StepCredenti
         notifier.showSuccess('A saved draft was found for this email. Resuming your progress.');
         onDraftLoaded(res.data);
       }
-    } catch (err) {
+    } catch {
       // Ignore errors silently as it just means no draft was found
     }
   };

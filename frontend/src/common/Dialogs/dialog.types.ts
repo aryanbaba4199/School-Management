@@ -3,6 +3,8 @@ import type { PlanFormData } from '../../features/app-management/plan-management
 import type { ISubscriptionPlan } from '../../features/app-management/plan-management/types/plans.types';
 import type { ISchool } from '../../features/schools/types/schools.types';
 
+import type { ISchoolUser } from '../../api/usersApi';
+
 /*------------- Dialog Types Definitions -------------*/
 
 export type DialogType = 
@@ -12,6 +14,9 @@ export type DialogType =
   | 'SCHOOL_FORM' 
   | 'PLAN_FORM' 
   | 'PASSCODE_PROMPT'
+  | 'STUDENT_FORM'
+  | 'TEACHER_FORM'
+  | 'PARENT_FORM'
   | null;
 
 export interface DialogPropsMap {
@@ -37,6 +42,18 @@ export interface DialogPropsMap {
     message: string;
     confirmLabel?: string;
     onConfirm: (passcode: string) => void | Promise<void>;
+  };
+  STUDENT_FORM: {
+    user?: ISchoolUser | null;
+    onSubmit: (data: Partial<ISchoolUser> & { password?: string }) => void | Promise<void>;
+  };
+  TEACHER_FORM: {
+    user?: ISchoolUser | null;
+    onSubmit: (data: Partial<ISchoolUser> & { password?: string }) => void | Promise<void>;
+  };
+  PARENT_FORM: {
+    user?: ISchoolUser | null;
+    onSubmit: (data: Partial<ISchoolUser> & { password?: string }) => void | Promise<void>;
   };
 }
 

@@ -1,0 +1,85 @@
+
+> frontend@0.0.0 lint
+> eslint .
+
+
+/Users/aryandubey/project/personal-/School Management/frontend/src/common/Datatable/components/Datatable.tsx
+  1:20  error  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/aryandubey/project/personal-/School Management/frontend/src/common/navbar/components/Sidebar.tsx
+  25:7  warning  Unused eslint-disable directive (no problems were reported from 'react-hooks/set-state-in-effect')
+
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/parents/components/ParentFormDialog.tsx
+  41:25  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/parents/components/ParentFormDialog.tsx:41:25
+  39 |   });
+  40 |
+> 41 |   const selectedState = watch('address.state');
+     |                         ^^^^^ React Hook Form's `useForm()` API returns a `watch()` function which cannot be memoized safely.
+  42 |
+  43 |   const { data: statesRes } = useGetStatesQuery('');
+  44 |   const states = statesRes?.success ? statesRes.data : [];  react-hooks/incompatible-library
+
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/schools/components/MasterDialogs/MasterDataAddDialog.tsx
+  44:29  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/schools/components/MasterDialogs/MasterDataAddDialog.tsx:44:29
+  42 |   });
+  43 |
+> 44 |   const selectedCountryId = watch('countryId');
+     |                             ^^^^^ React Hook Form's `useForm()` API returns a `watch()` function which cannot be memoized safely.
+  45 |
+  46 |   const { data: countriesRes } = useGetCountriesQuery(undefined, { skip: (type !== 'STATE' && type !== 'DISTRICT' && type !== 'BOARD') });
+  47 |   const countries = countriesRes?.success ? countriesRes.data : [];  react-hooks/incompatible-library
+
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/schools/components/SchoolForm.tsx
+    3:15  error    'FieldValues' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+  100:27  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/schools/components/SchoolForm.tsx:100:27
+   98 |   });
+   99 |
+> 100 |   const selectedCountry = watch('country');
+      |                           ^^^^^ React Hook Form's `useForm()` API returns a `watch()` function which cannot be memoized safely.
+  101 |   const selectedState = watch('state');
+  102 |
+  103 |   const { data: plansRes } = useGetSubscriptionPlansQuery();  react-hooks/incompatible-library
+
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/students/components/StudentFormDialog.tsx
+  51:25  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/students/components/StudentFormDialog.tsx:51:25
+  49 |   });
+  50 |
+> 51 |   const selectedState = watch('address.state');
+     |                         ^^^^^ React Hook Form's `useForm()` API returns a `watch()` function which cannot be memoized safely.
+  52 |
+  53 |   const { data: statesRes } = useGetStatesQuery('');
+  54 |   const states = statesRes?.success ? statesRes.data : [];  react-hooks/incompatible-library
+
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/teachers/components/TeacherFormDialog.tsx
+  40:25  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/teachers/components/TeacherFormDialog.tsx:40:25
+  38 |   });
+  39 |
+> 40 |   const selectedState = watch('address.state');
+     |                         ^^^^^ React Hook Form's `useForm()` API returns a `watch()` function which cannot be memoized safely.
+  41 |
+  42 |   const { data: statesRes } = useGetStatesQuery('');
+  43 |   const states = statesRes?.success ? statesRes.data : [];  react-hooks/incompatible-library
+
+✖ 8 problems (2 errors, 6 warnings)
+  0 errors and 1 warning potentially fixable with the `--fix` option.
+

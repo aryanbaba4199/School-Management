@@ -70,7 +70,7 @@ describe('App Schools Navigation and Registration', () => {
     fireEvent.change(screen.getByLabelText('School Code *'), { target: { value: 'NTSC' } });
     fireEvent.change(screen.getByLabelText('Subdomain *'), { target: { value: 'ntsc' } });
     fireEvent.change(screen.getByLabelText('Email Address *'), { target: { value: 'test@schoolos.com' } });
-    fireEvent.change(screen.getByLabelText('Phone Number (+91) *'), { target: { value: '1234567890' } });
+    fireEvent.change(screen.getByLabelText('Phone Number *'), { target: { value: '1234567890' } });
 
     // Click Next
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));

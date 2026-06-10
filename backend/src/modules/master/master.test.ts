@@ -5,7 +5,6 @@ import { DistrictModel } from './models/district.model';
 import { CityModel } from './models/city.model';
 import { SubscriptionPlanModel } from './models/subscription-plan.model';
 import { SchoolModel } from '../school/school.model';
-import { Types } from 'mongoose';
 import { generateToken } from '../../common/utils/jwt';
 
 /*------------- Jest Mongoose Mocks -------------*/
@@ -32,13 +31,17 @@ describe('Master Module API Endpoints', () => {
       (StateModel.findOne as jest.Mock).mockResolvedValue(null);
       (StateModel.prototype.save as jest.Mock).mockResolvedValue({ _id: 'state123', name: 'Karnataka', code: 'KA' });
 
-      const response = await request(app).post('/api/masters/states').send({ name: 'Karnataka', code: 'KA' });
+      const response = await request(app).post('/api/masters/states').send({ name: 'Karnataka', code: 'KA', countryId: '507f1f77bcf86cd799439011' });
       expect(response.status).toBe(201);
       expect(response.body.data._id).toBe('state123');
     });
 
     it('should fetch all States (GET /states)', async () => {
-      (StateModel.find as jest.Mock).mockReturnValue({ sort: jest.fn().mockResolvedValue([{ name: 'Karnataka' }]) });
+      (StateModel.find as jest.Mock).mockReturnValue({
+        populate: jest.fn().mockReturnValue({
+          sort: jest.fn().mockResolvedValue([{ name: 'Karnataka' }]),
+        }),
+      });
       const response = await request(app).get('/api/masters/states');
       expect(response.status).toBe(200);
       expect(response.body.data).toHaveLength(1);
@@ -100,7 +103,7 @@ describe('Master Module API Endpoints', () => {
         .send({
           name: 'Basic',
           code: 'BASIC',
-          price: 999,
+          price: { monthly: 999, yearly: 9999 },
         });
       expect(response.status).toBe(201);
     });
@@ -110,8 +113,8 @@ describe('Master Module API Endpoints', () => {
         _id: 'plan123',
         name: 'Basic',
         code: 'BASIC',
-        price: 999,
-        save: jest.fn().mockResolvedValue({ _id: 'plan123', name: 'Standard', code: 'BASIC', price: 1500 }),
+        price: { monthly: 999, yearly: 9999 },
+        save: jest.fn().mockResolvedValue({ _id: 'plan123', name: 'Standard', code: 'BASIC', price: { monthly: 1500, yearly: 15000 } }),
       };
       (SubscriptionPlanModel.findById as jest.Mock).mockResolvedValue(mockPlan);
       (SubscriptionPlanModel.findOne as jest.Mock).mockResolvedValue(null);
@@ -121,11 +124,11 @@ describe('Master Module API Endpoints', () => {
         .set('Authorization', `Bearer ${superAdminToken}`)
         .send({
           name: 'Standard',
-          price: 1500,
+          price: { monthly: 1500, yearly: 15000 },
         });
 
       expect(response.status).toBe(200);
-      expect(response.body.data.price).toBe(1500);
+      expect(response.body.data.price.monthly).toBe(1500);
     });
 
     it('should delete Plan if no schools are using it (DELETE /subscription-plans/:id)', async () => {

@@ -9,6 +9,9 @@ import { LoginPage } from './features/auth/pages/LoginPage';
 import { DashboardPage } from './features/dashboard/pages/DashboardPage';
 import { SchoolsPage, SchoolDetailsPage } from './features/schools';
 import { PlansPage } from './features/app-management/plan-management/pages/PlansPage';
+import { StudentsPage } from './features/users/students';
+import { TeachersPage } from './features/users/teachers';
+import { ParentsPage } from './features/users/parents';
 import { MainLayout } from '@common/navbar';
 
 /*------------- Conditional App Shell -------------*/
@@ -29,6 +32,9 @@ function AppContent() {
         <Route path="/schools" element={<SchoolsPage />} />
         <Route path="/schools/:id" element={<SchoolDetailsPage />} />
         <Route path="/app-management/plans" element={user.role.name === 'SUPER_ADMIN' ? <PlansPage /> : <Navigate to="/" replace />} />
+        <Route path="/user-management/students" element={<StudentsPage />} />
+        <Route path="/user-management/teachers" element={<TeachersPage />} />
+        <Route path="/user-management/parents" element={<ParentsPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </MainLayout>

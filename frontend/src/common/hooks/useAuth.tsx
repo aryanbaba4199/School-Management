@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useContext, useState, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import type { IUser } from '../types/user.types';
 
@@ -36,7 +37,7 @@ function parseJwt(token: string): JwtPayload | null {
         .join('')
     );
     return JSON.parse(jsonPayload) as JwtPayload;
-  } catch (e) {
+  } catch {
     return null;
   }
 }
@@ -51,32 +52,37 @@ function isTokenExpired(token: string): boolean {
 /*------------- Auth Provider Component -------------*/
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [token, setToken] = useState<string | null>(null);
-  const [user, setUser] = useState<IUser | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [token, setToken] = useState<string | null>(() => {
+    try {
+      const storedToken = localStorage.getItem('auth_token');
+      if (storedToken) {
+        if (isTokenExpired(storedToken)) {
+          localStorage.removeItem('auth_token');
+          localStorage.removeItem('auth_user');
+          return null;
+        }
+        return storedToken;
+      }
+    } catch {
+      // Ignore reading storage errors on init
+    }
+    return null;
+  });
 
-  // Initialize auth state from local storage
-  useEffect(() => {
+  const [user, setUser] = useState<IUser | null>(() => {
     try {
       const storedToken = localStorage.getItem('auth_token');
       const storedUser = localStorage.getItem('auth_user');
-
-      if (storedToken && storedUser) {
-        if (isTokenExpired(storedToken)) {
-          // Token is expired, wipe credentials
-          localStorage.removeItem('auth_token');
-          localStorage.removeItem('auth_user');
-        } else {
-          setToken(storedToken);
-          setUser(JSON.parse(storedUser) as IUser);
-        }
+      if (storedToken && storedUser && !isTokenExpired(storedToken)) {
+        return JSON.parse(storedUser) as IUser;
       }
-    } catch (e) {
-      console.error('Failed to parse stored authentication credentials', e);
-    } finally {
-      setLoading(false);
+    } catch {
+      // Ignore reading storage errors on init
     }
-  }, []);
+    return null;
+  });
+
+  const [loading] = useState<boolean>(false);
 
   const login = useCallback((newToken: string, newUser: IUser) => {
     try {

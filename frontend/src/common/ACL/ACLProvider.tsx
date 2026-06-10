@@ -1,4 +1,5 @@
-import { createContext, useContext, useMemo } from 'react';
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useContext, useMemo, useCallback } from 'react';
 import type { ReactNode } from 'react';
 
 /*------------- ACL Types -------------*/
@@ -22,7 +23,7 @@ interface ACLProviderProps {
 }
 
 export function ACLProvider({ children, userRole, accessList }: ACLProviderProps) {
-  const hasAccess = (allowedRoles?: RoleName[], requiredAccess?: string[]): boolean => {
+  const hasAccess = useCallback((allowedRoles?: RoleName[], requiredAccess?: string[]): boolean => {
     // SUPER_ADMIN has global override access to everything
     if (userRole === 'SUPER_ADMIN') {
       return true;
@@ -46,13 +47,13 @@ export function ACLProvider({ children, userRole, accessList }: ACLProviderProps
     }
 
     return true;
-  };
+  }, [userRole, accessList]);
 
   const contextValue = useMemo(() => ({
     userRole,
     accessList,
     hasAccess,
-  }), [userRole, accessList]);
+  }), [userRole, accessList, hasAccess]);
 
   return (
     <ACLContext.Provider value={contextValue}>

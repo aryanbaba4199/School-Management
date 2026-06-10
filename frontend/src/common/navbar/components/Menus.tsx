@@ -3,7 +3,7 @@ import {
   ListItemText, Typography, Collapse, Avatar, Tooltip 
 } from '@mui/material';
 import { 
-  FaChartPie, FaSchool, FaUsers, FaUserGraduate, FaChalkboardTeacher, 
+  FaChartPie, FaSchool, FaUsers, 
   FaClipboardList, FaBook, FaUserCheck, FaFileSignature, FaBookOpen, 
   FaCreditCard, FaBell, FaChevronDown, FaChevronUp, FaCogs 
 } from 'react-icons/fa';
@@ -23,9 +23,16 @@ const MENU_ITEMS: MenuItemType[] = [
     ]
   },
   { label: 'Schools', icon: <FaSchool size={16} />, roles: ['SUPER_ADMIN'], path: '/schools' },
-  { label: 'Users', icon: <FaUsers size={16} />, roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN'], path: '/users' },
-  { label: 'Students', icon: <FaUserGraduate size={16} />, roles: ['SCHOOL_ADMIN', 'TEACHER'], path: '/students' },
-  { label: 'Teachers', icon: <FaChalkboardTeacher size={16} />, roles: ['SCHOOL_ADMIN'], path: '/teachers' },
+  {
+    label: 'User Management',
+    icon: <FaUsers size={16} />,
+    roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN'],
+    children: [
+      { label: 'Students', roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN'], path: '/user-management/students' },
+      { label: 'Teachers', roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN'], path: '/user-management/teachers' },
+      { label: 'Parents', roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN'], path: '/user-management/parents' }
+    ]
+  },
   { label: 'Classes & Sections', icon: <FaClipboardList size={16} />, roles: ['SCHOOL_ADMIN', 'TEACHER'], path: '/classes' },
   { label: 'Subjects', icon: <FaBook size={16} />, roles: ['SCHOOL_ADMIN', 'TEACHER'], path: '/subjects' },
   { label: 'Attendance', icon: <FaUserCheck size={16} />, roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'], path: '/attendance' },

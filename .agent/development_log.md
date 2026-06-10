@@ -4,6 +4,36 @@ This file tracks chronological updates, architectural decisions, and setups perf
 
 ---
 
+## [2026-06-10] School Schema Updates & Collapsible User Management with CRUD
+
+### What Was Done
+1. **School Schema Updates**:
+   - Added `totalTeacher` and `totalStudent` default fields to backend `school.model.ts` and updated frontend `schools.types.ts`.
+   - Integrated teacher and student counts under "General Information" on `SchoolDetailsPage.tsx`.
+
+2. **Collapsible User Management Navigation**:
+   - Renamed "Users" sidebar menu to **User Management**, making it a collapsible parent menu in `Menus.tsx` and `Sidebar.tsx`.
+   - Submenus created: **Students** (`/user-management/students`), **Teachers** (`/user-management/teachers`), and **Parents** (`/user-management/parents`). Removed legacy standalone links.
+
+3. **Backend User Module CRUD Expansion**:
+   - Extended `backend/src/modules/user/user.service.ts` to implement full CRUD services: `updateUser` (PUT), `toggleUserStatus` (PATCH), and `deleteUser` (DELETE), with multi-tenant boundaries.
+   - Updated `findUsers` to support role-based filtering (e.g. `role.name` filter on Mongoose).
+   - Exposed endpoints in `user.routes.ts` validated via new `UpdateUserSchema` in `create-user.dto.ts`.
+
+4. **Frontend usersApi & Reusable Multi-Select Forms**:
+   - Created `frontend/src/api/usersApi.ts` for User RTK Query mutations and queries, invalidating `'User'` tags.
+   - Enhanced common `FormSelectField.tsx` component to natively support `multiple={true}` selection for array fields (useful for Teachers' subjects and Parents' children).
+
+5. **Students, Teachers, and Parents CRUD Modules**:
+   - Structured three completely new feature folders in `frontend/src/features/` containing: `components/` (FormDialog, Columns), `hooks/` (useStudents, useTeachers, useParents), `schema/`, `pages/`, and `types/` following strict modular folder layouts.
+   - Implemented Yup schemas, react-hook-form bindings, responsive form fields, and Datatable components.
+   - Kept all newly created files strictly under the 200 lines limit constraint.
+
+6. **Validation & Verification**:
+   - Verified that both backend (`tsc`) and frontend (`tsc -b && vite build`) compile and compile successfully with 0 warnings or errors.
+
+---
+
 ## [2026-06-09] Database Seeding Extension
 
 ### What Was Done

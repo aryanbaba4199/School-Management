@@ -31,7 +31,6 @@ export class UserController {
         return;
       }
 
-      // Enforce tenant boundary: non-super-admins cannot register users for other schools
       let schoolIdOverride: string | undefined;
       if (requester.role !== 'SUPER_ADMIN') {
         schoolIdOverride = requester.schoolId;
@@ -40,7 +39,7 @@ export class UserController {
       const user = await userService.createUser(req.body, schoolIdOverride);
       sendSuccess(res, 201, user);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'User creation failed';
+      const errorMessage = error instanceof Error ? error.message : 'User registration failed';
       sendError(res, 400, errorMessage);
     }
   }
@@ -80,14 +79,14 @@ export class UserController {
 
       const page = Math.max(1, parseInt(req.query.page as string) || 1);
       const limit = Math.max(1, parseInt(req.query.limit as string) || 25);
+      const role = req.query.role as string | undefined;
 
-      // Enforce tenant isolation: non-super-admins can only list users of their own school
       let filterSchoolId: string | undefined;
       if (req.user.role !== 'SUPER_ADMIN') {
         filterSchoolId = req.user.schoolId;
       }
 
-      const { users, totalCount } = await userService.findUsers(filterSchoolId, page, limit);
+      const { users, totalCount } = await userService.findUsers(filterSchoolId, role, page, limit);
       const totalPages = Math.ceil(totalCount / limit);
 
       sendSuccess(res, 200, users, {
@@ -99,6 +98,78 @@ export class UserController {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to fetch users';
       sendError(res, 500, errorMessage);
+    }
+  }
+
+  /**
+   * HTTP PUT /api/users/:id
+   */
+  async update(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const requester = req.user;
+      if (!requester) {
+        sendError(res, 401, 'Unauthorized request');
+        return;
+      }
+
+      let schoolIdOverride: string | undefined;
+      if (requester.role !== 'SUPER_ADMIN') {
+        schoolIdOverride = requester.schoolId;
+      }
+
+      const user = await userService.updateUser(req.params.id as string, req.body, schoolIdOverride);
+      sendSuccess(res, 200, user);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'User update failed';
+      sendError(res, 400, errorMessage);
+    }
+  }
+
+  /**
+   * HTTP PATCH /api/users/:id/status
+   */
+  async toggleStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const requester = req.user;
+      if (!requester) {
+        sendError(res, 401, 'Unauthorized request');
+        return;
+      }
+
+      let schoolIdOverride: string | undefined;
+      if (requester.role !== 'SUPER_ADMIN') {
+        schoolIdOverride = requester.schoolId;
+      }
+
+      const user = await userService.toggleUserStatus(req.params.id as string, schoolIdOverride);
+      sendSuccess(res, 200, user);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to toggle status';
+      sendError(res, 400, errorMessage);
+    }
+  }
+
+  /**
+   * HTTP DELETE /api/users/:id
+   */
+  async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const requester = req.user;
+      if (!requester) {
+        sendError(res, 401, 'Unauthorized request');
+        return;
+      }
+
+      let schoolIdOverride: string | undefined;
+      if (requester.role !== 'SUPER_ADMIN') {
+        schoolIdOverride = requester.schoolId;
+      }
+
+      await userService.deleteUser(req.params.id as string, schoolIdOverride);
+      sendSuccess(res, 200, null);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'User deletion failed';
+      sendError(res, 400, errorMessage);
     }
   }
 }

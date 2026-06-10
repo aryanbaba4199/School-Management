@@ -1,0 +1,464 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.8 [39m[90m/Users/aryandubey/project/personal-/School Management/frontend[39m
+
+(node:86840) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+[90mstderr[2m | src/tests/App.schools.test.tsx[2m > [22m[2mApp Schools Navigation and Registration[2m > [22m[2mallows super admin to edit, deactivate, and delete a school
+[22m[39mMUI: You have provided an out-of-range value `India` for the select (name="country") component.
+Consider providing a value that matches one of the available options or ''.
+The available values are `__ADD_NEW__`.
+MUI: You have provided an out-of-range value `CBSE` for the select (name="boardType") component.
+Consider providing a value that matches one of the available options or ''.
+The available values are `__ADD_NEW__`.
+MUI: You have provided an out-of-range value `India` for the select (name="country") component.
+Consider providing a value that matches one of the available options or ''.
+The available values are `__ADD_NEW__`.
+MUI: You have provided an out-of-range value `CBSE` for the select (name="boardType") component.
+Consider providing a value that matches one of the available options or ''.
+The available values are `__ADD_NEW__`.
+
+[90mstderr[2m | src/tests/App.schools.test.tsx[2m > [22m[2mApp Schools Navigation and Registration[2m > [22m[2mallows super admin to edit, deactivate, and delete a school
+[22m[39mMUI: You have provided an out-of-range value `India` for the select (name="country") component.
+Consider providing a value that matches one of the available options or ''.
+The available values are `__ADD_NEW__`.
+MUI: You have provided an out-of-range value `CBSE` for the select (name="boardType") component.
+Consider providing a value that matches one of the available options or ''.
+The available values are `__ADD_NEW__`.
+
+[90mstderr[2m | src/tests/App.schools.test.tsx[2m > [22m[2mApp Schools Navigation and Registration[2m > [22m[2mallows super admin to edit, deactivate, and delete a school
+[22m[39mMUI: You have provided an out-of-range value `India` for the select (name="country") component.
+Consider providing a value that matches one of the available options or ''.
+The available values are `__ADD_NEW__`.
+MUI: You have provided an out-of-range value `CBSE` for the select (name="boardType") component.
+Consider providing a value that matches one of the available options or ''.
+The available values are `__ADD_NEW__`.
+
+ [31m❯[39m src/tests/App.schools.test.tsx [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[33m 1986[2mms[22m[39m
+[31m     [31m×[31m allows super admin to navigate to schools page and register a new school[39m[33m 706[2mms[22m[39m
+[31m     [31m×[31m allows super admin to edit, deactivate, and delete a school[39m[33m 1279[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 2 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/tests/App.schools.test.tsx[2m > [22mApp Schools Navigation and Registration[2m > [22mallows super admin to navigate to schools page and register a new school
+[31m[1mTestingLibraryElementError[22m[39m: Unable to find a label with the text of: Phone Number (+91) *
+
+Ignored nodes: comments, script, style
+[36m<body[39m
+  [33mstyle[39m=[32m"padding-right: 1024px; overflow: hidden;"[39m
+[36m>[39m
+  [36m<div[39m
+    [33maria-hidden[39m=[32m"true"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"sc-jJwPsw bEFVOa"[39m
+    [36m>[39m
+      [36m<nav[39m
+        [33mclass[39m=[32m"sc-ezjgic cInbSj"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"MuiBox-root css-axw7ok"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"MuiButtonBase-root MuiIconButton-root MuiIconButton-edgeStart MuiIconButton-sizeMedium css-19f0f5m-MuiButtonBase-root-MuiIconButton-root"[39m
+            [33mtabindex[39m=[32m"0"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33mfill[39m=[32m"currentColor"[39m
+              [33mheight[39m=[32m"20"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-width[39m=[32m"0"[39m
+              [33mviewBox[39m=[32m"0 0 448 512"[39m
+              [33mwidth[39m=[32m"20"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</button>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"sc-bYgEKt emGHox"[39m
+          [36m>[39m
+            [36m<h6[39m
+              [33mclass[39m=[32m"MuiTypography-root MuiTypography-h6 css-4sa4ip-MuiTypography-root"[39m
+            [36m>[39m
+              [0mSchool OS Ecosystem[0m
+            [36m</h6>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"MuiBox-root css-j0ozid"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-11fmdht-MuiButtonBase-root-MuiIconButton-root"[39m
+            [33mtabindex[39m=[32m"0"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33mfill[39m=[32m"currentColor"[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-width[39m=[32m"0"[39m
+              [33mviewBox[39m=[32m"0 0 512 512"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M256 160c-52.9 0-96 43.1-96 96s43.1 96 96 96 96-43.1 96-96-43.1-96-96-96zm246.4 80.5l-94.7-47.3 33.5-100.4c4.5-13.6-8.4-26.5-21.9-21.9l-100.4 33.5-47.4-94.8c-6.4-12.8-24.6-12.8-31 0l-47.3 94.7L92.7 70.8c-13.6-4.5-26.5 8.4-21.9 21.9l33.5 100.4-94.7 47.4c-12.8 6.4-12.8 24.6 0 31l94.7 47.3-33.5 100.5c-4.5 13.6 8.4 26.5 21.9 21.9l100.4-33.5 47.3 94.7c6.4 12.8 24.6 12.8 31 0l47.3-94.7 100.4 33.5c13.6 4.5 26.5-8.4 21.9-21.9l-33.5-100.4 94.7-47.3c13-6.5 13-24.7.2-31.1zm-155.9 106c-49.9 49.9-131.1 49.9-181 0-49.9-49.9-49.9-131.1 0-181 49.9-49.9 131.1-49.9 181 0 49.9 49.9 49.9 131.1 0 181z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-11fmdht-MuiButtonBase-root-MuiIconButton-root"[39m
+            [33mtabindex[39m=[32m"0"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"MuiBadge-root css-63ezxx-MuiBadge-root"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33mfill[39m=[32m"currentColor"[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-width[39m=[32m"0"[39m
+                [33mviewBox[39m=[32m"0 0 448 512"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M224 512c35.32 0 63.97-28.65 63.97-64H160.03c0 35.35 28.65 64 63.97 64zm215.39-149.71c-19.32-20.76-55.47-51.99-55.47-154.29 0-77.7-54.48-139.9-127.94-155.16V32c0-17.67-14.32-32-31.98-32s-31.98 14.33-31.98 32v20.84C118.56 68.1 64.08 130.3 64.08 208c0 102.3-36.15 133.53-55.47 154.29-6 6.45-8.66 14.16-8.61 21.71.11 16.4 12.98 32 32.1 32h383.8c19.12 0 32-15.6 32.1-32 .05-7.55-2.61-15.27-8.61-21.71z"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<span[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"MuiBadge-badge MuiBadge-dot MuiBadge-anchorOriginTopRight MuiBadge-anchorOriginTopRightRectangular MuiBadge-overlapRectangular MuiBadge-colorError css-34nsx6-MuiBadge-badge"[39m
+                [33mstyle[39m=[32m"--Badge-translate: 50%, -50%; --Badge-inset: 0 0 auto auto; --Badge-origin: 100% 0%;"[39m
+              [36m/>[39m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1cdesbr-MuiButtonBase-root-MuiIconButton-root"[39m
+            [33mdata-testid[39m=[32m"avatar-menu-button"[39m
+            [33mtabindex[39m=[32m"0"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-o5l312-MuiAvatar-root"[39m
+            [36m>[39m
+              [0mD[0m
+            [36m</div>[39m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</nav>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"sc-hiunUN jisUOr"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"MuiBox-root css-13tqxrv"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"sc-kLEbxe kHTvZV"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"MuiBox-root css-117hr02"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"MuiBox-root css-120nera"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-ll0gc0-MuiAvatar-root"[39m
+                [36m>[39m
+                  [0mD[0m
+ ...
+[90m [2m❯[22m Object.getElementError node_modules/@testing-library/dom/dist/config.js:[2m37:19[22m[39m
+[90m [2m❯[22m getAllByLabelText node_modules/@testing-library/dom/dist/queries/label-text.js:[2m111:38[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m52:17[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m95:19[22m[39m
+[36m [2m❯[22m src/tests/App.schools.test.tsx:[2m73:29[22m[39m
+    [90m 71|[39m     fireEvent.change(screen.getByLabelText('Subdomain *'), { target: {…
+    [90m 72|[39m     fireEvent.change(screen.getByLabelText('Email Address *'), { targe…
+    [90m 73|[39m     fireEvent.change(screen.getByLabelText('Phone Number (+91) *'), { …
+    [90m   |[39m                             [31m^[39m
+    [90m 74|[39m
+    [90m 75|[39m     [90m// Click Next[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/tests/App.schools.test.tsx[2m > [22mApp Schools Navigation and Registration[2m > [22mallows super admin to edit, deactivate, and delete a school
+[31m[1mTestingLibraryElementError[22m[39m: Unable to find role="button" and name "Save Changes"
+
+Ignored nodes: comments, script, style
+[36m<body[39m
+  [33mstyle[39m=[32m"padding-right: 1024px; overflow: hidden;"[39m
+[36m>[39m
+  [36m<div[39m
+    [33maria-hidden[39m=[32m"true"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"sc-jJwPsw bEFVOa"[39m
+    [36m>[39m
+      [36m<nav[39m
+        [33mclass[39m=[32m"sc-ezjgic cInbSj"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"MuiBox-root css-axw7ok"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"MuiButtonBase-root MuiIconButton-root MuiIconButton-edgeStart MuiIconButton-sizeMedium css-19f0f5m-MuiButtonBase-root-MuiIconButton-root"[39m
+            [33mtabindex[39m=[32m"0"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33mfill[39m=[32m"currentColor"[39m
+              [33mheight[39m=[32m"20"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-width[39m=[32m"0"[39m
+              [33mviewBox[39m=[32m"0 0 448 512"[39m
+              [33mwidth[39m=[32m"20"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</button>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"sc-bYgEKt emGHox"[39m
+          [36m>[39m
+            [36m<h6[39m
+              [33mclass[39m=[32m"MuiTypography-root MuiTypography-h6 css-4sa4ip-MuiTypography-root"[39m
+            [36m>[39m
+              [0mSchool OS Ecosystem[0m
+            [36m</h6>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"MuiBox-root css-j0ozid"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-11fmdht-MuiButtonBase-root-MuiIconButton-root"[39m
+            [33mtabindex[39m=[32m"0"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33mfill[39m=[32m"currentColor"[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-width[39m=[32m"0"[39m
+              [33mviewBox[39m=[32m"0 0 512 512"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M256 160c-52.9 0-96 43.1-96 96s43.1 96 96 96 96-43.1 96-96-43.1-96-96-96zm246.4 80.5l-94.7-47.3 33.5-100.4c4.5-13.6-8.4-26.5-21.9-21.9l-100.4 33.5-47.4-94.8c-6.4-12.8-24.6-12.8-31 0l-47.3 94.7L92.7 70.8c-13.6-4.5-26.5 8.4-21.9 21.9l33.5 100.4-94.7 47.4c-12.8 6.4-12.8 24.6 0 31l94.7 47.3-33.5 100.5c-4.5 13.6 8.4 26.5 21.9 21.9l100.4-33.5 47.3 94.7c6.4 12.8 24.6 12.8 31 0l47.3-94.7 100.4 33.5c13.6 4.5 26.5-8.4 21.9-21.9l-33.5-100.4 94.7-47.3c13-6.5 13-24.7.2-31.1zm-155.9 106c-49.9 49.9-131.1 49.9-181 0-49.9-49.9-49.9-131.1 0-181 49.9-49.9 131.1-49.9 181 0 49.9 49.9 49.9 131.1 0 181z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-11fmdht-MuiButtonBase-root-MuiIconButton-root"[39m
+            [33mtabindex[39m=[32m"0"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"MuiBadge-root css-63ezxx-MuiBadge-root"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33mfill[39m=[32m"currentColor"[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-width[39m=[32m"0"[39m
+                [33mviewBox[39m=[32m"0 0 448 512"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M224 512c35.32 0 63.97-28.65 63.97-64H160.03c0 35.35 28.65 64 63.97 64zm215.39-149.71c-19.32-20.76-55.47-51.99-55.47-154.29 0-77.7-54.48-139.9-127.94-155.16V32c0-17.67-14.32-32-31.98-32s-31.98 14.33-31.98 32v20.84C118.56 68.1 64.08 130.3 64.08 208c0 102.3-36.15 133.53-55.47 154.29-6 6.45-8.66 14.16-8.61 21.71.11 16.4 12.98 32 32.1 32h383.8c19.12 0 32-15.6 32.1-32 .05-7.55-2.61-15.27-8.61-21.71z"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<span[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"MuiBadge-badge MuiBadge-dot MuiBadge-anchorOriginTopRight MuiBadge-anchorOriginTopRightRectangular MuiBadge-overlapRectangular MuiBadge-colorError css-34nsx6-MuiBadge-badge"[39m
+                [33mstyle[39m=[32m"--Badge-translate: 50%, -50%; --Badge-inset: 0 0 auto auto; --Badge-origin: 100% 0%;"[39m
+              [36m/>[39m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1cdesbr-MuiButtonBase-root-MuiIconButton-root"[39m
+            [33mdata-testid[39m=[32m"avatar-menu-button"[39m
+            [33mtabindex[39m=[32m"0"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-o5l312-MuiAvatar-root"[39m
+            [36m>[39m
+              [0mD[0m
+            [36m</div>[39m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</nav>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"sc-hiunUN jisUOr"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"MuiBox-root css-13tqxrv"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"sc-kLEbxe kHTvZV"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"MuiBox-root css-117hr02"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"MuiBox-root css-120nera"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-ll0gc0-MuiAvatar-root"[39m
+                [36m>[39m
+                  [0mD[0m
+ ...
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head>[39m
+    [36m<meta[39m
+      [33mcontent[39m=[32m""[39m
+      [33mname[39m=[32m"emotion-insertion-point"[39m
+    [36m/>[39m
+  [36m</head>[39m
+  [36m<body[39m
+    [33mstyle[39m=[32m"padding-right: 1024px; overflow: hidden;"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33maria-hidden[39m=[32m"true"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"sc-jJwPsw bEFVOa"[39m
+      [36m>[39m
+        [36m<nav[39m
+          [33mclass[39m=[32m"sc-ezjgic cInbSj"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"MuiBox-root css-axw7ok"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"MuiButtonBase-root MuiIconButton-root MuiIconButton-edgeStart MuiIconButton-sizeMedium css-19f0f5m-MuiButtonBase-root-MuiIconButton-root"[39m
+              [33mtabindex[39m=[32m"0"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33mfill[39m=[32m"currentColor"[39m
+                [33mheight[39m=[32m"20"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-width[39m=[32m"0"[39m
+                [33mviewBox[39m=[32m"0 0 448 512"[39m
+                [33mwidth[39m=[32m"20"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</button>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"sc-bYgEKt emGHox"[39m
+            [36m>[39m
+              [36m<h6[39m
+                [33mclass[39m=[32m"MuiTypography-root MuiTypography-h6 css-4sa4ip-MuiTypography-root"[39m
+              [36m>[39m
+                [0mSchool OS Ecosystem[0m
+              [36m</h6>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"MuiBox-root css-j0ozid"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-11fmdht-MuiButtonBase-root-MuiIconButton-root"[39m
+              [33mtabindex[39m=[32m"0"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33mfill[39m=[32m"currentColor"[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-width[39m=[32m"0"[39m
+                [33mviewBox[39m=[32m"0 0 512 512"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M256 160c-52.9 0-96 43.1-96 96s43.1 96 96 96 96-43.1 96-96-43.1-96-96-96zm246.4 80.5l-94.7-47.3 33.5-100.4c4.5-13.6-8.4-26.5-21.9-21.9l-100.4 33.5-47.4-94.8c-6.4-12.8-24.6-12.8-31 0l-47.3 94.7L92.7 70.8c-13.6-4.5-26.5 8.4-21.9 21.9l33.5 100.4-94.7 47.4c-12.8 6.4-12.8 24.6 0 31l94.7 47.3-33.5 100.5c-4.5 13.6 8.4 26.5 21.9 21.9l100.4-33.5 47.3 94.7c6.4 12.8 24.6 12.8 31 0l47.3-94.7 100.4 33.5c13.6 4.5 26.5-8.4 21.9-21.9l-33.5-100.4 94.7-47.3c13-6.5 13-24.7.2-31.1zm-155.9 106c-49.9 49.9-131.1 49.9-181 0-49.9-49.9-49.9-131.1 0-181 49.9-49.9 131.1-49.9 181 0 49.9 49.9 49.9 131.1 0 181z"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-11fmdht-MuiButtonBase-root-MuiIconButton-root"[39m
+              [33mtabindex[39m=[32m"0"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"MuiBadge-root css-63ezxx-MuiBadge-root"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33mfill[39m=[32m"currentColor"[39m
+                  [33mheight[39m=[32m"18"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-width[39m=[32m"0"[39m
+                  [33mviewBox[39m=[32m"0 0 448 512"[39m
+                  [33mwidth[39m=[32m"18"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M224 512c35.32 0 63.97-28.65 63.97-64H160.03c0 35.35 28.65 64 63.97 64zm215.39-149.71c-19.32-20.76-55.47-51.99-55.47-154.29 0-77.7-54.48-139.9-127.94-155.16V32c0-17.67-14.32-32-31.98-32s-31.98 14.33-31.98 32v20.84C118.56 68.1 64.08 130.3 64.08 208c0 102.3-36.15 133.53-55.47 154.29-6 6.45-8.66 14.16-8.61 21.71.11 16.4 12.98 32 32.1 32h383.8c19.12 0 32-15.6 32.1-32 .05-7.55-2.61-15.27-8.61-21.71z"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<span[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"MuiBadge-badge MuiBadge-dot MuiBadge-anchorOriginTopRight MuiBadge-anchorOriginTopRightRectangular MuiBadge-overlapRectangular MuiBadge-colorError css-34nsx6-MuiBadge-badge"[39m
+                  [33mstyle[39m=[32m"--Badge-translate: 50%, -50%; --Badge-inset: 0 0 auto auto; --Badge-origin: 100% 0%;"[39m
+                [36m/>[39m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1cdesbr-MuiButtonBase-root-MuiIconButton-root"[39m
+              [33mdata-testid[39m=[32m"avatar-menu-button"[39m
+              [33mtabindex[39m=[32m"0"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-o5l312-MuiAvatar-root"[39m
+              [36m>[39m
+                [0mD[0m
+              [36m</div>[39m
+            [36m</button>[39m
+          [36m</div>[39m
+        [36m</nav>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"sc-hiunUN jisUOr"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"MuiBox-root css-13tqxrv"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"sc-kLEbxe kHTvZV"[39m
+            [36m>[39m
+              [36m<div[39m
+       ...
+[90m [2m❯[22m waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:[2m163:27[22m[39m
+[36m [2m❯[22m src/tests/App.schools.test.tsx:[2m148:11[22m[39m
+    [90m146|[39m
+    [90m147|[39m     [90m// Click Save Changes[39m
+    [90m148|[39m     [35mawait[39m [34mwaitFor[39m(() [33m=>[39m {
+    [90m   |[39m           [31m^[39m
+    [90m149|[39m       expect(screen.getByRole('button', { name: 'Save Changes' })).toB…
+    [90m150|[39m     })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m   Start at [22m 10:37:00
+[2m   Duration [22m 3.68s[2m (transform 1.03s, setup 31ms, import 1.33s, tests 1.99s, environment 238ms)[22m
+
