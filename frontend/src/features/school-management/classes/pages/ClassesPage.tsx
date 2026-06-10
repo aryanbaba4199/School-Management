@@ -3,12 +3,9 @@ import { useClasses } from '../hooks/useClasses';
 import { getClassColumns } from '../components/classColumns';
 import { useAuth } from '@common/hooks/useAuth';
 
-import { useNavigate } from 'react-router-dom';
-
 /*------------- Classes Page Component -------------*/
 
 export function ClassesPage() {
-  const navigate = useNavigate();
   const {
     classes,
     totalCount,
@@ -32,10 +29,10 @@ export function ClassesPage() {
   const isSuperAdmin = user?.role?.name === 'SUPER_ADMIN';
 
   const columns = getClassColumns({
-    onView: (classObj) => navigate(`/school-management/classes/${classObj._id}`),
+    onView: (classObj) => openDialog('CLASS_DETAILS', { classId: classObj._id }),
     onEdit: handleEdit,
     onDelete: handleDelete,
-    onTeacherClick: (teacherId) => navigate(`/user-management/teachers/${teacherId}`),
+    onTeacherClick: (teacherId) => openDialog('TEACHER_DETAILS', { userId: teacherId }),
     isSuperAdmin,
   });
 

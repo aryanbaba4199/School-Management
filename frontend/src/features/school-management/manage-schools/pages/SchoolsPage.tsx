@@ -1,10 +1,8 @@
 import { PageWrapper, Datatable, DatatableHeader, DatatableFooter } from '@common/Datatable';
-import { useNavigate } from 'react-router-dom';
 import { useSchools } from '../hooks/useSchools';
 import { getSchoolColumns } from '../components/schoolColumns';
 
 export function SchoolsPage() {
-  const navigate = useNavigate();
   const {
     schools,
     totalCount,
@@ -26,7 +24,7 @@ export function SchoolsPage() {
   } = useSchools();
 
   const handleView = (school: Parameters<typeof getSchoolColumns>[0]['onView'] extends (s: infer S) => void ? S : never) => {
-    navigate(`/school-management/manage-schools/${school._id}`);
+    openDialog('SCHOOL_DETAILS', { schoolId: school._id });
   };
 
   const columns = getSchoolColumns({

@@ -10,8 +10,6 @@ import type { ISubject } from '../../api/subjectsApi';
 /*------------- Dialog Types Definitions -------------*/
 
 export type DialogType = 
-  | 'USER_DETAILS' 
-  | 'SCHOOL_DETAILS' 
   | 'CONFIRMATION' 
   | 'SCHOOL_FORM' 
   | 'PLAN_FORM' 
@@ -21,11 +19,17 @@ export type DialogType =
   | 'PARENT_FORM'
   | 'CLASS_FORM'
   | 'SUBJECT_FORM'
+  | 'CLASS_DETAILS'
+  | 'TEACHER_DETAILS'
+  | 'USER_DETAILS' 
+  | 'SCHOOL_DETAILS' 
   | null;
 
 export interface DialogPropsMap {
   USER_DETAILS: { userId: string };
   SCHOOL_DETAILS: { schoolId: string };
+  CLASS_DETAILS: { classId: string };
+  TEACHER_DETAILS: { userId: string };
   CONFIRMATION: {
     title: string;
     message: string;
