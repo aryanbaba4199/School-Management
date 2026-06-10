@@ -2,22 +2,26 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import type { Resolver } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { DialogTitle, DialogContent, DialogActions, Button, Grid, Box } from '@mui/material';
+import { DialogTitle, DialogContent, DialogActions, Button, Grid, Box, CircularProgress } from '@mui/material';
 import { FormTextField, FormSelectField } from '@common/Forms';
 import { useGetUsersQuery } from '../../../../api/usersApi';
 import { useGetSchoolsQuery } from '../../../../api/schoolsApi';
 import { useAuth } from '@common/hooks/useAuth';
 import { subjectSchema } from '../schema/subject.schema';
-import type { SubjectFormData, ISubject } from '../types/subjects.types';
+import { useGetSubjectByIdQuery } from '../../../../api/subjectsApi';
+import type { SubjectFormData } from '../types/subjects.types';
 
 interface SubjectFormDialogProps {
   onClose: () => void;
   onSubmit: (data: { name: string; code: string; teacherIds?: string[]; schoolId?: string }) => void;
-  subject?: ISubject | null;
+  subjectId?: string;
   isLoading?: boolean;
 }
 
-export function SubjectFormDialog({ onClose, onSubmit, subject, isLoading = false }: SubjectFormDialogProps) {
+export function SubjectFormDialog({ onClose, onSubmit, subjectId, isLoading = false }: SubjectFormDialogProps) {
+  const { data: subjectRes, isLoading: isSubjectLoading } = useGetSubjectByIdQuery(subjectId!, { skip: !subjectId });
+  const subject = subjectRes?.success ? subjectRes.data : null;
+
   const { user } = useAuth();
   const isSuperAdmin = user?.role?.name === 'SUPER_ADMIN';
 
@@ -63,10 +67,18 @@ export function SubjectFormDialog({ onClose, onSubmit, subject, isLoading = fals
     });
   };
 
+  if (isSubjectLoading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4, minHeight: 300, alignItems: 'center' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
   return (
     <>
       <DialogTitle sx={{ fontWeight: 800, borderBottom: '1px solid var(--color-border-default)', pb: 2 }}>
-        {subject ? 'Edit Subject Details' : 'Add New Subject'}
+        {subjectId ? 'Edit Subject Details' : 'Add New Subject'}
       </DialogTitle>
       <DialogContent sx={{ pt: 3, pb: 2 }}>
         <Box component="form" noValidate sx={{ mt: 1 }}>
@@ -99,7 +111,7 @@ export function SubjectFormDialog({ onClose, onSubmit, subject, isLoading = fals
           Cancel
         </Button>
         <Button onClick={handleSubmit(onFormSubmit)} variant="contained" color="primary" sx={{ textTransform: 'none' }} disabled={isLoading}>
-          {subject ? 'Save Changes' : 'Add Subject'}
+          {subjectId ? 'Save Changes' : 'Add Subject'}
         </Button>
       </DialogActions>
     </>

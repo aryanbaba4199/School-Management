@@ -63,12 +63,12 @@ export function useStudents() {
     }
   };
 
-  const handleEdit = (student: ISchoolUser) => {
+  const handleEdit = (user: ISchoolUser) => {
     openDialog('STUDENT_FORM', {
-      user: student,
+      userId: user._id,
       onSubmit: async (data: Partial<ISchoolUser> & { password?: string }) => {
         try {
-          await updateUser({ id: student._id, body: data }).unwrap();
+          await updateUser({ id: user._id, body: data }).unwrap();
           notifier.showSuccess('Student updated successfully!');
           closeDialog();
         } catch (err: unknown) {

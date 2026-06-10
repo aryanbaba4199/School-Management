@@ -63,12 +63,16 @@ export class UserController {
    */
   async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const user = await userService.findUserById(req.params.id);
+      const user = await userService.findUserById(req.params.id as string);
       if (!user) {
         sendError(res, 404, 'User not found');
         return;
       }
-      if (req.schoolId && user.schoolId?.toString() !== req.schoolId) {
+      const userSchoolId = typeof user.schoolId === 'object' && user.schoolId !== null && '_id' in user.schoolId 
+        ? user.schoolId._id?.toString() 
+        : user.schoolId?.toString();
+        
+      if (req.schoolId && userSchoolId !== req.schoolId) {
         sendError(res, 403, 'Unauthorized access to user profile');
         return;
       }

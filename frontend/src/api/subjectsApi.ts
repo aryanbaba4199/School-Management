@@ -22,6 +22,10 @@ export const subjectsApi = baseApi.injectEndpoints({
       }),
       providesTags: ['Subject'],
     }),
+    getSubjectById: builder.query<{ success: boolean; data: ISubject }, string>({
+      query: (id) => `/subjects/${id}`,
+      providesTags: (_result, _error, id) => [{ type: 'Subject', id }],
+    }),
     createSubject: builder.mutation<{ success: boolean; data: ISubject }, { name: string; code: string; teacherIds?: string[]; schoolId?: string }>({
       query: (body) => ({
         url: '/subjects',
@@ -50,6 +54,7 @@ export const subjectsApi = baseApi.injectEndpoints({
 
 export const {
   useGetSubjectsQuery,
+  useGetSubjectByIdQuery,
   useCreateSubjectMutation,
   useUpdateSubjectMutation,
   useDeleteSubjectMutation,

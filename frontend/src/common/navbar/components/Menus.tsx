@@ -1,6 +1,6 @@
 import { 
   Box, List, ListItem, ListItemButton, ListItemIcon, 
-  ListItemText, Typography, Collapse, Avatar, Tooltip 
+  ListItemText, Typography, Collapse, Avatar, Tooltip, tooltipClasses 
 } from '@mui/material';
 import { 
   FaChartPie, FaSchool, FaUsers, 
@@ -101,7 +101,18 @@ export function MenuItemsList({ collapsed, openSubmenu, toggleSubmenu, onItemCli
   const navigate = useNavigate();
   const userRole = user?.role?.name || '';
 
-  const allowedItems = MENU_ITEMS.filter(item => item.roles.includes('ALL') || item.roles.includes(userRole));
+  const allowedItems = MENU_ITEMS
+    .filter(item => item.roles.includes('ALL') || item.roles.includes(userRole))
+    .map(item => {
+      if (item.children) {
+        return {
+          ...item,
+          children: item.children.filter(child => child.roles.includes('ALL') || child.roles.includes(userRole))
+        };
+      }
+      return item;
+    })
+    .filter(item => !(item.children && item.children.length === 0));
 
   return (
     <List sx={{ py: 1 }}>
@@ -117,81 +128,199 @@ export function MenuItemsList({ collapsed, openSubmenu, toggleSubmenu, onItemCli
         return (
           <ListItem key={idx} disablePadding sx={{ display: 'block', position: 'relative' }}>
             <ActiveBar $active={isActive} />
-            
-            {hasChildren ? (
-              <>
-                <ListItemButton
-                  onClick={() => {
-                    toggleSubmenu(item.label);
-                    if (onItemClick && collapsed) onItemClick();
-                  }}
-                  sx={{
-                    minHeight: 48, justifyContent: collapsed ? 'center' : 'initial', px: 2.5, py: 1.5,
-                    color: isActive ? 'var(--color-primary-main)' : 'var(--color-text-secondary)',
-                    '&:hover': { bgcolor: 'rgba(124, 58, 237, 0.03)', color: 'var(--color-primary-main)' }
-                  }}
-                >
-                  <ListItemIcon sx={{ minWidth: 0, mr: collapsed ? 'auto' : 3, justifyContent: 'center', color: 'inherit' }}>
-                    {item.icon}
-                  </ListItemIcon>
-                  {!collapsed && (
-                    <>
-                      <ListItemText primary={<Typography variant="body2" sx={{ fontWeight: 500 }}>{item.label}</Typography>} />
-                      {isSubmenuOpen ? <FaChevronUp size={12} /> : <FaChevronDown size={12} />}
-                    </>
-                  )}
-                </ListItemButton>
-
-                {!collapsed && (
-                  <Collapse in={isSubmenuOpen} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding sx={{ pl: 2 }}>
-                      {item.children!.map((child, cIdx) => {
-                        const isChildActive = child.path ? location.pathname === child.path : false;
-                        return (
-                          <ListItemButton
-                            key={cIdx}
-                            onClick={() => {
-                              if (child.path) navigate(child.path);
-                              if (onItemClick) onItemClick();
-                            }}
-                            sx={{
-                              minHeight: 40, pl: 5,
-                              color: isChildActive ? 'var(--color-primary-main)' : 'var(--color-text-secondary)',
-                              '&:hover': { color: 'var(--color-primary-main)', bgcolor: 'rgba(124, 58, 237, 0.02)' }
-                            }}
-                          >
-                            <ListItemText primary={<Typography variant="body2" sx={{ fontSize: '0.85rem' }}>{child.label}</Typography>} />
-                          </ListItemButton>
-                        );
-                      })}
-                    </List>
-                  </Collapse>
-                )}
-              </>
-            ) : (
-              <ListItemButton
-                onClick={() => {
-                  if (item.path) navigate(item.path);
-                  if (onItemClick) onItemClick();
-                }}
-                sx={{
-                  minHeight: 48, justifyContent: collapsed ? 'center' : 'initial', px: 2.5, py: 1.5,
-                  color: isActive ? 'var(--color-primary-main)' : 'var(--color-text-secondary)',
-                  bgcolor: isActive ? 'rgba(124, 58, 237, 0.05)' : 'transparent',
-                  '&:hover': {
-                    bgcolor: 'rgba(124, 58, 237, 0.03)', color: 'var(--color-primary-main)',
-                    '& .MuiListItemIcon-root': { color: 'var(--color-primary-main)' }
+            <Tooltip
+              title={
+                collapsed ? (
+                  hasChildren ? (
+                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                      <Typography variant="subtitle2" sx={{ px: 2, py: 1.5, fontWeight: 700, borderBottom: '1px solid var(--color-border-default)', bgcolor: 'rgba(124, 58, 237, 0.05)' }}>
+                        {item.label}
+                      </Typography>
+                      <List disablePadding>
+                        {item.children!.map((child, cIdx) => {
+                          const isChildActive = child.path ? location.pathname === child.path : false;
+                          return (
+                            <ListItemButton
+                              key={cIdx}
+                              onClick={() => {
+                                if (child.path) navigate(child.path);
+                                if (onItemClick) onItemClick();
+                              }}
+                              sx={{
+                                px: 2, py: 1.2,
+                                color: isChildActive ? 'var(--color-primary-main)' : 'var(--color-text-secondary)',
+                                '&:hover': { color: 'var(--color-primary-main)', bgcolor: 'rgba(124, 58, 237, 0.02)' }
+                              }}
+                            >
+                              <ListItemText primary={<Typography variant="body2" sx={{ fontWeight: isChildActive ? 600 : 400 }}>{child.label}</Typography>} />
+                            </ListItemButton>
+                          );
+                        })}
+                      </List>
+                    </Box>
+                  ) : (
+                    item.label
+                  )
+                ) : (
+                  ''
+                )
+              }
+              placement="right-start"
+              interactive={hasChildren}
+              disableHoverListener={!collapsed}
+              slotProps={{
+                popper: {
+                  sx: {
+                    [`& .${tooltipClasses.tooltip}`]: hasChildren ? {
+                      bgcolor: 'var(--color-bg-paper)',
+                      color: 'var(--color-text-primary)',
+                      boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
+                      border: '1px solid var(--color-border-default)',
+                      p: 0,
+                      minWidth: 220,
+                      borderRadius: 2
+                    } : undefined
                   }
-                }}
-              >
-                <ListItemIcon sx={{ minWidth: 0, mr: collapsed ? 'auto' : 3, justifyContent: 'center', color: 'inherit' }}>
-                  {item.icon}
-                </ListItemIcon>
-                {!collapsed && (
-                  <ListItemText primary={<Typography variant="body2" sx={{ fontWeight: isActive ? 700 : 500 }}>{item.label}</Typography>} />
+                }
+              }}
+            >
+              <Box sx={{ width: '100%' }}>
+                {hasChildren ? (
+                  <>
+                    {(() => {
+                      const parentButton = (
+                        <ListItemButton
+                          onClick={(e) => {
+                            if (item.disable?.includes(userRole)) {
+                              e.preventDefault();
+                              return;
+                            }
+                            toggleSubmenu(item.label);
+                            if (onItemClick && collapsed) onItemClick();
+                          }}
+                          sx={{
+                            minHeight: 48, justifyContent: collapsed ? 'center' : 'initial', px: 2.5, py: 1.5,
+                            color: isActive ? 'var(--color-primary-main)' : 'var(--color-text-secondary)',
+                            opacity: item.disable?.includes(userRole) ? 0.5 : 1,
+                            cursor: item.disable?.includes(userRole) ? 'not-allowed' : 'pointer',
+                            '&:hover': item.disable?.includes(userRole) ? {} : { bgcolor: 'rgba(124, 58, 237, 0.03)', color: 'var(--color-primary-main)' }
+                          }}
+                        >
+                          <ListItemIcon sx={{ minWidth: 0, mr: collapsed ? 'auto' : 3, justifyContent: 'center', color: 'inherit' }}>
+                            {item.icon}
+                          </ListItemIcon>
+                          {!collapsed && (
+                            <>
+                              <ListItemText primary={<Typography variant="body2" sx={{ fontWeight: 500 }}>{item.label}</Typography>} />
+                              {isSubmenuOpen ? <FaChevronUp size={12} /> : <FaChevronDown size={12} />}
+                            </>
+                          )}
+                        </ListItemButton>
+                      );
+                      return item.disable?.includes(userRole) ? (
+                        <Tooltip title="You are not authorized to access this" placement="right">
+                          <Box>{parentButton}</Box>
+                        </Tooltip>
+                      ) : parentButton;
+                    })()}
+
+                    {!collapsed && (
+                      <Collapse in={isSubmenuOpen} timeout="auto" unmountOnExit>
+                        <List component="div" disablePadding>
+                          {item.children!.map((child, cIdx) => {
+                            const isChildActive = child.path ? location.pathname === child.path : false;
+                            const isChildDisabled = child.disable?.includes(userRole);
+                            const childButton = (
+                              <ListItemButton
+                                key={cIdx}
+                                onClick={(e) => {
+                                  if (isChildDisabled) {
+                                    e.preventDefault();
+                                    return;
+                                  }
+                                  if (child.path) navigate(child.path);
+                                  if (onItemClick) onItemClick();
+                                }}
+                                sx={{
+                                  minHeight: 40, pl: 9,
+                                  color: isChildActive ? 'var(--color-primary-main)' : 'var(--color-text-secondary)',
+                                  opacity: isChildDisabled ? 0.5 : 1,
+                                  cursor: isChildDisabled ? 'not-allowed' : 'pointer',
+                                  '&:hover': isChildDisabled ? {} : { color: 'var(--color-primary-main)', bgcolor: 'rgba(124, 58, 237, 0.02)' },
+                                  position: 'relative',
+                                  '&::before': {
+                                    content: '""',
+                                    position: 'absolute',
+                                    left: 52,
+                                    top: '50%',
+                                    width: 6,
+                                    height: 6,
+                                    borderRadius: '50%',
+                                    bgcolor: isChildActive ? 'var(--color-primary-main)' : 'var(--color-text-disabled)',
+                                    transform: 'translateY(-50%)',
+                                    transition: 'all 0.2s ease-in-out'
+                                  },
+                                  '&:hover::before': isChildDisabled ? {} : {
+                                    bgcolor: 'var(--color-primary-main)',
+                                    transform: 'translateY(-50%) scale(1.2)'
+                                  }
+                                }}
+                              >
+                                <ListItemText primary={<Typography variant="body2" sx={{ fontSize: '0.85rem', fontWeight: isChildActive ? 600 : 400 }}>{child.label}</Typography>} />
+                              </ListItemButton>
+                            );
+                            
+                            return isChildDisabled ? (
+                              <Tooltip title="You are not authorized to access this" placement="right" key={cIdx}>
+                                <Box>{childButton}</Box>
+                              </Tooltip>
+                            ) : childButton;
+                          })}
+                        </List>
+                      </Collapse>
+                    )}
+                  </>
+                ) : (
+                  (() => {
+                    const singleButton = (
+                      <ListItemButton
+                        onClick={(e) => {
+                          if (item.disable?.includes(userRole)) {
+                            e.preventDefault();
+                            return;
+                          }
+                          if (item.path) navigate(item.path);
+                          if (onItemClick) onItemClick();
+                        }}
+                        sx={{
+                          minHeight: 48, justifyContent: collapsed ? 'center' : 'initial', px: 2.5, py: 1.5,
+                          color: isActive ? 'var(--color-primary-main)' : 'var(--color-text-secondary)',
+                          bgcolor: isActive ? 'rgba(124, 58, 237, 0.05)' : 'transparent',
+                          opacity: item.disable?.includes(userRole) ? 0.5 : 1,
+                          cursor: item.disable?.includes(userRole) ? 'not-allowed' : 'pointer',
+                          '&:hover': item.disable?.includes(userRole) ? {} : {
+                            bgcolor: 'rgba(124, 58, 237, 0.03)', color: 'var(--color-primary-main)',
+                            '& .MuiListItemIcon-root': { color: 'var(--color-primary-main)' }
+                          }
+                        }}
+                      >
+                        <ListItemIcon sx={{ minWidth: 0, mr: collapsed ? 'auto' : 3, justifyContent: 'center', color: 'inherit' }}>
+                          {item.icon}
+                        </ListItemIcon>
+                        {!collapsed && (
+                          <ListItemText primary={<Typography variant="body2" sx={{ fontWeight: isActive ? 700 : 500 }}>{item.label}</Typography>} />
+                        )}
+                      </ListItemButton>
+                    );
+                    return item.disable?.includes(userRole) ? (
+                      <Tooltip title="You are not authorized to access this" placement="right">
+                        <Box>{singleButton}</Box>
+                      </Tooltip>
+                    ) : singleButton;
+                  })()
                 )}
-              </ListItemButton>
-            )}
+              </Box>
+            </Tooltip>
           </ListItem>
         );
       })}

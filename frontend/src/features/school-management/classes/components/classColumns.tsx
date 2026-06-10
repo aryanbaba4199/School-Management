@@ -76,7 +76,7 @@ export const getClassColumns = ({ onView, onEdit, onDelete, onTeacherClick, isSu
           render: (row: IClass) => {
             const school = row.schoolId;
             if (school && typeof school === 'object' && 'name' in school) {
-              return `${(school as any).name}`;
+              return `${(school as { name: string }).name}`;
             }
             return '-';
           },
@@ -94,7 +94,7 @@ export const getClassColumns = ({ onView, onEdit, onDelete, onTeacherClick, isSu
           <Box>
             <Typography 
               variant="body2" 
-              onClick={() => onTeacherClick?.((teacher as any)._id)}
+              onClick={() => onTeacherClick?.((teacher as { _id: string; name: string; email: string })._id)}
               sx={{ 
                 fontWeight: 600, 
                 color: onTeacherClick ? 'var(--color-primary-main)' : 'var(--color-text-primary)',
@@ -102,10 +102,10 @@ export const getClassColumns = ({ onView, onEdit, onDelete, onTeacherClick, isSu
                 '&:hover': onTeacherClick ? { textDecoration: 'underline' } : {}
               }}
             >
-              {(teacher as any).name}
+              {(teacher as { name: string }).name}
             </Typography>
             <Typography variant="caption" sx={{ color: 'var(--color-text-secondary)' }}>
-              {(teacher as any).email}
+              {(teacher as { email: string }).email}
             </Typography>
           </Box>
         );
@@ -122,7 +122,7 @@ export const getClassColumns = ({ onView, onEdit, onDelete, onTeacherClick, isSu
       if (sections.length === 0) return '-';
       return (
         <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
-          {sections.map((sec: any) => (
+          {sections.map((sec: { _id: string; name: string }) => (
             <Chip key={sec._id} label={sec.name} size="small" variant="outlined" />
           ))}
         </Box>

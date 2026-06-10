@@ -62,12 +62,12 @@ export function useParents() {
     }
   };
 
-  const handleEdit = (parent: ISchoolUser) => {
+  const handleEdit = (user: ISchoolUser) => {
     openDialog('PARENT_FORM', {
-      user: parent,
+      userId: user._id,
       onSubmit: async (data: Partial<ISchoolUser> & { password?: string }) => {
         try {
-          await updateUser({ id: parent._id, body: data }).unwrap();
+          await updateUser({ id: user._id, body: data }).unwrap();
           notifier.showSuccess('Parent updated successfully!');
           closeDialog();
         } catch (err: unknown) {

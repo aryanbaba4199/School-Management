@@ -166,6 +166,7 @@ export class SchoolService {
     if (input.shift !== undefined) school.shift = input.shift;
     if (input.startTime !== undefined) school.startTime = input.startTime;
     if (input.endTime !== undefined) school.endTime = input.endTime;
+    if (input.admissionFee !== undefined) school.admissionFee = input.admissionFee;
     
     // Handle Subscription/Billing Cycle updates
     if (input.subscriptionPlan) {

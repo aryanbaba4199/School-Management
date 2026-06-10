@@ -14,3 +14,6 @@ make a menu Account Management
 and make two submenu for now 
 Fees Management, 
 Transaction Management, 
+
+
+in class creation time also ask the monthly and yearly fees ( have to update the class schema also )

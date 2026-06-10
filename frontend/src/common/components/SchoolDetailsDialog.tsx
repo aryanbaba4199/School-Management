@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import {
   DialogTitle,
   DialogContent,
@@ -32,85 +31,16 @@ const InfoBox = styled(Box)`
   height: 100%;
 `;
 
+import { useGetSchoolByIdQuery } from '../../api/schoolsApi';
+
 interface SchoolDetailsDialogProps {
   schoolId: string;
   onClose: () => void;
 }
 
-interface MockSchool {
-  _id: string;
-  name: string;
-  code: string;
-  subdomain: string;
-  email: string;
-  phone: string;
-  address?: string;
-  boardType: string;
-  subscriptionName: string;
-  maxStudents: number;
-  admissionFee?: number;
-  isActive: boolean;
-  settings: {
-    attendanceEnabled: boolean;
-    onlineExamEnabled: boolean;
-    aiAnalyticsEnabled: boolean;
-    parentAppEnabled: boolean;
-  };
-}
-
-const mockSchoolsDb: Record<string, MockSchool> = {
-  'school-1': {
-    _id: 'school-1',
-    name: 'Greenwood International School',
-    code: 'GWIS',
-    subdomain: 'greenwood',
-    email: 'info@greenwood.edu.in',
-    phone: '+91 22 2345 6789',
-    address: 'Plot 12, Sector 15, Vashi, Navi Mumbai, Maharashtra, 400703',
-    boardType: 'CBSE',
-    subscriptionName: 'Premium Plan',
-    maxStudents: 1500,
-    isActive: true,
-    settings: {
-      attendanceEnabled: true,
-      onlineExamEnabled: true,
-      aiAnalyticsEnabled: true,
-      parentAppEnabled: true,
-    },
-  },
-  'school-2': {
-    _id: 'school-2',
-    name: 'Saint Xavier Academy',
-    code: 'SXAC',
-    subdomain: 'stxaviers',
-    email: 'contact@sxac.edu.in',
-    phone: '+91 33 2211 4455',
-    address: '5 Roy Street, Kolkata, West Bengal, 700020',
-    boardType: 'ICSE',
-    subscriptionName: 'Standard Plan',
-    maxStudents: 800,
-    isActive: true,
-    settings: {
-      attendanceEnabled: true,
-      onlineExamEnabled: false,
-      aiAnalyticsEnabled: false,
-      parentAppEnabled: true,
-    },
-  },
-};
-
 export default function SchoolDetailsDialog({ schoolId, onClose }: SchoolDetailsDialogProps) {
-  const [school, setSchool] = useState<MockSchool | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const found = mockSchoolsDb[schoolId] || mockSchoolsDb['school-1'];
-      setSchool(found);
-      setLoading(false);
-    }, 450);
-    return () => clearTimeout(timer);
-  }, [schoolId]);
+  const { data: res, isLoading: loading } = useGetSchoolByIdQuery(schoolId, { skip: !schoolId });
+  const school = res?.success ? res.data : null;
 
   if (loading) {
     return (
@@ -146,9 +76,9 @@ export default function SchoolDetailsDialog({ schoolId, onClose }: SchoolDetails
               {school.name}
             </Typography>
             <Box sx={{ display: 'flex', gap: 1, mt: 0.5, alignItems: 'center' }}>
-              <Chip label={school.boardType} color="primary" size="small" variant="outlined" />
+              <Chip label={typeof school.boardType === 'object' ? (school.boardType as { acronym?: string; name: string }).acronym || (school.boardType as { name: string }).name : school.boardType} color="primary" size="small" variant="outlined" />
               <Chip label={`Code: ${school.code}`} size="small" />
-              <Chip label={school.subscriptionName} color="secondary" size="small" />
+              <Chip label={typeof school.subscriptionPlan === 'object' ? (school.subscriptionPlan as { name: string }).name : school.subscriptionPlan} color="secondary" size="small" />
               <Chip
                 label={school.isActive ? 'Active' : 'Inactive'}
                 color={school.isActive ? 'success' : 'default'}
@@ -189,7 +119,7 @@ export default function SchoolDetailsDialog({ schoolId, onClose }: SchoolDetails
             <SectionTitle><FaTools size={16} /> Features & Settings</SectionTitle>
             <InfoBox>
               <Grid container spacing={1}>
-                {Object.entries(school.settings).map(([key, enabled]) => (
+                {Object.entries(school.settings || {}).map(([key, enabled]) => (
                   <Grid size={6} key={key}>
                     <Typography variant="caption" color="textSecondary" sx={{ textTransform: 'capitalize' }}>
                       {key.replace(/Enabled$/, '').replace(/([A-Z])/g, ' $1')}
@@ -212,7 +142,7 @@ export default function SchoolDetailsDialog({ schoolId, onClose }: SchoolDetails
             <SectionTitle><FaSchool size={16} /> Subscriptions & Scaling</SectionTitle>
             <InfoBox>
               <Typography variant="body2" sx={{ mb: 1 }}>
-                <strong>Tier:</strong> {school.subscriptionName}
+                <strong>Tier:</strong> {typeof school.subscriptionPlan === 'object' ? (school.subscriptionPlan as { name: string }).name : school.subscriptionPlan}
               </Typography>
               <Typography variant="body2">
                 <strong>Capacity Limit:</strong> {school.maxStudents} Students

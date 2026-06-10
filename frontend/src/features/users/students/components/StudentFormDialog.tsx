@@ -1,30 +1,27 @@
 import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import type { Resolver } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { DialogTitle, DialogContent, DialogActions, Button, Grid, Box } from '@mui/material';
+import { DialogTitle, DialogContent, DialogActions, Button, Grid, Box, CircularProgress, Autocomplete, TextField } from '@mui/material';
 import { FormTextField, FormSelectField } from '@common/Forms';
-import { useGetUsersQuery } from '../../../../api/usersApi';
+import { useGetUsersQuery, useGetUserByIdQuery } from '../../../../api/usersApi';
 import { useGetStatesQuery, useGetDistrictsQuery } from '../../../../api/masterApi';
+import { useGetClassesQuery } from '../../../../api/classesApi';
 import { studentSchema, type StudentFormData } from '../schema/student.schema';
 import type { ISchoolUser } from '../../../../api/usersApi';
 
 interface StudentFormDialogProps {
   onClose: () => void;
   onSubmit: (data: Partial<ISchoolUser> & { password?: string }) => void;
-  user?: ISchoolUser | null;
+  userId?: string;
   isLoading?: boolean;
 }
 
-const CLASS_OPTIONS = [
-  { value: '60f7c223405c102c98d6c820', label: 'Class 10-A' },
-  { value: '60f7c223405c102c98d6c821', label: 'Class 9-B' },
-  { value: '60f7c223405c102c98d6c822', label: 'Class 8-C' },
-  { value: '60f7c223405c102c98d6c823', label: 'Class 11-A' },
-  { value: '60f7c223405c102c98d6c824', label: 'Class 12-B' },
-];
 
-export function StudentFormDialog({ onClose, onSubmit, user, isLoading = false }: StudentFormDialogProps) {
+
+export function StudentFormDialog({ onClose, onSubmit, userId, isLoading = false }: StudentFormDialogProps) {
+  const { data: userRes, isLoading: isUserLoading } = useGetUserByIdQuery(userId!, { skip: !userId });
+  const user = userRes?.success ? userRes.data : null;
   const { data: parentsRes } = useGetUsersQuery({ role: 'PARENT' });
   const parents = parentsRes?.success ? parentsRes.data : [];
 
@@ -49,6 +46,16 @@ export function StudentFormDialog({ onClose, onSubmit, user, isLoading = false }
   });
 
   const selectedState = watch('address.state');
+  const selectedClassId = watch('classId');
+
+  const mapToOpts = (items: { _id: string; name: string }[]) => items.map(i => ({ value: i._id, label: i.name }));
+
+  const { data: classesRes } = useGetClassesQuery();
+  const classes = classesRes?.success ? classesRes.data : [];
+  const classOptions = mapToOpts(classes);
+
+  const selectedClass = classes.find(c => c._id === selectedClassId);
+  const sectionOptions = selectedClass ? mapToOpts(selectedClass.sections) : [];
 
   const { data: statesRes } = useGetStatesQuery('');
   const states = statesRes?.success ? statesRes.data : [];
@@ -77,7 +84,6 @@ export function StudentFormDialog({ onClose, onSubmit, user, isLoading = false }
     }
   }, [user, reset]);
 
-  const mapToOpts = (items: { _id: string; name: string }[]) => items.map(i => ({ value: i._id, label: i.name }));
 
   const onFormSubmit = (formData: StudentFormData) => {
     const submitPayload: Partial<ISchoolUser> & { password?: string } = {
@@ -105,10 +111,18 @@ export function StudentFormDialog({ onClose, onSubmit, user, isLoading = false }
     onSubmit(submitPayload);
   };
 
+  if (isUserLoading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4, minHeight: 300, alignItems: 'center' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
   return (
     <>
       <DialogTitle sx={{ fontWeight: 800, borderBottom: '1px solid var(--color-border-default)', pb: 2 }}>
-        {user ? 'Edit Student' : 'Add New Student'}
+        {userId ? 'Edit Student' : 'Add New Student'}
       </DialogTitle>
       <DialogContent sx={{ pt: 3, pb: 2 }}>
         <Box component="form" noValidate sx={{ mt: 1 }}>
@@ -120,7 +134,7 @@ export function StudentFormDialog({ onClose, onSubmit, user, isLoading = false }
               <FormTextField name="email" control={control} label="Email Address" required disabled={isLoading} />
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
-              <FormTextField name="password" control={control} label={user ? 'Password (Leave blank to keep same)' : 'Password'} type="password" required={!user} disabled={isLoading} />
+              <FormTextField name="password" control={control} label={userId ? 'Password (Leave blank to keep same)' : 'Password'} type="password" required={!userId} disabled={isLoading} />
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
               <FormTextField name="userCode" control={control} label="Admission Number" required disabled={isLoading} />
@@ -129,10 +143,60 @@ export function StudentFormDialog({ onClose, onSubmit, user, isLoading = false }
               <FormTextField name="phone" control={control} label="Phone Number" disabled={isLoading} />
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
-              <FormSelectField name="classId" control={control} label="Class & Section" options={CLASS_OPTIONS} disabled={isLoading} />
+              <FormSelectField
+                name="classId"
+                control={control}
+                label="Class"
+                options={classOptions}
+                required
+              />
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
-              <FormSelectField name="parentId" control={control} label="Parent/Guardian" options={parents.map(p => ({ value: p._id, label: `${p.name} (${p.userCode})` }))} disabled={isLoading} />
+              <FormSelectField
+                name="sectionId"
+                control={control}
+                label="Section"
+                options={sectionOptions}
+                required
+                disabled={!selectedClassId || sectionOptions.length === 0}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <Controller
+                name="parentId"
+                control={control}
+                render={({ field: { onChange, value }, fieldState: { error } }) => {
+                  const parentOptions = parents.map(p => ({ value: p._id, label: `${p.name} (${p.userCode})` }));
+                  const selectedOption = parentOptions.find(o => o.value === value) || null;
+                  return (
+                    <Autocomplete
+                      options={parentOptions}
+                      getOptionLabel={(option) => option.label}
+                      value={selectedOption}
+                      onChange={(_, newValue) => {
+                        onChange(newValue ? newValue.value : '');
+                      }}
+                      disabled={isLoading}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Parent/Guardian"
+                          error={!!error}
+                          helperText={error?.message}
+                          variant="outlined"
+                          size="small"
+                          sx={{ 
+                            '& .MuiOutlinedInput-root': {
+                              bgcolor: 'var(--color-bg-primary)',
+                              borderRadius: '8px'
+                            }
+                          }}
+                        />
+                      )}
+                    />
+                  );
+                }}
+              />
             </Grid>
             <Grid size={{ xs: 12, sm: 12 }}>
               <FormTextField name="address.street" control={control} label="Street Address" disabled={isLoading} />
@@ -154,7 +218,7 @@ export function StudentFormDialog({ onClose, onSubmit, user, isLoading = false }
           Cancel
         </Button>
         <Button onClick={handleSubmit(onFormSubmit)} variant="contained" color="primary" sx={{ textTransform: 'none' }} disabled={isLoading}>
-          {user ? 'Save Changes' : 'Add Student'}
+          {userId ? 'Save Changes' : 'Add Student'}
         </Button>
       </DialogActions>
     </>

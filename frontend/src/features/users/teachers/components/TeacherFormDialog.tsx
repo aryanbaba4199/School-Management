@@ -2,23 +2,26 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import type { Resolver } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { DialogTitle, DialogContent, DialogActions, Button, Grid, Box } from '@mui/material';
+import { DialogTitle, DialogContent, DialogActions, Button, Grid, Box, CircularProgress } from '@mui/material';
 import { FormTextField, FormSelectField } from '@common/Forms';
 import { useGetStatesQuery, useGetDistrictsQuery } from '../../../../api/masterApi';
 import { useGetSubjectsQuery } from '../../../../api/subjectsApi';
 import { useGetSchoolsQuery } from '../../../../api/schoolsApi';
 import { useAuth } from '@common/hooks/useAuth';
 import { teacherSchema, type TeacherFormData } from '../schema/teacher.schema';
+import { useGetUserByIdQuery } from '../../../../api/usersApi';
 import type { ISchoolUser } from '../../../../api/usersApi';
 
 interface TeacherFormDialogProps {
   onClose: () => void;
   onSubmit: (data: Partial<ISchoolUser> & { password?: string }) => void;
-  user?: ISchoolUser | null;
+  userId?: string;
   isLoading?: boolean;
 }
 
-export function TeacherFormDialog({ onClose, onSubmit, user, isLoading = false }: TeacherFormDialogProps) {
+export function TeacherFormDialog({ onClose, onSubmit, userId, isLoading = false }: TeacherFormDialogProps) {
+  const { data: userRes, isLoading: isUserLoading } = useGetUserByIdQuery(userId!, { skip: !userId });
+  const user = userRes?.success ? userRes.data : null;
   const { user: currentUser } = useAuth();
   const isSuperAdmin = currentUser?.role?.name === 'SUPER_ADMIN';
 
@@ -110,10 +113,18 @@ export function TeacherFormDialog({ onClose, onSubmit, user, isLoading = false }
     onSubmit(submitPayload);
   };
 
+  if (isUserLoading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4, minHeight: 300, alignItems: 'center' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
   return (
     <>
       <DialogTitle sx={{ fontWeight: 800, borderBottom: '1px solid var(--color-border-default)', pb: 2 }}>
-        {user ? 'Edit Tutors Details' : 'Add New Teacher'}
+        {userId ? 'Edit Tutors Details' : 'Add New Teacher'}
       </DialogTitle>
       <DialogContent sx={{ pt: 3, pb: 2 }}>
         <Box component="form" noValidate sx={{ mt: 1 }}>
@@ -136,7 +147,7 @@ export function TeacherFormDialog({ onClose, onSubmit, user, isLoading = false }
               <FormTextField name="email" control={control} label="Email Address" required disabled={isLoading} />
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
-              <FormTextField name="password" control={control} label={user ? 'Password (Leave blank to keep same)' : 'Password'} type="password" required={!user} disabled={isLoading} />
+              <FormTextField name="password" control={control} label={userId ? 'Password (Leave blank to keep same)' : 'Password'} type="password" required={!userId} disabled={isLoading} />
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
               <FormTextField name="userCode" control={control} label="Employee ID" required disabled={isLoading} />
@@ -167,7 +178,7 @@ export function TeacherFormDialog({ onClose, onSubmit, user, isLoading = false }
           Cancel
         </Button>
         <Button onClick={handleSubmit(onFormSubmit)} variant="contained" color="primary" sx={{ textTransform: 'none' }} disabled={isLoading}>
-          {user ? 'Save Changes' : 'Add Teacher'}
+          {userId ? 'Save Changes' : 'Add Teacher'}
         </Button>
       </DialogActions>
     </>

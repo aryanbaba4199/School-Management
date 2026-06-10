@@ -12,8 +12,8 @@ router.post('/', authenticate, requireRoles('SUPER_ADMIN'), validate(CreateSchoo
 router.get('/', authenticate, requireRoles('SUPER_ADMIN'), controller.list);
 router.get('/drafts/:email', authenticate, requireRoles('SUPER_ADMIN'), controller.getDraft);
 router.post('/drafts', authenticate, requireRoles('SUPER_ADMIN'), controller.saveDraft);
-router.get('/:id', authenticate, requireRoles('SUPER_ADMIN'), controller.getById);
-router.put('/:id', authenticate, requireRoles('SUPER_ADMIN'), controller.update);
+router.get('/:id', authenticate, requireRoles('SUPER_ADMIN', 'SCHOOL_ADMIN'), controller.getById);
+router.put('/:id', authenticate, requireRoles('SUPER_ADMIN', 'SCHOOL_ADMIN'), controller.update);
 router.patch('/:id/deactivate', authenticate, requireRoles('SUPER_ADMIN'), controller.toggleDeactivate);
 router.delete('/:id', authenticate, requireRoles('SUPER_ADMIN'), controller.deleteSchool);
 

@@ -66,7 +66,7 @@ export function useSchools() {
 
   const handleEdit = (school: ISchool) => {
     openDialog('SCHOOL_FORM', {
-      school,
+      schoolId: school._id,
       onSubmit: async (data: SchoolFormData) => {
         try {
           await updateSchool({ id: school._id, body: data }).unwrap();

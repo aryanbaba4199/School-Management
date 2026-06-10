@@ -62,12 +62,12 @@ export function useTeachers() {
     }
   };
 
-  const handleEdit = (teacher: ISchoolUser) => {
+  const handleEdit = (user: ISchoolUser) => {
     openDialog('TEACHER_FORM', {
-      user: teacher,
+      userId: user._id,
       onSubmit: async (data: Partial<ISchoolUser> & { password?: string }) => {
         try {
-          await updateUser({ id: teacher._id, body: data }).unwrap();
+          await updateUser({ id: user._id, body: data }).unwrap();
           notifier.showSuccess('Teacher updated successfully!');
           closeDialog();
         } catch (err: unknown) {

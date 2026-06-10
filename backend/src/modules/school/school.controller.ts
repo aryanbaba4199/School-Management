@@ -52,6 +52,10 @@ export class SchoolController {
   async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const id = req.params.id as string;
+      if (req.user?.role !== 'SUPER_ADMIN' && req.user?.schoolId !== id) {
+        sendError(res, 403, 'Access denied. You do not have permission to access this resource.');
+        return;
+      }
       const school = await schoolService.getSchoolById(id);
       sendSuccess(res, 200, school);
     } catch (error) {
@@ -96,6 +100,10 @@ export class SchoolController {
   async update(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const id = req.params.id as string;
+      if (req.user?.role !== 'SUPER_ADMIN' && req.user?.schoolId !== id) {
+        sendError(res, 403, 'Access denied. You do not have permission to access this resource.');
+        return;
+      }
       const school = await schoolService.updateSchool(id, req.body);
       sendSuccess(res, 200, school);
     } catch (error) {

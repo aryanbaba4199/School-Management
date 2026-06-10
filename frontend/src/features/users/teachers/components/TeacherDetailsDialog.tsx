@@ -96,7 +96,7 @@ export default function TeacherDetailsDialog({ userId, onClose }: TeacherDetails
                   </Typography>
                   <Typography variant="body1" sx={{ fontWeight: 500 }}>
                     {teacherData.schoolId && typeof teacherData.schoolId === 'object' && 'name' in teacherData.schoolId
-                      ? `${(teacherData.schoolId as any).name}`
+                      ? `${(teacherData.schoolId as { name: string }).name}`
                       : 'Default Institute'}
                   </Typography>
                 </Grid>
@@ -112,7 +112,7 @@ export default function TeacherDetailsDialog({ userId, onClose }: TeacherDetails
               <Divider sx={{ mb: 2 }} />
               <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                 {teacherData.subjects && teacherData.subjects.length > 0 ? (
-                  teacherData.subjects.map((sub: any) => (
+                  teacherData.subjects.map((sub: { _id: string; name: string } | string) => (
                     <Chip 
                       key={sub._id || sub} 
                       label={typeof sub === 'object' ? sub.name : sub} 

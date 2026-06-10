@@ -3,6 +3,9 @@ import { Box, Typography, IconButton, Badge, Menu, MenuItem, ListItemIcon, Avata
 import { FaBars, FaBell, FaSun, FaMoon, FaSignOutAlt, FaUser } from 'react-icons/fa';
 import { useAppTheme } from '../../../features/themes/components/AppThemeProvider';
 import { useAuth } from '@common/hooks/useAuth';
+import { useDialog } from '@common/Dialogs/dialog.provider';
+import { useUpdateSchoolMutation } from '../../../api/schoolsApi';
+import { useNotifier } from '@common/Notifier/NotifierProvider';
 import type { NavbarProps } from '../types/navbar.types';
 import { NavbarWrapper, BrandBox } from '../styles/navbar.styles';
 
@@ -10,6 +13,9 @@ export function Navbar({ onToggleSidebar }: NavbarProps) {
   const { mode, toggleTheme } = useAppTheme();
   const { user, logout } = useAuth();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const { openDialog, closeDialog } = useDialog();
+  const [updateSchool] = useUpdateSchoolMutation();
+  const notifier = useNotifier();
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -22,6 +28,28 @@ export function Navbar({ onToggleSidebar }: NavbarProps) {
   const handleLogoutClick = () => {
     handleMenuClose();
     logout();
+  };
+
+  const handleProfileClick = () => {
+    handleMenuClose();
+    if (user?.role?.name === 'SUPER_ADMIN') {
+      openDialog('USER_DETAILS', { userId: user._id });
+    } else if (user?.role?.name === 'SCHOOL_ADMIN' && user.schoolId) {
+      const schoolId = typeof user.schoolId === 'object' ? user.schoolId._id : user.schoolId;
+      openDialog('SCHOOL_FORM', {
+        schoolId,
+        onSubmit: async (data) => {
+          try {
+            await updateSchool({ id: schoolId, body: data }).unwrap();
+            notifier.showSuccess('School updated successfully!');
+            closeDialog();
+          } catch (err: unknown) {
+            const error = err as { data?: { message?: string }; message?: string };
+            notifier.showError(error?.data?.message || error?.message || 'Failed to update school');
+          }
+        }
+      });
+    }
   };
 
   return (
@@ -105,12 +133,14 @@ export function Navbar({ onToggleSidebar }: NavbarProps) {
                 </Typography>
               </Box>
 
-              <MenuItem onClick={handleMenuClose} sx={{ color: 'var(--color-text-primary)' }}>
-                <ListItemIcon sx={{ color: 'var(--color-text-secondary)', minWidth: 36 }}>
-                  <FaUser size={14} />
-                </ListItemIcon>
-                Profile
-              </MenuItem>
+              {(user.role.name === 'SUPER_ADMIN' || user.role.name === 'SCHOOL_ADMIN') && (
+                <MenuItem onClick={handleProfileClick} sx={{ color: 'var(--color-text-primary)' }}>
+                  <ListItemIcon sx={{ color: 'var(--color-text-secondary)', minWidth: 36 }}>
+                    <FaUser size={14} />
+                  </ListItemIcon>
+                  Profile
+                </MenuItem>
+              )}
 
               <MenuItem onClick={handleLogoutClick} sx={{ color: 'var(--color-text-primary)' }} data-testid="logout-menu-item">
                 <ListItemIcon sx={{ color: 'var(--color-text-secondary)', minWidth: 36 }}>

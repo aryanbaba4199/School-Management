@@ -2,9 +2,9 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import type { Resolver } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { DialogTitle, DialogContent, DialogActions, Button, Grid, Box } from '@mui/material';
+import { DialogTitle, DialogContent, DialogActions, Button, Grid, Box, CircularProgress } from '@mui/material';
 import { FormTextField, FormSelectField } from '@common/Forms';
-import { useGetUsersQuery } from '../../../../api/usersApi';
+import { useGetUsersQuery, useGetUserByIdQuery } from '../../../../api/usersApi';
 import { useGetStatesQuery, useGetDistrictsQuery } from '../../../../api/masterApi';
 import { parentSchema, type ParentFormData } from '../schema/parent.schema';
 import type { ISchoolUser } from '../../../../api/usersApi';
@@ -12,11 +12,13 @@ import type { ISchoolUser } from '../../../../api/usersApi';
 interface ParentFormDialogProps {
   onClose: () => void;
   onSubmit: (data: Partial<ISchoolUser> & { password?: string }) => void;
-  user?: ISchoolUser | null;
+  userId?: string;
   isLoading?: boolean;
 }
 
-export function ParentFormDialog({ onClose, onSubmit, user, isLoading = false }: ParentFormDialogProps) {
+export function ParentFormDialog({ onClose, onSubmit, userId, isLoading = false }: ParentFormDialogProps) {
+  const { data: userRes, isLoading: isUserLoading } = useGetUserByIdQuery(userId!, { skip: !userId });
+  const user = userRes?.success ? userRes.data : null;
   const { data: studentsRes } = useGetUsersQuery({ role: 'STUDENT' });
   const students = studentsRes?.success ? studentsRes.data : [];
 
@@ -91,10 +93,18 @@ export function ParentFormDialog({ onClose, onSubmit, user, isLoading = false }:
     onSubmit(submitPayload);
   };
 
+  if (isUserLoading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4, minHeight: 300, alignItems: 'center' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
   return (
     <>
       <DialogTitle sx={{ fontWeight: 800, borderBottom: '1px solid var(--color-border-default)', pb: 2 }}>
-        {user ? 'Edit Parent Details' : 'Add New Parent'}
+        {userId ? 'Edit Parent Details' : 'Add New Parent'}
       </DialogTitle>
       <DialogContent sx={{ pt: 3, pb: 2 }}>
         <Box component="form" noValidate sx={{ mt: 1 }}>
@@ -106,7 +116,7 @@ export function ParentFormDialog({ onClose, onSubmit, user, isLoading = false }:
               <FormTextField name="email" control={control} label="Email Address" required disabled={isLoading} />
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
-              <FormTextField name="password" control={control} label={user ? 'Password (Leave blank to keep same)' : 'Password'} type="password" required={!user} disabled={isLoading} />
+              <FormTextField name="password" control={control} label={userId ? 'Password (Leave blank to keep same)' : 'Password'} type="password" required={!userId} disabled={isLoading} />
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
               <FormTextField name="userCode" control={control} label="Guardian ID" required disabled={isLoading} />
@@ -137,7 +147,7 @@ export function ParentFormDialog({ onClose, onSubmit, user, isLoading = false }:
           Cancel
         </Button>
         <Button onClick={handleSubmit(onFormSubmit)} variant="contained" color="primary" sx={{ textTransform: 'none' }} disabled={isLoading}>
-          {user ? 'Save Changes' : 'Add Parent'}
+          {userId ? 'Save Changes' : 'Add Parent'}
         </Button>
       </DialogActions>
     </>

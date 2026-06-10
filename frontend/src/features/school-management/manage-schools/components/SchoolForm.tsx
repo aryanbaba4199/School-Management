@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import type { DefaultValues } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -7,8 +7,8 @@ import { schoolSchema, type SchoolFormData } from '../schema/school.schema';
 import { StepCredentials } from './RegistrationSteps/StepCredentials';
 import { StepDetails } from './RegistrationSteps/StepDetails';
 import { StepSubscription } from './RegistrationSteps/StepSubscription';
-import { useSaveDraftMutation } from '../../../../api/schoolsApi';
-import type { ISchool, ISchoolDraft } from '../types/schools.types';
+import { useSaveDraftMutation, useGetSchoolByIdQuery } from '../../../../api/schoolsApi';
+import type { ISchoolDraft } from '../types/schools.types';
 import {
   useGetSubscriptionPlansQuery,
   useGetCountriesQuery,
@@ -26,12 +26,10 @@ import { MasterDataAddDialog } from './MasterDialogs/MasterDataAddDialog';
 import type { MasterDataPayload } from './MasterDialogs/MasterDataAddDialog';
 
 interface SchoolFormProps {
-  school?: ISchool | null;
+  schoolId?: string;
   onSubmit: (data: SchoolFormData) => void;
   onCancel: () => void;
 }
-
-
 
 const STEP_FIELDS: (keyof SchoolFormData | string)[][] = [
   ['adminName', 'adminEmail', 'adminPassword'],
@@ -39,8 +37,11 @@ const STEP_FIELDS: (keyof SchoolFormData | string)[][] = [
   ['subscriptionPlan', 'billingCycle', 'maxStudents', 'settings.attendanceEnabled', 'settings.onlineExamEnabled', 'settings.aiAnalyticsEnabled', 'settings.parentAppEnabled'],
 ];
 
-export function SchoolForm({ school = null, onSubmit, onCancel }: SchoolFormProps) {
-  const steps = school ? ['School Details', 'Subscription & Features'] : ['Admin Credentials', 'School Details', 'Subscription & Features'];
+export function SchoolForm({ schoolId, onSubmit, onCancel }: SchoolFormProps) {
+  const { data: schoolRes, isLoading: isSchoolLoading } = useGetSchoolByIdQuery(schoolId!, { skip: !schoolId });
+  const school = schoolRes?.success ? schoolRes.data : null;
+
+  const steps = schoolId ? ['School Details', 'Subscription & Features'] : ['Admin Credentials', 'School Details', 'Subscription & Features'];
   const [activeStep, setActiveStep] = useState(0);
   const [saveDraft, { isLoading: isSavingDraft }] = useSaveDraftMutation();
   const [createCountry] = useCreateCountryMutation();
@@ -66,45 +67,52 @@ export function SchoolForm({ school = null, onSubmit, onCancel }: SchoolFormProp
         options as unknown as Parameters<typeof configuredResolver>[2]
       );
     },
-    defaultValues: (school ? {
-      adminName: 'Edit Mode',
-      adminEmail: school.email,
-      adminPassword: 'password123',
-      name: school.name,
-      code: school.code,
-      subdomain: school.subdomain,
-      email: school.email,
-      phone: school.phone,
-      countryCode: school.countryCode || '+91',
-      address: school.address || '',
-      state: typeof school.state === 'object' ? school.state?._id : school.state || '',
-      district: typeof school.district === 'object' ? school.district?._id : school.district || '',
-      country: typeof school.country === 'object' ? school.country?._id : school.country || '',
-      boardType: typeof school.boardType === 'object' ? school.boardType?._id : school.boardType || '',
-      maxStudents: school.maxStudents,
-      subscriptionPlan: typeof school.subscriptionPlan === 'object' ? school.subscriptionPlan._id : school.subscriptionPlan || '',
-      billingCycle: school.billingCycle || 'MONTHLY',
-      pincode: school.pincode,
-      shift: school.shift || '',
-      startTime: school.startTime || '',
-      endTime: school.endTime || '',
-      settings: {
-        attendanceEnabled: school.settings?.attendanceEnabled ?? true,
-        onlineExamEnabled: school.settings?.onlineExamEnabled ?? false,
-        aiAnalyticsEnabled: school.settings?.aiAnalyticsEnabled ?? false,
-        parentAppEnabled: school.settings?.parentAppEnabled ?? true,
-      }
-    } : {
+    defaultValues: {
       adminName: '', adminEmail: '', adminPassword: '',
       name: '', code: '', subdomain: '', email: '', phone: '', countryCode: '+91', address: '',
       boardType: '60f7c223405c102c98d6c830', country: '60f7c223405c102c98d6c840', maxStudents: 500, subscriptionPlan: '60f7c223405c102c98d6c810', billingCycle: 'MONTHLY',
-      state: '', district: '', pincode: undefined,
+      state: '', district: '', pincode: undefined, admissionFee: undefined,
       shift: 'Morning Shift',
       startTime: '08:00',
       endTime: '13:00',
       settings: { attendanceEnabled: true, onlineExamEnabled: false, aiAnalyticsEnabled: false, parentAppEnabled: true }
-    }) as DefaultValues<SchoolFormData>
+    } as DefaultValues<SchoolFormData>
   });
+
+  useEffect(() => {
+    if (school) {
+      reset({
+        adminName: 'Edit Mode',
+        adminEmail: school.email,
+        adminPassword: 'password123',
+        name: school.name,
+        code: school.code,
+        subdomain: school.subdomain,
+        email: school.email,
+        phone: school.phone,
+        countryCode: school.countryCode || '+91',
+        address: school.address || '',
+        state: typeof school.state === 'object' ? school.state?._id : school.state || '',
+        district: typeof school.district === 'object' ? school.district?._id : school.district || '',
+        country: typeof school.country === 'object' ? school.country?._id : school.country || '',
+        boardType: typeof school.boardType === 'object' ? school.boardType?._id : school.boardType || '',
+        maxStudents: school.maxStudents,
+        subscriptionPlan: typeof school.subscriptionPlan === 'object' ? school.subscriptionPlan._id : school.subscriptionPlan || '',
+        billingCycle: school.billingCycle || 'MONTHLY',
+        pincode: school.pincode,
+        admissionFee: school.admissionFee,
+        shift: school.shift || '',
+        startTime: school.startTime || '',
+        endTime: school.endTime || '',
+        settings: {
+          attendanceEnabled: school.settings?.attendanceEnabled ?? true,
+          onlineExamEnabled: school.settings?.onlineExamEnabled ?? false,
+          aiAnalyticsEnabled: school.settings?.aiAnalyticsEnabled ?? false,
+          parentAppEnabled: school.settings?.parentAppEnabled ?? true,
+        }
+      } as DefaultValues<SchoolFormData>);
+    }
+  }, [school, reset]);
 
   const selectedCountry = watch('country');
   const selectedState = watch('state');
@@ -162,6 +170,7 @@ export function SchoolForm({ school = null, onSubmit, onCancel }: SchoolFormProp
       subscriptionPlan: draft.subscriptionDetails?.subscriptionPlan || '60f7c223405c102c98d6c810',
       billingCycle: draft.subscriptionDetails?.billingCycle || 'MONTHLY',
       maxStudents: draft.subscriptionDetails?.maxStudents || 500,
+      admissionFee: draft.schoolDetails?.admissionFee,
       shift: 'Morning Shift',
       startTime: '08:00',
       endTime: '13:00',
@@ -178,12 +187,12 @@ export function SchoolForm({ school = null, onSubmit, onCancel }: SchoolFormProp
   };
 
   const handleNext = async () => {
-    const fieldsToValidate = school ? STEP_FIELDS[activeStep + 1] : STEP_FIELDS[activeStep];
+    const fieldsToValidate = schoolId ? STEP_FIELDS[activeStep + 1] : STEP_FIELDS[activeStep];
     const isValid = await trigger(fieldsToValidate as (keyof SchoolFormData)[]);
     if (!isValid) return;
 
     if (activeStep < steps.length - 1) {
-      if (!school) {
+      if (!schoolId) {
         try {
           const values = getValues();
           await saveDraft({
@@ -222,7 +231,7 @@ export function SchoolForm({ school = null, onSubmit, onCancel }: SchoolFormProp
   const handleBack = () => setActiveStep((prev) => Math.max(0, prev - 1));
 
   const renderStepContent = () => {
-    const stepToShow = school ? activeStep + 1 : activeStep;
+    const stepToShow = schoolId ? activeStep + 1 : activeStep;
     if (stepToShow === 0) {
       return (
         <StepCredentials control={control} errors={control._formState.errors} onDraftLoaded={handleDraftLoaded} />
@@ -253,6 +262,14 @@ export function SchoolForm({ school = null, onSubmit, onCancel }: SchoolFormProp
     return null;
   };
 
+  if (isSchoolLoading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4, minHeight: 300, alignItems: 'center' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
   return (
     <Box sx={{ width: '100%' }}>
       <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 4 }}>
@@ -282,7 +299,7 @@ export function SchoolForm({ school = null, onSubmit, onCancel }: SchoolFormProp
           </Button>
         ) : (
           <Button onClick={handleSubmit(onSubmit, (errs) => console.log('Validation Errors:', errs))} variant="contained" color="primary" sx={{ textTransform: 'none' }}>
-            {school ? 'Save Changes' : 'Create School'}
+            {schoolId ? 'Save Changes' : 'Create School'}
           </Button>
         )}
       </Box>

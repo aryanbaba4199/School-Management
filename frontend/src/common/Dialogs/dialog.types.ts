@@ -1,11 +1,8 @@
 import type { SchoolFormData } from '../../features/school-management/manage-schools/schema/school.schema';
 import type { PlanFormData } from '../../features/app-management/plan-management/schema/plan.schema';
 import type { ISubscriptionPlan } from '../../features/app-management/plan-management/types/plans.types';
-import type { ISchool } from '../../features/school-management/manage-schools/types/schools.types';
 
 import type { ISchoolUser } from '../../api/usersApi';
-import type { IClass } from '../../api/classesApi';
-import type { ISubject } from '../../api/subjectsApi';
 
 /*------------- Dialog Types Definitions -------------*/
 
@@ -38,7 +35,7 @@ export interface DialogPropsMap {
     onConfirm: () => void | Promise<void>;
   };
   SCHOOL_FORM: {
-    school?: ISchool | null;
+    schoolId?: string;
     onSubmit: (data: SchoolFormData) => void | Promise<void>;
   };
   PLAN_FORM: {
@@ -52,19 +49,19 @@ export interface DialogPropsMap {
     onConfirm: (passcode: string) => void | Promise<void>;
   };
   STUDENT_FORM: {
-    user?: ISchoolUser | null;
+    userId?: string;
     onSubmit: (data: Partial<ISchoolUser> & { password?: string }) => void | Promise<void>;
   };
   TEACHER_FORM: {
-    user?: ISchoolUser | null;
+    userId?: string;
     onSubmit: (data: Partial<ISchoolUser> & { password?: string }) => void | Promise<void>;
   };
   PARENT_FORM: {
-    user?: ISchoolUser | null;
+    userId?: string;
     onSubmit: (data: Partial<ISchoolUser> & { password?: string }) => void | Promise<void>;
   };
   CLASS_FORM: {
-    classObj?: IClass | null;
+    classId?: string;
     onSubmit: (data: {
       name: string;
       sections: string[];
@@ -74,7 +71,7 @@ export interface DialogPropsMap {
     }) => void | Promise<void>;
   };
   SUBJECT_FORM: {
-    subject?: ISubject | null;
+    subjectId?: string;
     onSubmit: (data: { name: string; code: string; teacherIds?: string[]; schoolId?: string }) => void | Promise<void>;
   };
 }

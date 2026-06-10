@@ -18,19 +18,22 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Alert,
   Tooltip,
+  CircularProgress,
+  Alert,
 } from '@mui/material';
 import { FaTrash, FaPlus, FaInfoCircle } from 'react-icons/fa';
 
 import { FormTextField, FormSelectField } from '@common/Forms';
+
 import { useGetSchoolsQuery, useGetSchoolByIdQuery } from '../../../../api/schoolsApi';
 import { useGetUsersQuery } from '../../../../api/usersApi';
+import { useGetClassByIdQuery } from '../../../../api/classesApi';
 import { useGetSubjectsQuery } from '../../../../api/subjectsApi';
 import { useAuth } from '@common/hooks/useAuth';
 import { useNotifier } from '@common/Notifier/NotifierProvider';
 import { classSchema } from '../schema/class.schema';
-import type { ClassFormData, IClass } from '../types/classes.types';
+import type { ClassFormData } from '../types/classes.types';
 
 interface ClassFormDialogProps {
   onClose: () => void;
@@ -40,8 +43,9 @@ interface ClassFormDialogProps {
     schoolId?: string;
     classTeacherId?: string;
     schedule?: { startTime: string; endTime: string; subjectId: string; teacherId: string }[];
+    schedule?: { startTime: string; endTime: string; subjectId: string; teacherId: string }[];
   }) => void;
-  classObj?: IClass | null;
+  classId?: string;
   isLoading?: boolean;
 }
 
@@ -56,8 +60,10 @@ function formatMinutesToHours(minutes: number): string {
   const mins = minutes % 60;
   return `${hrs} hr ${mins} min`;
 }
+export function ClassFormDialog({ onClose, onSubmit, classId, isLoading = false }: ClassFormDialogProps) {
+  const { data: classRes, isLoading: isClassLoading } = useGetClassByIdQuery(classId!, { skip: !classId });
+  const classItem = classRes?.success ? classRes.data : null;
 
-export function ClassFormDialog({ onClose, onSubmit, classObj, isLoading = false }: ClassFormDialogProps) {
   const { user } = useAuth();
   const isSuperAdmin = user?.role?.name === 'SUPER_ADMIN';
   const notifier = useNotifier();
@@ -118,13 +124,13 @@ export function ClassFormDialog({ onClose, onSubmit, classObj, isLoading = false
   }, 0);
 
   useEffect(() => {
-    if (classObj) {
+    if (classItem) {
       reset({
-        name: classObj.name,
-        sections: classObj.sections?.map((s) => s.name).join(', ') || '',
-        schoolId: typeof classObj.schoolId === 'object' ? (classObj.schoolId as { _id: string })._id : classObj.schoolId || '',
-        classTeacherId: typeof classObj.classTeacherId === 'object' ? (classObj.classTeacherId as any)._id : classObj.classTeacherId || '',
-        schedule: classObj.schedule?.map((s) => ({
+        name: classItem.name,
+        sections: classItem.sections?.map((s) => s.name).join(', ') || '',
+        schoolId: typeof classItem.schoolId === 'object' ? (classItem.schoolId as { _id: string })._id : classItem.schoolId || '',
+        classTeacherId: typeof classItem.classTeacherId === 'object' ? (classItem.classTeacherId as { _id: string })._id : classItem.classTeacherId || '',
+        schedule: classItem.schedule?.map((s) => ({
           startTime: s.startTime,
           endTime: s.endTime,
           subjectId: typeof s.subjectId === 'object' ? s.subjectId._id : s.subjectId,
@@ -132,7 +138,7 @@ export function ClassFormDialog({ onClose, onSubmit, classObj, isLoading = false
         })) || [],
       });
     }
-  }, [classObj, reset]);
+  }, [classItem, reset]);
 
   const onFormSubmit = (formData: ClassFormData) => {
     const sectionList = formData.sections
@@ -180,10 +186,18 @@ export function ClassFormDialog({ onClose, onSubmit, classObj, isLoading = false
     });
   };
 
+  if (isClassLoading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4, minHeight: 300, alignItems: 'center' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
   return (
     <>
       <DialogTitle sx={{ fontWeight: 800, borderBottom: '1px solid var(--color-border-default)', pb: 2 }}>
-        {classObj ? 'Edit Class Details' : 'Add New Class'}
+        {classId ? 'Edit Class Details' : 'Add New Class'}
       </DialogTitle>
       <DialogContent sx={{ pt: 3, pb: 2, minWidth: { md: 650 } }}>
         <Box component="form" noValidate sx={{ mt: 1 }}>
@@ -348,7 +362,7 @@ export function ClassFormDialog({ onClose, onSubmit, classObj, isLoading = false
           Cancel
         </Button>
         <Button onClick={handleSubmit(onFormSubmit)} variant="contained" color="primary" sx={{ textTransform: 'none' }} disabled={isLoading}>
-          {classObj ? 'Save Changes' : 'Add Class'}
+          {classId ? 'Save Changes' : 'Add Class'}
         </Button>
       </DialogActions>
     </>

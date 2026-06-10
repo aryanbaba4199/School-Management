@@ -63,7 +63,7 @@ export function useSubjects() {
 
   const handleEdit = (subject: ISubject) => {
     openDialog('SUBJECT_FORM', {
-      subject,
+      subjectId: subject._id,
       onSubmit: async (data: { name: string; code: string; teacherIds?: string[]; schoolId?: string }) => {
         try {
           await updateSubject({ id: subject._id, body: data }).unwrap();

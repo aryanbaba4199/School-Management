@@ -74,7 +74,7 @@ export default function ClassDetailsDialog({ classId, onClose }: ClassDetailsDia
                 </Typography>
                 <Typography variant="body1" sx={{ fontWeight: 500 }}>
                   {classData.classTeacherId && typeof classData.classTeacherId === 'object' && 'name' in classData.classTeacherId 
-                    ? `${(classData.classTeacherId as any).name} (${(classData.classTeacherId as any).email})` 
+                    ? `${(classData.classTeacherId as { name: string; email: string }).name} (${(classData.classTeacherId as { name: string; email: string }).email})` 
                     : 'Not Assigned'}
                 </Typography>
               </Box>
@@ -85,7 +85,7 @@ export default function ClassDetailsDialog({ classId, onClose }: ClassDetailsDia
                 </Typography>
                 <Typography variant="body1" sx={{ fontWeight: 500 }}>
                   {classData.schoolId && typeof classData.schoolId === 'object' && 'name' in classData.schoolId
-                    ? `${(classData.schoolId as any).name}`
+                    ? `${(classData.schoolId as { name: string }).name}`
                     : 'Default Institute'}
                 </Typography>
               </Box>
@@ -96,7 +96,7 @@ export default function ClassDetailsDialog({ classId, onClose }: ClassDetailsDia
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
                   {classData.sections && classData.sections.length > 0 ? (
-                    classData.sections.map((sec: any) => (
+                    classData.sections.map((sec: { _id: string; name: string }) => (
                       <Chip key={sec._id} label={sec.name} size="small" variant="outlined" />
                     ))
                   ) : (
@@ -126,7 +126,7 @@ export default function ClassDetailsDialog({ classId, onClose }: ClassDetailsDia
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {classData.schedule.map((period: any, index: number) => {
+                      {classData.schedule.map((period: { _id?: string; subjectId: { name?: string } | string; teacherId: { name?: string } | string; startTime: string; endTime: string }, index: number) => {
                         const subjectName = typeof period.subjectId === 'object' && period.subjectId?.name ? period.subjectId.name : '-';
                         const teacherName = typeof period.teacherId === 'object' && period.teacherId?.name ? period.teacherId.name : '-';
                         return (

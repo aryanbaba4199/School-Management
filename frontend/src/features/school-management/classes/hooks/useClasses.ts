@@ -69,7 +69,7 @@ export function useClasses() {
 
   const handleEdit = (classObj: IClass) => {
     openDialog('CLASS_FORM', {
-      classObj,
+      classId: classObj._id,
       onSubmit: async (data: {
         name: string;
         sections: string[];
