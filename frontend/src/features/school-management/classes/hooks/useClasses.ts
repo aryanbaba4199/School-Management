@@ -50,7 +50,13 @@ export function useClasses() {
     setSortColumn(columnId);
   };
 
-  const handleCreateClass = async (data: { name: string; sections: string[]; schoolId?: string }) => {
+  const handleCreateClass = async (data: {
+    name: string;
+    sections: string[];
+    schoolId?: string;
+    classTeacherId?: string;
+    schedule?: { startTime: string; endTime: string; subjectId: string; teacherId: string }[];
+  }) => {
     try {
       await createClass(data).unwrap();
       notifier.showSuccess('Class created successfully!');
@@ -64,7 +70,13 @@ export function useClasses() {
   const handleEdit = (classObj: IClass) => {
     openDialog('CLASS_FORM', {
       classObj,
-      onSubmit: async (data: { name: string; sections: string[]; schoolId?: string }) => {
+      onSubmit: async (data: {
+        name: string;
+        sections: string[];
+        schoolId?: string;
+        classTeacherId?: string;
+        schedule?: { startTime: string; endTime: string; subjectId: string; teacherId: string }[];
+      }) => {
         try {
           await updateClass({ id: classObj._id, body: data }).unwrap();
           notifier.showSuccess('Class updated successfully!');

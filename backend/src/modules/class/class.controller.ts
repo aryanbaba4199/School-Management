@@ -22,6 +22,8 @@ export class ClassController {
         name: req.body.name,
         schoolId,
         sections: req.body.sections,
+        classTeacherId: req.body.classTeacherId,
+        schedule: req.body.schedule,
       });
 
       sendSuccess(res, 201, result);
@@ -69,7 +71,12 @@ export class ClassController {
     try {
       const result = await classService.updateClass(
         req.params.id as string,
-        { name: req.body.name, sections: req.body.sections },
+        {
+          name: req.body.name,
+          sections: req.body.sections,
+          classTeacherId: req.body.classTeacherId,
+          schedule: req.body.schedule,
+        },
         req.schoolId
       );
       sendSuccess(res, 200, result);

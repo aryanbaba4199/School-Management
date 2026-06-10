@@ -13,4 +13,14 @@ export const classSchema = yup.object({
       if (!val) return false;
       return val.split(',').map(s => s.trim()).filter(Boolean).length > 0;
     }),
+  schoolId: yup.string().optional(),
+  classTeacherId: yup.string().optional(),
+  schedule: yup.array().of(
+    yup.object({
+      startTime: yup.string().required('Start time is required'),
+      endTime: yup.string().required('End time is required'),
+      subjectId: yup.string().required('Subject is required'),
+      teacherId: yup.string().required('Teacher is required'),
+    })
+  ).optional(),
 }).required();

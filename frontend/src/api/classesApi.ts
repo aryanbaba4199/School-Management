@@ -10,12 +10,21 @@ export interface ISection {
   isActive: boolean;
 }
 
+export interface IPeriodSchedule {
+  startTime: string;
+  endTime: string;
+  subjectId: string | { _id: string; name: string; code: string };
+  teacherId: string | { _id: string; name: string; email: string };
+}
+
 export interface IClass {
   _id: string;
   name: string;
   schoolId: string;
   isActive: boolean;
   sections: ISection[];
+  classTeacherId?: string | { _id: string; name: string; email: string };
+  schedule?: IPeriodSchedule[];
 }
 
 /*------------- RTK Query Slice Injection -------------*/
@@ -29,7 +38,7 @@ export const classesApi = baseApi.injectEndpoints({
       }),
       providesTags: ['Class'],
     }),
-    createClass: builder.mutation<{ success: boolean; data: IClass }, { name: string; sections: string[]; schoolId?: string }>({
+    createClass: builder.mutation<{ success: boolean; data: IClass }, { name: string; sections: string[]; schoolId?: string; classTeacherId?: string; schedule?: { startTime: string; endTime: string; subjectId: string; teacherId: string }[] }>({
       query: (body) => ({
         url: '/classes',
         method: 'POST',
@@ -37,7 +46,7 @@ export const classesApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Class', 'Section'],
     }),
-    updateClass: builder.mutation<{ success: boolean; data: IClass }, { id: string; body: { name: string; sections: string[]; schoolId?: string } }>({
+    updateClass: builder.mutation<{ success: boolean; data: IClass }, { id: string; body: { name: string; sections: string[]; schoolId?: string; classTeacherId?: string; schedule?: { startTime: string; endTime: string; subjectId: string; teacherId: string }[] } }>({
       query: ({ id, body }) => ({
         url: `/classes/${id}`,
         method: 'PUT',

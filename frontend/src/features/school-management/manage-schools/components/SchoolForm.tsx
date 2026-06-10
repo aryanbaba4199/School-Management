@@ -35,7 +35,7 @@ interface SchoolFormProps {
 
 const STEP_FIELDS: (keyof SchoolFormData | string)[][] = [
   ['adminName', 'adminEmail', 'adminPassword'],
-  ['name', 'code', 'subdomain', 'email', 'phone', 'countryCode', 'boardType', 'state', 'district', 'address'],
+  ['name', 'code', 'subdomain', 'email', 'phone', 'countryCode', 'boardType', 'state', 'district', 'address', 'shift', 'startTime', 'endTime'],
   ['subscriptionPlan', 'billingCycle', 'maxStudents', 'settings.attendanceEnabled', 'settings.onlineExamEnabled', 'settings.aiAnalyticsEnabled', 'settings.parentAppEnabled'],
 ];
 
@@ -85,6 +85,9 @@ export function SchoolForm({ school = null, onSubmit, onCancel }: SchoolFormProp
       subscriptionPlan: typeof school.subscriptionPlan === 'object' ? school.subscriptionPlan._id : school.subscriptionPlan || '',
       billingCycle: school.billingCycle || 'MONTHLY',
       pincode: school.pincode,
+      shift: school.shift || '',
+      startTime: school.startTime || '',
+      endTime: school.endTime || '',
       settings: {
         attendanceEnabled: school.settings?.attendanceEnabled ?? true,
         onlineExamEnabled: school.settings?.onlineExamEnabled ?? false,
@@ -96,6 +99,9 @@ export function SchoolForm({ school = null, onSubmit, onCancel }: SchoolFormProp
       name: '', code: '', subdomain: '', email: '', phone: '', countryCode: '+91', address: '',
       boardType: '60f7c223405c102c98d6c830', country: '60f7c223405c102c98d6c840', maxStudents: 500, subscriptionPlan: '60f7c223405c102c98d6c810', billingCycle: 'MONTHLY',
       state: '', district: '', pincode: undefined,
+      shift: 'Morning Shift',
+      startTime: '08:00',
+      endTime: '13:00',
       settings: { attendanceEnabled: true, onlineExamEnabled: false, aiAnalyticsEnabled: false, parentAppEnabled: true }
     }) as DefaultValues<SchoolFormData>
   });
@@ -156,6 +162,9 @@ export function SchoolForm({ school = null, onSubmit, onCancel }: SchoolFormProp
       subscriptionPlan: draft.subscriptionDetails?.subscriptionPlan || '60f7c223405c102c98d6c810',
       billingCycle: draft.subscriptionDetails?.billingCycle || 'MONTHLY',
       maxStudents: draft.subscriptionDetails?.maxStudents || 500,
+      shift: 'Morning Shift',
+      startTime: '08:00',
+      endTime: '13:00',
       settings: draft.subscriptionDetails?.settings || {
         attendanceEnabled: true,
         onlineExamEnabled: false,

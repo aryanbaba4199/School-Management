@@ -86,6 +86,9 @@ export const schoolSchema = yup.object({
     .integer('Capacity must be an integer')
     .min(1, 'Capacity must be at least 1')
     .default(500),
+  shift: yup.string().optional(),
+  startTime: yup.string().optional(),
+  endTime: yup.string().optional(),
   settings: yup.object({
     attendanceEnabled: yup.boolean().default(true),
     onlineExamEnabled: yup.boolean().default(false),

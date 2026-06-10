@@ -102,6 +102,34 @@ export function StepDetails({
         <Grid size={{ xs: 12, sm: 6 }}>
           <FormTextField name="phone" control={control} label="Phone Number" required />
         </Grid>
+        <Grid size={{ xs: 12, sm: 4 }}>
+          <FormSelectField
+            name="shift"
+            control={control}
+            label="Operational Shift"
+            options={[
+              { value: 'Morning Shift', label: 'Morning Shift' },
+              { value: 'Evening Shift', label: 'Evening Shift' },
+              { value: 'Full Day', label: 'Full Day' },
+            ]}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 4 }}>
+          <FormTextField
+            name="startTime"
+            control={control}
+            label="Operational Start Time"
+            type="time"
+          />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 4 }}>
+          <FormTextField
+            name="endTime"
+            control={control}
+            label="Operational End Time"
+            type="time"
+          />
+        </Grid>
       </Grid>
     </Box>
   );

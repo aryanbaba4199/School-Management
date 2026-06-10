@@ -1,3 +1,4 @@
+import { Types } from 'mongoose';
 import { ClassModel } from './class.model';
 import { SectionModel } from './section.model';
 
@@ -7,10 +8,23 @@ export class ClassService {
   /**
    * Creates a class and its associated sections.
    */
-  async createClass(input: { name: string; schoolId: string; sections?: string[] }): Promise<any> {
+  async createClass(input: {
+    name: string;
+    schoolId: string;
+    sections?: string[];
+    classTeacherId?: string;
+    schedule?: { startTime: string; endTime: string; subjectId: string; teacherId: string }[];
+  }): Promise<any> {
     const cls = new ClassModel({
       name: input.name,
       schoolId: input.schoolId,
+      classTeacherId: input.classTeacherId ? new Types.ObjectId(input.classTeacherId) : undefined,
+      schedule: input.schedule?.map((s) => ({
+        startTime: s.startTime,
+        endTime: s.endTime,
+        subjectId: new Types.ObjectId(s.subjectId),
+        teacherId: new Types.ObjectId(s.teacherId),
+      })),
     });
     await cls.save();
 
@@ -28,7 +42,12 @@ export class ClassService {
       }
     }
 
-    return { ...cls.toObject(), sections: createdSections };
+    const populatedCls = await ClassModel.findById(cls._id)
+      .populate('classTeacherId', 'name email')
+      .populate('schedule.subjectId', 'name code')
+      .populate('schedule.teacherId', 'name email');
+
+    return { ...(populatedCls?.toObject() || cls.toObject()), sections: createdSections };
   }
 
   /**
@@ -43,7 +62,12 @@ export class ClassService {
       filter.name = { $regex: search, $options: 'i' };
     }
 
-    const classes = await ClassModel.find(filter).sort({ name: 1 });
+    const classes = await ClassModel.find(filter)
+      .sort({ name: 1 })
+      .populate('classTeacherId', 'name email')
+      .populate('schedule.subjectId', 'name code')
+      .populate('schedule.teacherId', 'name email');
+
     const results = [];
 
     for (const cls of classes) {
@@ -64,7 +88,11 @@ export class ClassService {
     const filter: any = { _id: id };
     if (schoolId) filter.schoolId = schoolId;
 
-    const cls = await ClassModel.findOne(filter);
+    const cls = await ClassModel.findOne(filter)
+      .populate('classTeacherId', 'name email')
+      .populate('schedule.subjectId', 'name code')
+      .populate('schedule.teacherId', 'name email');
+
     if (!cls) return null;
 
     const sections = await SectionModel.find({ classId: cls._id }).sort({ name: 1 });
@@ -74,7 +102,16 @@ export class ClassService {
   /**
    * Updates a class name and reconciles its associated sections list.
    */
-  async updateClass(id: string, input: { name?: string; sections?: string[] }, schoolId?: string): Promise<any> {
+  async updateClass(
+    id: string,
+    input: {
+      name?: string;
+      sections?: string[];
+      classTeacherId?: string;
+      schedule?: { startTime: string; endTime: string; subjectId: string; teacherId: string }[];
+    },
+    schoolId?: string
+  ): Promise<any> {
     const filter: any = { _id: id };
     if (schoolId) filter.schoolId = schoolId;
 
@@ -83,13 +120,24 @@ export class ClassService {
 
     if (input.name) {
       cls.name = input.name;
-      await cls.save();
     }
+    if (input.classTeacherId !== undefined) {
+      cls.classTeacherId = input.classTeacherId ? new Types.ObjectId(input.classTeacherId) : undefined;
+    }
+    if (input.schedule !== undefined) {
+      cls.schedule = input.schedule?.map((s) => ({
+        startTime: s.startTime,
+        endTime: s.endTime,
+        subjectId: new Types.ObjectId(s.subjectId),
+        teacherId: new Types.ObjectId(s.teacherId),
+      }));
+    }
+    await cls.save();
 
     if (input.sections) {
-      const targetSecNames = input.sections.map(s => s.trim()).filter(Boolean);
+      const targetSecNames = input.sections.map((s) => s.trim()).filter(Boolean);
       const existingSecs = await SectionModel.find({ classId: cls._id });
-      const existingSecNames = existingSecs.map(s => s.name);
+      const existingSecNames = existingSecs.map((s) => s.name);
 
       // Create new sections
       for (const name of targetSecNames) {
@@ -111,8 +159,13 @@ export class ClassService {
       }
     }
 
+    const populatedCls = await ClassModel.findById(cls._id)
+      .populate('classTeacherId', 'name email')
+      .populate('schedule.subjectId', 'name code')
+      .populate('schedule.teacherId', 'name email');
+
     const sections = await SectionModel.find({ classId: cls._id }).sort({ name: 1 });
-    return { ...cls.toObject(), sections };
+    return { ...(populatedCls?.toObject() || cls.toObject()), sections };
   }
 
   /**

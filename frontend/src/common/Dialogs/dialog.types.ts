@@ -61,7 +61,13 @@ export interface DialogPropsMap {
   };
   CLASS_FORM: {
     classObj?: IClass | null;
-    onSubmit: (data: { name: string; sections: string[]; schoolId?: string }) => void | Promise<void>;
+    onSubmit: (data: {
+      name: string;
+      sections: string[];
+      schoolId?: string;
+      classTeacherId?: string;
+      schedule?: { startTime: string; endTime: string; subjectId: string; teacherId: string }[];
+    }) => void | Promise<void>;
   };
   SUBJECT_FORM: {
     subject?: ISubject | null;

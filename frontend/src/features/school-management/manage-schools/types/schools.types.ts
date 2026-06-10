@@ -30,6 +30,9 @@ export interface ISchool {
   totalStudent?: number;
   isActive: boolean;
   isDeactive: boolean;
+  shift?: string;
+  startTime?: string;
+  endTime?: string;
   settings: ISchoolSettings;
   createdAt: string;
   updatedAt: string;

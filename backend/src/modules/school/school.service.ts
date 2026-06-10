@@ -163,6 +163,9 @@ export class SchoolService {
     if (input.country) school.country = new Types.ObjectId(input.country);
     if (input.boardType) school.boardType = new Types.ObjectId(input.boardType);
     if (input.maxStudents) school.maxStudents = input.maxStudents;
+    if (input.shift !== undefined) school.shift = input.shift;
+    if (input.startTime !== undefined) school.startTime = input.startTime;
+    if (input.endTime !== undefined) school.endTime = input.endTime;
     
     // Handle Subscription/Billing Cycle updates
     if (input.subscriptionPlan) {

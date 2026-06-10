@@ -65,6 +65,9 @@ export const CreateSchoolSchema = z.object({
     subscriptionEndDate: z.string().datetime().or(z.date()).optional(),
     maxStudents: z.number().int().min(1, 'Max students must be at least 1').default(500).optional(),
     isActive: z.boolean().default(true).optional(),
+    shift: z.string().max(50).optional(),
+    startTime: z.string().max(20).optional(),
+    endTime: z.string().max(20).optional(),
 
     settings: z.object({
       attendanceEnabled: z.boolean().default(true).optional(),

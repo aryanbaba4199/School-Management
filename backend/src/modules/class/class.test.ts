@@ -32,6 +32,20 @@ describe('Class Module API Endpoints', () => {
         toObject: () => ({ _id: 'class123', name: 'Class 10', schoolId: 'school123' }),
       }));
 
+      const mockPopulate = jest.fn().mockReturnValue({
+        populate: jest.fn().mockReturnValue({
+          populate: jest.fn().mockResolvedValue({
+            _id: 'class123',
+            name: 'Class 10',
+            schoolId: 'school123',
+            toObject: () => ({ _id: 'class123', name: 'Class 10', schoolId: 'school123' }),
+          }),
+        }),
+      });
+      (ClassModel.findById as jest.Mock).mockReturnValue({
+        populate: mockPopulate,
+      });
+
       const mockSectionSave = jest.fn().mockResolvedValue({
         _id: 'sec123',
         name: 'A',
@@ -55,10 +69,17 @@ describe('Class Module API Endpoints', () => {
 
   describe('GET /api/classes', () => {
     it('should list classes for school admin', async () => {
+      const mockPopulate = jest.fn().mockReturnValue({
+        populate: jest.fn().mockReturnValue({
+          populate: jest.fn().mockResolvedValue([
+            { _id: 'class123', name: 'Class 10', schoolId: 'school123', toObject: function() { return this; } },
+          ]),
+        }),
+      });
       (ClassModel.find as jest.Mock).mockReturnValue({
-        sort: jest.fn().mockResolvedValue([
-          { _id: 'class123', name: 'Class 10', schoolId: 'school123', toObject: function() { return this; } },
-        ]),
+        sort: jest.fn().mockReturnValue({
+          populate: mockPopulate,
+        }),
       });
       (SectionModel.find as jest.Mock).mockReturnValue({
         sort: jest.fn().mockResolvedValue([
@@ -87,6 +108,21 @@ describe('Class Module API Endpoints', () => {
         toObject: function() { return this; },
       };
       (ClassModel.findOne as jest.Mock).mockResolvedValue(mockClass);
+
+      const mockPopulate = jest.fn().mockReturnValue({
+        populate: jest.fn().mockReturnValue({
+          populate: jest.fn().mockResolvedValue({
+            _id: 'class123',
+            name: 'Class 10 Updated',
+            schoolId: 'school123',
+            toObject: () => ({ _id: 'class123', name: 'Class 10 Updated', schoolId: 'school123' }),
+          }),
+        }),
+      });
+      (ClassModel.findById as jest.Mock).mockReturnValue({
+        populate: mockPopulate,
+      });
+
       const mockSections = [
         { _id: 'sec123', name: 'A', classId: 'class123', schoolId: 'school123' },
       ];

@@ -26,6 +26,9 @@ export interface ISchool extends Document {
   totalStudent: number;
   isActive: boolean;
   isDeactive: boolean;
+  shift?: string;
+  startTime?: string;
+  endTime?: string;
   settings: {
     attendanceEnabled: boolean;
     onlineExamEnabled: boolean;
@@ -150,6 +153,18 @@ const SchoolSchema = new Schema<ISchool>(
     isDeactive: {
       type: Boolean,
       default: false,
+    },
+    shift: {
+      type: String,
+      trim: true,
+    },
+    startTime: {
+      type: String,
+      trim: true,
+    },
+    endTime: {
+      type: String,
+      trim: true,
     },
     settings: {
       attendanceEnabled: {

@@ -180,6 +180,9 @@ export function SchoolDetailsPage() {
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6 }}><Field label="Total Teachers" value={school.totalTeacher ?? 0} /></Grid>
                 <Grid size={{ xs: 12, sm: 6 }}><Field label="Total Students" value={school.totalStudent ?? 0} /></Grid>
+                <Grid size={{ xs: 12, sm: 4 }}><Field label="Operational Shift" value={school.shift} /></Grid>
+                <Grid size={{ xs: 12, sm: 4 }}><Field label="Start Time" value={school.startTime} /></Grid>
+                <Grid size={{ xs: 12, sm: 4 }}><Field label="End Time" value={school.endTime} /></Grid>
               </Grid>
             </CardContent>
           </SectionCard>

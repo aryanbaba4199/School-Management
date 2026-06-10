@@ -1,6 +1,7 @@
 import { PageWrapper, Datatable, DatatableHeader, DatatableFooter } from '@common/Datatable';
 import { useClasses } from '../hooks/useClasses';
 import { getClassColumns } from '../components/classColumns';
+import { useAuth } from '@common/hooks/useAuth';
 
 /*------------- Classes Page Component -------------*/
 
@@ -24,9 +25,13 @@ export function ClassesPage() {
     openDialog,
   } = useClasses();
 
+  const { user } = useAuth();
+  const isSuperAdmin = user?.role?.name === 'SUPER_ADMIN';
+
   const columns = getClassColumns({
     onEdit: handleEdit,
     onDelete: handleDelete,
+    isSuperAdmin,
   });
 
   return (
