@@ -4,9 +4,13 @@ import type { SchoolFormData } from '../features/schools/schema/school.schema';
 
 export const schoolsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getSchools: builder.query<{ success: boolean; data: ISchool[] }, void>({
+    getSchools: builder.query<{ success: boolean; data: ISchool[]; pagination: { totalPages: number; totalCount: number; currentPage: number; limit: number } }, void>({
       query: () => '/schools',
       providesTags: ['School'],
+    }),
+    getSchoolById: builder.query<{ success: boolean; data: ISchool }, string>({
+      query: (id) => `/schools/${id}`,
+      providesTags: (_result, _error, id) => [{ type: 'School', id }],
     }),
     createSchool: builder.mutation<{ success: boolean; data: ISchool }, SchoolFormData>({
       query: (newSchool) => ({
@@ -54,6 +58,7 @@ export const schoolsApi = baseApi.injectEndpoints({
 
 export const { 
   useGetSchoolsQuery, 
+  useGetSchoolByIdQuery,
   useCreateSchoolMutation,
   useGetDraftQuery,
   useLazyGetDraftQuery,

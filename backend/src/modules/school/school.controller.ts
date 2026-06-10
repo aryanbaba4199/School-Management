@@ -46,6 +46,21 @@ export class SchoolController {
   }
 
   /**
+   * HTTP GET /api/schools/:id
+   * Fetches a single school by ID with populated references.
+   */
+  async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const id = req.params.id as string;
+      const school = await schoolService.getSchoolById(id);
+      sendSuccess(res, 200, school);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while fetching school';
+      sendError(res, error instanceof Error && error.message === 'School not found.' ? 404 : 500, errorMessage);
+    }
+  }
+
+  /**
    * HTTP GET /api/schools/drafts/:email
    * Retrieves a draft registration by adminEmail.
    */

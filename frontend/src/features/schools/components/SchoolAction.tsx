@@ -1,9 +1,10 @@
 import { ActionMenu, type ActionMenuItem } from '@common/Datatable';
-import { FaEdit, FaCheckCircle, FaBan, FaTrash } from 'react-icons/fa';
+import { FaEye, FaEdit, FaCheckCircle, FaBan, FaTrash } from 'react-icons/fa';
 import type { ISchool } from '../types/schools.types';
 
 interface SchoolActionProps {
   school: ISchool;
+  onView: (school: ISchool) => void;
   onEdit: (school: ISchool) => void;
   onToggleDeactivate: (school: ISchool) => void;
   onDelete: (school: ISchool) => void;
@@ -11,11 +12,18 @@ interface SchoolActionProps {
 
 export function SchoolAction({
   school,
+  onView,
   onEdit,
   onToggleDeactivate,
   onDelete
 }: SchoolActionProps) {
   const actions: ActionMenuItem[] = [
+    {
+      label: 'View Details',
+      icon: <FaEye />,
+      onClick: () => onView(school),
+      color: 'primary'
+    },
     {
       label: 'Edit',
       icon: <FaEdit />,

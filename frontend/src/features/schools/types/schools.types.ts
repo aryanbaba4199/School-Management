@@ -26,6 +26,8 @@ export interface ISchool {
   subscriptionStartDate?: string;
   subscriptionEndDate?: string;
   maxStudents: number;
+  totalTeacher?: number;
+  totalStudent?: number;
   isActive: boolean;
   isDeactive: boolean;
   settings: ISchoolSettings;
@@ -102,6 +104,8 @@ export const MOCK_SCHOOLS: ISchool[] = [
     subscriptionPlan: { _id: '60f7c223405c102c98d6c810', name: 'Pro Plan', code: 'PRO' },
     billingCycle: 'YEARLY',
     maxStudents: 1500,
+    totalTeacher: 45,
+    totalStudent: 1200,
     isActive: true,
     isDeactive: false,
     country: 'India',
@@ -121,6 +125,8 @@ export const MOCK_SCHOOLS: ISchool[] = [
     subscriptionPlan: { _id: '60f7c223405c102c98d6c811', name: 'Basic Plan', code: 'BASIC' },
     billingCycle: 'MONTHLY',
     maxStudents: 800,
+    totalTeacher: 25,
+    totalStudent: 650,
     isActive: true,
     isDeactive: false,
     country: 'India',

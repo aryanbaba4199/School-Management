@@ -99,6 +99,23 @@ export class SchoolService {
   }
 
   /**
+   * Fetches a single school by ID with populated references.
+   */
+  async getSchoolById(id: string): Promise<ISchool> {
+    const school = await SchoolModel.findById(id)
+      .populate('country', 'name code')
+      .populate('state', 'name code')
+      .populate('district', 'name code')
+      .populate('boardType', 'name acronym')
+      .populate('subscriptionPlan', 'name price maxStudents features');
+
+    if (!school) {
+      throw new Error('School not found.');
+    }
+    return school;
+  }
+
+  /**
    * Finds a draft registration by admin email.
    */
   async findDraftByEmail(adminEmail: string) {

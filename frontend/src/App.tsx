@@ -7,7 +7,7 @@ import { NotifierProvider } from './common/Notifier/NotifierProvider';
 import { DialogProvider } from './common/Dialogs/dialog.provider';
 import { LoginPage } from './features/auth/pages/LoginPage';
 import { DashboardPage } from './features/dashboard/pages/DashboardPage';
-import { SchoolsPage } from './features/schools';
+import { SchoolsPage, SchoolDetailsPage } from './features/schools';
 import { PlansPage } from './features/app-management/plan-management/pages/PlansPage';
 import { MainLayout } from '@common/navbar';
 
@@ -27,6 +27,7 @@ function AppContent() {
       <Routes>
         <Route path="/" element={<DashboardPage />} />
         <Route path="/schools" element={<SchoolsPage />} />
+        <Route path="/schools/:id" element={<SchoolDetailsPage />} />
         <Route path="/app-management/plans" element={user.role.name === 'SUPER_ADMIN' ? <PlansPage /> : <Navigate to="/" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
