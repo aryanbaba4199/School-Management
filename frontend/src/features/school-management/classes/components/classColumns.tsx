@@ -1,11 +1,12 @@
 /* eslint-disable react-refresh/only-export-components */
 import { Chip, Box, Typography } from '@mui/material';
 import { ActionMenu, type ActionMenuItem } from '@common/Datatable';
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
 import type { Column } from '@common/Datatable';
 import type { IClass } from '../types/classes.types';
 
 interface GetClassColumnsProps {
+  onView: (classObj: IClass) => void;
   onEdit: (classObj: IClass) => void;
   onDelete: (classObj: IClass) => void;
   isSuperAdmin?: boolean;
@@ -13,14 +14,21 @@ interface GetClassColumnsProps {
 
 export function ClassAction({
   classObj,
+  onView,
   onEdit,
   onDelete
 }: {
   classObj: IClass;
+  onView: (classObj: IClass) => void;
   onEdit: (classObj: IClass) => void;
   onDelete: (classObj: IClass) => void;
 }) {
   const actions: ActionMenuItem[] = [
+    {
+      label: 'View',
+      icon: <FaEye />,
+      onClick: () => onView(classObj),
+    },
     {
       label: 'Edit',
       icon: <FaEdit />,
@@ -38,13 +46,22 @@ export function ClassAction({
   return <ActionMenu items={actions} />;
 }
 
-export const getClassColumns = ({ onEdit, onDelete, isSuperAdmin = false }: GetClassColumnsProps): Column<IClass>[] => [
+export const getClassColumns = ({ onView, onEdit, onDelete, isSuperAdmin = false }: GetClassColumnsProps): Column<IClass>[] => [
   {
     id: 'name',
     label: 'Class Name',
     sortable: true,
     render: (row) => (
-      <Typography variant="body2" sx={{ fontWeight: 600, color: 'var(--color-text-primary)' }}>
+      <Typography 
+        variant="body2" 
+        onClick={() => onView(row)}
+        sx={{ 
+          fontWeight: 600, 
+          color: 'var(--color-primary-main)', 
+          cursor: 'pointer',
+          '&:hover': { textDecoration: 'underline' } 
+        }}
+      >
         {row.name}
       </Typography>
     )

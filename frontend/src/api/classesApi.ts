@@ -38,6 +38,10 @@ export const classesApi = baseApi.injectEndpoints({
       }),
       providesTags: ['Class'],
     }),
+    getClassById: builder.query<{ success: boolean; data: IClass }, string>({
+      query: (id) => `/classes/${id}`,
+      providesTags: (result, error, id) => [{ type: 'Class', id }],
+    }),
     createClass: builder.mutation<{ success: boolean; data: IClass }, { name: string; sections: string[]; schoolId?: string; classTeacherId?: string; schedule?: { startTime: string; endTime: string; subjectId: string; teacherId: string }[] }>({
       query: (body) => ({
         url: '/classes',
@@ -73,6 +77,7 @@ export const classesApi = baseApi.injectEndpoints({
 
 export const {
   useGetClassesQuery,
+  useGetClassByIdQuery,
   useCreateClassMutation,
   useUpdateClassMutation,
   useDeleteClassMutation,

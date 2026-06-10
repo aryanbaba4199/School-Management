@@ -3,7 +3,7 @@ import { useAuth } from '../common/hooks/useAuth';
 import { LoginPage } from '../features/auth/pages/LoginPage';
 import { DashboardPage } from '../features/dashboard/pages/DashboardPage';
 import { SchoolsPage, SchoolDetailsPage } from '../features/school-management/manage-schools';
-import { ClassesPage } from '../features/school-management/classes';
+import { ClassesPage, ClassDetailsPage } from '../features/school-management/classes';
 import { SubjectsPage } from '../features/school-management/subjects';
 import { PlansPage } from '../features/app-management/plan-management/pages/PlansPage';
 import { StudentsPage } from '../features/users/students';
@@ -37,6 +37,14 @@ export function AppRoutes() {
           element={
             user.role.name === 'SUPER_ADMIN' || user.role.name === 'SCHOOL_ADMIN'
               ? <ClassesPage />
+              : <Navigate to="/" replace />
+          }
+        />
+        <Route
+          path="/school-management/classes/:id"
+          element={
+            user.role.name === 'SUPER_ADMIN' || user.role.name === 'SCHOOL_ADMIN'
+              ? <ClassDetailsPage />
               : <Navigate to="/" replace />
           }
         />
