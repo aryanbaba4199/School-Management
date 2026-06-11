@@ -28,6 +28,7 @@ export function StudentsPage() {
   } = useStudents();
 
   const columns = getStudentColumns({
+    onView: (student) => openDialog('STUDENT_DETAILS', { userId: student._id }),
     onEdit: handleEdit,
     onToggleDeactivate: handleToggleDeactivate,
     onDelete: handleDelete,

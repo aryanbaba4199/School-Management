@@ -15,6 +15,9 @@ export interface StudentFormData {
     district?: string;
     pincode?: number;
   };
+  regDate?: string;
+  startDate?: string;
+  leaveDate?: string;
 }
 
 export const studentSchema = yup.object({
@@ -51,4 +54,7 @@ export const studentSchema = yup.object({
     district: yup.string().optional(),
     pincode: yup.number().typeError('Pincode must be a number').integer('Pincode must be an integer').optional(),
   }).optional(),
+  regDate: yup.string().optional(),
+  startDate: yup.string().optional(),
+  leaveDate: yup.string().optional(),
 }).required();

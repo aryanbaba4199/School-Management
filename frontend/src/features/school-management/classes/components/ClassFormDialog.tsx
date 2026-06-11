@@ -42,7 +42,8 @@ interface ClassFormDialogProps {
     sections: string[];
     schoolId?: string;
     classTeacherId?: string;
-    schedule?: { startTime: string; endTime: string; subjectId: string; teacherId: string }[];
+    monthlyFee?: number;
+    yearlyFee?: number;
     schedule?: { startTime: string; endTime: string; subjectId: string; teacherId: string }[];
   }) => void;
   classId?: string;
@@ -81,6 +82,8 @@ export function ClassFormDialog({ onClose, onSubmit, classId, isLoading = false 
       sections: 'A',
       schoolId: '',
       classTeacherId: '',
+      monthlyFee: 0,
+      yearlyFee: 0,
       schedule: [],
     },
   });
@@ -127,10 +130,12 @@ export function ClassFormDialog({ onClose, onSubmit, classId, isLoading = false 
     if (classItem) {
       reset({
         name: classItem.name,
-        sections: classItem.sections?.map((s) => s.name).join(', ') || '',
+        sections: classItem.sections ? classItem.sections.map((s: any) => s.name).join(', ') : 'A',
         schoolId: typeof classItem.schoolId === 'object' ? (classItem.schoolId as { _id: string })._id : classItem.schoolId || '',
         classTeacherId: typeof classItem.classTeacherId === 'object' ? (classItem.classTeacherId as { _id: string })._id : classItem.classTeacherId || '',
-        schedule: classItem.schedule?.map((s) => ({
+        monthlyFee: classItem.monthlyFee || 0,
+        yearlyFee: classItem.yearlyFee || 0,
+        schedule: classItem.schedule?.map((s: any) => ({
           startTime: s.startTime,
           endTime: s.endTime,
           subjectId: typeof s.subjectId === 'object' ? s.subjectId._id : s.subjectId,
@@ -227,6 +232,12 @@ export function ClassFormDialog({ onClose, onSubmit, classId, isLoading = false 
                 options={teacherOptions}
                 disabled={isLoading}
               />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <FormTextField name="monthlyFee" type="number" control={control} label="Monthly Tuition Fee (₹)" disabled={isLoading} />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <FormTextField name="yearlyFee" type="number" control={control} label="Yearly Fee (₹)" disabled={isLoading} />
             </Grid>
 
             {/* School Timing Banner */}

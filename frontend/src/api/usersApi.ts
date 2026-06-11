@@ -24,6 +24,9 @@ export interface ISchoolUser {
   classId?: string;
   sectionId?: string;
   subjects?: ({ _id: string; name: string; code: string } | string)[];
+  regDate?: string;
+  startDate?: string;
+  leaveDate?: string;
   createdAt: string;
   updatedAt: string;
 }

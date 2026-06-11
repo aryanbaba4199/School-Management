@@ -23,4 +23,6 @@ export const classSchema = yup.object({
       teacherId: yup.string().required('Teacher is required'),
     })
   ).optional(),
+  monthlyFee: yup.number().min(0, 'Fee cannot be negative').optional(),
+  yearlyFee: yup.number().min(0, 'Fee cannot be negative').optional(),
 }).required();

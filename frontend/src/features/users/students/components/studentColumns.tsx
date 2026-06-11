@@ -6,6 +6,7 @@ import type { Column } from '@common/Datatable';
 import type { ISchoolUser } from '../../../../api/usersApi';
 
 interface GetStudentColumnsProps {
+  onView: (student: ISchoolUser) => void;
   onEdit: (student: ISchoolUser) => void;
   onToggleDeactivate: (student: ISchoolUser) => void;
   onDelete: (student: ISchoolUser) => void;
@@ -14,16 +15,24 @@ interface GetStudentColumnsProps {
 
 export function StudentAction({
   student,
+  onView,
   onEdit,
   onToggleDeactivate,
   onDelete
 }: {
   student: ISchoolUser;
+  onView: (student: ISchoolUser) => void;
   onEdit: (student: ISchoolUser) => void;
   onToggleDeactivate: (student: ISchoolUser) => void;
   onDelete: (student: ISchoolUser) => void;
 }) {
   const actions: ActionMenuItem[] = [
+    {
+      label: 'View',
+      icon: <FaCheckCircle />, // Just using icon, maybe better to use eye icon later
+      onClick: () => onView(student),
+      color: 'info'
+    },
     {
       label: 'Edit',
       icon: <FaEdit />,
@@ -58,7 +67,7 @@ const CLASS_MAPPING: Record<string, string> = {
   '60f7c223405c102c98d6c824': 'Class 12-B'
 };
 
-export const getStudentColumns = ({ onEdit, onToggleDeactivate, onDelete, isSuperAdmin = false }: GetStudentColumnsProps): Column<ISchoolUser>[] => [
+export const getStudentColumns = ({ onView, onEdit, onToggleDeactivate, onDelete, isSuperAdmin = false }: GetStudentColumnsProps): Column<ISchoolUser>[] => [
   {
     id: 'name',
     label: 'Student Name',
@@ -132,6 +141,7 @@ export const getStudentColumns = ({ onEdit, onToggleDeactivate, onDelete, isSupe
       <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
         <StudentAction 
           student={row}
+          onView={onView}
           onEdit={onEdit}
           onToggleDeactivate={onToggleDeactivate}
           onDelete={onDelete}

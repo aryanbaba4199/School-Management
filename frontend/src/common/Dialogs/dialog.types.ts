@@ -20,6 +20,7 @@ export type DialogType =
   | 'TEACHER_DETAILS'
   | 'USER_DETAILS' 
   | 'SCHOOL_DETAILS' 
+  | 'STUDENT_DETAILS'
   | null;
 
 export interface DialogPropsMap {
@@ -27,6 +28,7 @@ export interface DialogPropsMap {
   SCHOOL_DETAILS: { schoolId: string };
   CLASS_DETAILS: { classId: string };
   TEACHER_DETAILS: { userId: string };
+  STUDENT_DETAILS: { userId: string };
   CONFIRMATION: {
     title: string;
     message: string;

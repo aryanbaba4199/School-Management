@@ -21,6 +21,7 @@ import { ClassFormDialog } from '../../features/school-management/classes/compon
 import { SubjectFormDialog } from '../../features/school-management/subjects/components/SubjectFormDialog';
 import ClassDetailsDialog from '../../features/school-management/classes/components/ClassDetailsDialog';
 import TeacherDetailsDialog from '../../features/users/teachers/components/TeacherDetailsDialog';
+import StudentDetailsDialog from '../../features/users/students/components/StudentDetailsDialog';
 
 /*------------- Dialog Provider Component -------------*/
 
@@ -79,6 +80,8 @@ export function DialogProvider({ children }: { children: ReactNode }) {
         return <ClassDetailsDialog {...(props as DialogPropsMap['CLASS_DETAILS'])} onClose={closeDialog} />;
       case 'TEACHER_DETAILS':
         return <TeacherDetailsDialog {...(props as DialogPropsMap['TEACHER_DETAILS'])} onClose={closeDialog} />;
+      case 'STUDENT_DETAILS':
+        return <StudentDetailsDialog {...(props as DialogPropsMap['STUDENT_DETAILS'])} onClose={closeDialog} />;
       default:
         return null;
     }

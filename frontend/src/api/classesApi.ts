@@ -24,6 +24,8 @@ export interface IClass {
   isActive: boolean;
   sections: ISection[];
   classTeacherId?: string | { _id: string; name: string; email: string };
+  monthlyFee?: number;
+  yearlyFee?: number;
   schedule?: IPeriodSchedule[];
 }
 
@@ -42,7 +44,7 @@ export const classesApi = baseApi.injectEndpoints({
       query: (id) => `/classes/${id}`,
       providesTags: (result, error, id) => [{ type: 'Class', id }],
     }),
-    createClass: builder.mutation<{ success: boolean; data: IClass }, { name: string; sections: string[]; schoolId?: string; classTeacherId?: string; schedule?: { startTime: string; endTime: string; subjectId: string; teacherId: string }[] }>({
+    createClass: builder.mutation<{ success: boolean; data: IClass }, { name: string; sections: string[]; schoolId?: string; classTeacherId?: string; monthlyFee?: number; yearlyFee?: number; schedule?: { startTime: string; endTime: string; subjectId: string; teacherId: string }[] }>({
       query: (body) => ({
         url: '/classes',
         method: 'POST',
@@ -50,7 +52,7 @@ export const classesApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Class', 'Section'],
     }),
-    updateClass: builder.mutation<{ success: boolean; data: IClass }, { id: string; body: { name: string; sections: string[]; schoolId?: string; classTeacherId?: string; schedule?: { startTime: string; endTime: string; subjectId: string; teacherId: string }[] } }>({
+    updateClass: builder.mutation<{ success: boolean; data: IClass }, { id: string; body: { name: string; sections: string[]; schoolId?: string; classTeacherId?: string; monthlyFee?: number; yearlyFee?: number; schedule?: { startTime: string; endTime: string; subjectId: string; teacherId: string }[] } }>({
       query: ({ id, body }) => ({
         url: `/classes/${id}`,
         method: 'PUT',
