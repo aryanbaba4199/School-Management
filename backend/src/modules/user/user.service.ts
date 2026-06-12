@@ -1,5 +1,7 @@
 import { UserModel, IUser } from './user.model';
 import { SubjectModel } from '../subject/subject.model';
+import { SchoolModel } from '../school/school.model';
+import { FeeInvoice } from '../fee/fee.model';
 import { CreateUserInput, LoginInput, UpdateUserInput } from './dto/create-user.dto';
 import { hashPassword, verifyPassword } from '../../common/utils/crypto';
 import { generateToken } from '../../common/utils/jwt';
@@ -55,6 +57,21 @@ export class UserService {
         { _id: { $in: input.subjects.map(s => new Types.ObjectId(s)) } },
         { $addToSet: { teacherIds: savedUser._id } }
       );
+    }
+
+    if (input.role.name === 'STUDENT' && schoolId && input.classId) {
+      const school = await SchoolModel.findById(schoolId);
+      if (school && school.admissionFee && school.admissionFee > 0) {
+        await FeeInvoice.create({
+          studentId: savedUser._id,
+          schoolId: school._id,
+          classId: new Types.ObjectId(input.classId),
+          amount: school.admissionFee,
+          type: 'ADMISSION',
+          year: new Date().getFullYear(),
+          status: 'PENDING',
+        });
+      }
     }
 
     const userObj = savedUser.toObject() as IUser;

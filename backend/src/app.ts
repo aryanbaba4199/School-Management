@@ -5,6 +5,7 @@ import { MasterModule } from './modules/master/master.module';
 import { UserModule } from './modules/user/user.module';
 import { ClassModule } from './modules/class/class.module';
 import { SubjectModule } from './modules/subject/subject.module';
+import { FeeModule } from './modules/fee/fee.module';
 
 /*------------- Express Application Configuration -------------*/
 
@@ -21,6 +22,7 @@ MasterModule.init(app);
 UserModule.init(app);
 ClassModule.init(app);
 SubjectModule.init(app);
+FeeModule.init(app);
 
 // Health check endpoint
 app.get('/health', (req: Request, res: Response) => {
