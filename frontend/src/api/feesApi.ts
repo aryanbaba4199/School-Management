@@ -55,9 +55,17 @@ export const feesApi = baseApi.injectEndpoints({
         url: `/fees/${id}/mark-due`,
         method: 'PUT',
       }),
-      invalidatesTags: (result, error, id) => [{ type: 'Fee', id }],
+      invalidatesTags: (result, error, id) => [{ type: 'Fee', id }, { type: 'Fee', id: 'LIST' }],
+    }),
+    generateStudentFees: builder.mutation<{ success: boolean; count: number; message: string }, { classId?: string; type: 'MONTHLY' | 'ADMISSION'; month?: number; year: number }>({
+      query: (body) => ({
+        url: '/fees/generate',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: [{ type: 'Fee', id: 'LIST' }],
     }),
   }),
 });
 
-export const { useGetStudentFeesQuery, useGetAllTransactionsQuery, usePayFeeMutation, useMarkFeeDueMutation } = feesApi;
+export const { useGetStudentFeesQuery, useGetAllTransactionsQuery, usePayFeeMutation, useMarkFeeDueMutation, useGenerateStudentFeesMutation } = feesApi;

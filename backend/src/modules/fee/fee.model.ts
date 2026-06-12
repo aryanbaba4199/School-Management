@@ -17,7 +17,7 @@ export interface IFeeInvoice extends Document {
 
 const feeInvoiceSchema = new Schema<IFeeInvoice>(
   {
-    studentId: { type: Schema.Types.ObjectId, ref: 'SchoolUser', required: true },
+    studentId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     schoolId: { type: Schema.Types.ObjectId, ref: 'School', required: true },
     classId: { type: Schema.Types.ObjectId, ref: 'Class', required: true },
     amount: { type: Number, required: true },
