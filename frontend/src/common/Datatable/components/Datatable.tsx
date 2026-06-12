@@ -19,7 +19,7 @@ import {
   Box,
   Tooltip
 } from '@mui/material';
-import { FaEllipsisV, FaColumns } from 'react-icons/fa';
+import { FaEllipsisV, FaColumns, FaFilter } from 'react-icons/fa';
 import styled from 'styled-components';
 import type { Column, ActionItem } from '../types/datatable.types';
 
@@ -49,6 +49,8 @@ interface DatatableProps<T> {
   sortDirection?: 'asc' | 'desc';
   onSort?: (columnId: string) => void;
   tableName?: string;
+  filterValues?: Record<string, any>;
+  onFilterChange?: (columnId: string, value: any) => void;
 }
 
 export default function Datatable<T extends { _id: string }>({
@@ -61,9 +63,14 @@ export default function Datatable<T extends { _id: string }>({
   sortDirection,
   onSort,
   tableName,
+  filterValues = {},
+  onFilterChange,
 }: DatatableProps<T>) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [activeRow, setActiveRow] = useState<T | null>(null);
+
+  const [filterAnchorEl, setFilterAnchorEl] = useState<null | HTMLElement>(null);
+  const [activeFilterCol, setActiveFilterCol] = useState<Column<T> | null>(null);
   
   const [columnsAnchorEl, setColumnsAnchorEl] = useState<null | HTMLElement>(null);
   const [visibleColumnIds, setVisibleColumnIds] = useState<string[]>(() => {
@@ -146,17 +153,35 @@ export default function Datatable<T extends { _id: string }>({
           <TableRow>
             {visibleColumns.map((col) => (
               <StyledHeaderCell key={col.id} align={col.align || 'left'}>
-                {col.sortable && onSort ? (
-                  <TableSortLabel
-                    active={sortColumn === col.id}
-                    direction={sortColumn === col.id ? sortDirection : 'asc'}
-                    onClick={() => onSort(col.id)}
-                  >
-                    {col.label}
-                  </TableSortLabel>
-                ) : (
-                  col.label
-                )}
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: col.align === 'right' ? 'flex-end' : col.align === 'center' ? 'center' : 'flex-start' }}>
+                  {col.sortable && onSort ? (
+                    <TableSortLabel
+                      active={sortColumn === col.id}
+                      direction={sortColumn === col.id ? sortDirection : 'asc'}
+                      onClick={() => onSort(col.id)}
+                    >
+                      {col.label}
+                    </TableSortLabel>
+                  ) : (
+                    <span>{col.label}</span>
+                  )}
+                  {col.filterable && (
+                    <IconButton 
+                      size="small" 
+                      onClick={(e) => {
+                        setFilterAnchorEl(e.currentTarget);
+                        setActiveFilterCol(col);
+                      }}
+                      sx={{ 
+                        ml: 0.5, 
+                        p: 0.5,
+                        color: filterValues[col.id] ? 'primary.main' : 'var(--color-text-secondary)',
+                      }}
+                    >
+                      <FaFilter size={12} />
+                    </IconButton>
+                  )}
+                </Box>
               </StyledHeaderCell>
             ))}
             {actions.length > 0 && <StyledHeaderCell align="right">Actions</StyledHeaderCell>}
@@ -228,6 +253,32 @@ export default function Datatable<T extends { _id: string }>({
               />
             </ListItemIcon>
             <ListItemText>{col.label}</ListItemText>
+          </MenuItem>
+        ))}
+      </Menu>
+
+      {/* Filter Menu */}
+      <Menu
+        anchorEl={filterAnchorEl}
+        open={Boolean(filterAnchorEl)}
+        onClose={() => {
+          setFilterAnchorEl(null);
+          setActiveFilterCol(null);
+        }}
+      >
+        {activeFilterCol?.filterOptions?.map(option => (
+          <MenuItem 
+            key={option.value} 
+            selected={filterValues[activeFilterCol.id] === option.value}
+            onClick={() => {
+              if (onFilterChange) {
+                onFilterChange(activeFilterCol.id, option.value);
+              }
+              setFilterAnchorEl(null);
+              setActiveFilterCol(null);
+            }}
+          >
+            <ListItemText primary={option.label} />
           </MenuItem>
         ))}
       </Menu>

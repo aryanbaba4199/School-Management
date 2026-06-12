@@ -26,11 +26,23 @@ export const getAllTransactions = async (req: Request, res: Response) => {
     // SchoolId is injected by the injectSchoolId middleware
     const schoolId = req.schoolId;
 
+    const { status } = req.query;
+
     if (!schoolId) {
       return res.status(400).json({ success: false, error: 'School ID is required to fetch transactions' });
     }
 
-    const fees = await FeeInvoice.find({ schoolId })
+    const query: any = { schoolId };
+    
+    if (status) {
+      if (status === 'DUE') {
+        query.status = { $in: ['PENDING', 'OVERDUE'] };
+      } else {
+        query.status = status;
+      }
+    }
+
+    const fees = await FeeInvoice.find(query)
       .populate('studentId', 'name userCode email phone')
       .populate('classId', 'name')
       .sort({ createdAt: -1 });

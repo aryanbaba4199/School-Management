@@ -67,13 +67,22 @@ export const transactionColumns: Column<IFeeInvoice>[] = [
     id: 'status',
     label: 'Status',
     sortable: true,
+    filterable: true,
+    filterOptions: [
+      { label: 'All', value: '' },
+      { label: 'Paid', value: 'PAID' },
+      { label: 'Due', value: 'DUE' },
+    ],
     render: (row) => {
       const isPaid = row.status === 'PAID';
       const isOverdue = row.status === 'OVERDUE';
+      const isPending = row.status === 'PENDING';
+      
+      const label = isPending ? 'DUE' : row.status;
       
       return (
         <Chip 
-          label={row.status} 
+          label={label} 
           size="small" 
           color={isPaid ? 'success' : isOverdue ? 'error' : 'warning'} 
           sx={{ fontWeight: 700, fontSize: '0.7rem', height: '20px' }} 
@@ -88,6 +97,26 @@ export const transactionColumns: Column<IFeeInvoice>[] = [
     render: (row) => (
       <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)' }}>
         {row.paidAt ? new Date(row.paidAt).toLocaleDateString() : '-'}
+      </Typography>
+    ),
+  },
+  {
+    id: 'paymentMode',
+    label: 'Payment Mode',
+    sortable: true,
+    render: (row) => (
+      <Typography variant="body2" sx={{ fontWeight: 500 }}>
+        {row.paymentMode ? row.paymentMode.replace('_', ' ') : '-'}
+      </Typography>
+    ),
+  },
+  {
+    id: 'paymentMessage',
+    label: 'Note / TXN ID',
+    sortable: false,
+    render: (row) => (
+      <Typography variant="body2" sx={{ color: 'text.secondary', maxWidth: 150, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={row.paymentMessage}>
+        {row.paymentMessage || '-'}
       </Typography>
     ),
   },

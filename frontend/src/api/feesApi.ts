@@ -27,8 +27,14 @@ interface FeesResponse {
 
 export const feesApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getAllTransactions: builder.query<FeesResponse, void>({
-      query: () => '/fees/transactions',
+    getAllTransactions: builder.query<FeesResponse, { status?: string } | void>({
+      query: (params) => {
+        let url = '/fees/transactions';
+        if (params?.status) {
+          url += `?status=${params.status}`;
+        }
+        return url;
+      },
       providesTags: (result) =>
         result?.data
           ? [

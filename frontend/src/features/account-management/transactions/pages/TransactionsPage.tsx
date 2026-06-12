@@ -1,12 +1,16 @@
 import { useState } from 'react';
 import { PageWrapper, Datatable, DatatableHeader, DatatableFooter } from '@common/Datatable';
 import { transactionColumns } from '../components/transactionColumns';
+import { useTransactionFilters } from '../hooks/useTransactionFilters';
 import { useGetAllTransactionsQuery } from '@api/feesApi';
 import type { IFeeInvoice } from '@api/feesApi';
 import { Box, Typography } from '@mui/material';
 
 export function TransactionsPage() {
-  const { data: res, isLoading, error } = useGetAllTransactionsQuery();
+  const { filterValues, handleFilterChange, sortColumn, sortDirection, handleSort } = useTransactionFilters();
+  const statusFilter = filterValues['status'];
+
+  const { data: res, isLoading, error } = useGetAllTransactionsQuery({ status: statusFilter });
   const transactions = res?.data || [];
 
   const [search, setSearch] = useState('');
@@ -19,10 +23,34 @@ export function TransactionsPage() {
     const student = t.studentId as any;
     const studentName = student?.name?.toLowerCase() || '';
     const userCode = student?.userCode?.toLowerCase() || '';
-    return studentName.includes(searchLower) || userCode.includes(searchLower);
+    const paymentMsg = t.paymentMessage?.toLowerCase() || '';
+    const paymentMode = t.paymentMode?.toLowerCase() || '';
+    return studentName.includes(searchLower) || 
+           userCode.includes(searchLower) || 
+           paymentMsg.includes(searchLower) || 
+           paymentMode.includes(searchLower);
   });
 
-  const paginatedTransactions = filteredTransactions.slice((page - 1) * limit, page * limit);
+  const sortedTransactions = [...filteredTransactions].sort((a, b) => {
+    if (!sortColumn) return 0;
+    
+    let aVal: any = a[sortColumn as keyof IFeeInvoice];
+    let bVal: any = b[sortColumn as keyof IFeeInvoice];
+
+    if (sortColumn === 'studentName') {
+      aVal = (a.studentId as any)?.name || '';
+      bVal = (b.studentId as any)?.name || '';
+    } else if (sortColumn === 'classId') {
+      aVal = (a.classId as any)?.name || '';
+      bVal = (b.classId as any)?.name || '';
+    }
+
+    if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
+    if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  const paginatedTransactions = sortedTransactions.slice((page - 1) * limit, page * limit);
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
@@ -51,6 +79,11 @@ export function TransactionsPage() {
           data={paginatedTransactions}
           loading={isLoading}
           tableName="transactions"
+          filterValues={filterValues}
+          onFilterChange={handleFilterChange}
+          sortColumn={sortColumn}
+          sortDirection={sortDirection}
+          onSort={handleSort}
         />
       )}
 

@@ -83,6 +83,40 @@ describe('Fee Module API Endpoints', () => {
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.data[0].type).toBe('ADMISSION');
+      
+      // Ensure find was called with just schoolId
+      expect(FeeInvoice.find).toHaveBeenCalledWith({ schoolId: 'school123' });
+    });
+
+    it('should filter transactions by PAID status', async () => {
+      const mockPopulate2 = { sort: jest.fn().mockResolvedValue([mockFeeDoc]) };
+      const mockPopulate1 = { populate: jest.fn().mockReturnValue(mockPopulate2) };
+      const mockQuery = { populate: jest.fn().mockReturnValue(mockPopulate1) };
+      (FeeInvoice.find as jest.Mock).mockReturnValue(mockQuery);
+
+      const response = await request(app)
+        .get('/api/fees/transactions?status=PAID')
+        .set('Authorization', `Bearer ${schoolAdminToken}`);
+
+      expect(response.status).toBe(200);
+      expect(FeeInvoice.find).toHaveBeenCalledWith({ schoolId: 'school123', status: 'PAID' });
+    });
+
+    it('should filter transactions by DUE status (PENDING and OVERDUE)', async () => {
+      const mockPopulate2 = { sort: jest.fn().mockResolvedValue([mockFeeDoc]) };
+      const mockPopulate1 = { populate: jest.fn().mockReturnValue(mockPopulate2) };
+      const mockQuery = { populate: jest.fn().mockReturnValue(mockPopulate1) };
+      (FeeInvoice.find as jest.Mock).mockReturnValue(mockQuery);
+
+      const response = await request(app)
+        .get('/api/fees/transactions?status=DUE')
+        .set('Authorization', `Bearer ${schoolAdminToken}`);
+
+      expect(response.status).toBe(200);
+      expect(FeeInvoice.find).toHaveBeenCalledWith({ 
+        schoolId: 'school123', 
+        status: { $in: ['PENDING', 'OVERDUE'] } 
+      });
     });
   });
 

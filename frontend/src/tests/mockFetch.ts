@@ -328,9 +328,19 @@ export const fetchStub = vi.fn(async (url: string | Request, options?: RequestIn
 
     if (urlString.includes('/api/fees')) {
       if (urlString.includes('/transactions')) {
+        const url = new URL(urlString, 'http://localhost');
+        const status = url.searchParams.get('status');
+        let data = mockFeesList;
+        
+        if (status === 'DUE') {
+          data = mockFeesList.filter(f => f.status === 'PENDING' || f.status === 'OVERDUE');
+        } else if (status) {
+          data = mockFeesList.filter(f => f.status === status);
+        }
+
         return Promise.resolve(new Response(JSON.stringify({
           success: true,
-          data: mockFeesList
+          data
         }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
       }
       if (urlString.includes('/student/')) {
