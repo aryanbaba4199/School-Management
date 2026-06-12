@@ -6,14 +6,5 @@ in class 10th there will be social science but in 3 class may be there is evs th
 so in. subject show class that will be multiple support ( show in chips not dropdown )
 
 
-/** -----------in class creation only selected subject should be shown in schedule------------------ */
 
-
-ok lets work in Account feature
-make a menu Account Management 
-and make two submenu for now 
-Fees Management, 
-Transaction Management, 
-
-
-in class creation time also ask the monthly and yearly fees ( have to update the class schema also )
+`

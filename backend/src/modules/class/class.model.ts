@@ -13,6 +13,8 @@ export interface IClass extends Document {
     subjectId: Types.ObjectId;
     teacherId: Types.ObjectId;
   }[];
+  monthlyFee?: number;
+  yearlyFee?: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -45,6 +47,8 @@ const ClassSchema = new Schema<IClass>(
         teacherId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
       }
     ],
+    monthlyFee: { type: Number },
+    yearlyFee: { type: Number },
     isActive: {
       type: Boolean,
       default: true,

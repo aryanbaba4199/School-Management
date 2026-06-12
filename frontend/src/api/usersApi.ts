@@ -27,6 +27,7 @@ export interface ISchoolUser {
   regDate?: string;
   startDate?: string;
   leaveDate?: string;
+  feeCycle?: 'MONTHLY' | 'YEARLY';
   createdAt: string;
   updatedAt: string;
 }

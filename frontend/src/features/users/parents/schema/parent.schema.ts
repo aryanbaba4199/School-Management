@@ -25,11 +25,7 @@ export const parentSchema = yup.object({
     .string()
     .required('Email is required')
     .email('Invalid email address format'),
-  password: yup
-    .string()
-    .min(6, 'Password must be at least 6 characters')
-    .max(50, 'Password cannot exceed 50 characters')
-    .optional(),
+
   userCode: yup
     .string()
     .required('Guardian ID is required')

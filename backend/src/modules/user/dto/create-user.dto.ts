@@ -46,6 +46,10 @@ export const CreateUserSchema = z.object({
     classId: ObjectIdSchema.optional(),
     sectionId: ObjectIdSchema.optional(),
     subjects: z.array(ObjectIdSchema).optional(),
+    regDate: z.coerce.date().optional(),
+    startDate: z.coerce.date().optional(),
+    leaveDate: z.coerce.date().optional(),
+    feeCycle: z.enum(['MONTHLY', 'YEARLY']).optional(),
   }),
 });
 
@@ -90,6 +94,10 @@ export const UpdateUserSchema = z.object({
     classId: ObjectIdSchema.optional(),
     sectionId: ObjectIdSchema.optional(),
     subjects: z.array(ObjectIdSchema).optional(),
+    regDate: z.coerce.date().optional(),
+    startDate: z.coerce.date().optional(),
+    leaveDate: z.coerce.date().optional(),
+    feeCycle: z.enum(['MONTHLY', 'YEARLY']).optional(),
   }),
 });
 

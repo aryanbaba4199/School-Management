@@ -186,6 +186,8 @@ export function ClassFormDialog({ onClose, onSubmit, classId, isLoading = false 
       name: formData.name,
       sections: sectionList,
       classTeacherId: formData.classTeacherId || undefined,
+      monthlyFee: formData.monthlyFee || 0,
+      yearlyFee: formData.yearlyFee || 0,
       schedule: formData.schedule || undefined,
       ...(isSuperAdmin && formData.schoolId ? { schoolId: formData.schoolId } : {}),
     });
@@ -234,7 +236,7 @@ export function ClassFormDialog({ onClose, onSubmit, classId, isLoading = false 
               />
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
-              <FormTextField name="monthlyFee" type="number" control={control} label="Monthly Tuition Fee (₹)" disabled={isLoading} />
+              <FormTextField name="monthlyFee" type="number" control={control} label="Monthly Fee (₹)" disabled={isLoading} />
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
               <FormTextField name="yearlyFee" type="number" control={control} label="Yearly Fee (₹)" disabled={isLoading} />

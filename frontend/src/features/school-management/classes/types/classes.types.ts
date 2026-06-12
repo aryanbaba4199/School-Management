@@ -15,4 +15,6 @@ export interface ClassFormData {
   schoolId?: string;
   classTeacherId?: string;
   schedule?: PeriodScheduleInput[];
+  monthlyFee?: number;
+  yearlyFee?: number;
 }

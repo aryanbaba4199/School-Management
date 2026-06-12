@@ -163,6 +163,10 @@ export class UserService {
     if (input.childrenIds !== undefined) user.childrenIds = input.childrenIds.map(c => new Types.ObjectId(c));
     if (input.classId !== undefined) user.classId = input.classId ? new Types.ObjectId(input.classId) : undefined;
     if (input.sectionId !== undefined) user.sectionId = input.sectionId ? new Types.ObjectId(input.sectionId) : undefined;
+    if (input.regDate !== undefined) user.regDate = input.regDate;
+    if (input.startDate !== undefined) user.startDate = input.startDate;
+    if (input.leaveDate !== undefined) user.leaveDate = input.leaveDate;
+    if (input.feeCycle !== undefined) user.feeCycle = input.feeCycle;
     if (input.subjects !== undefined) {
       const oldSubjects = user.subjects?.map((s) => s.toString()) || [];
       const newSubjects = input.subjects;

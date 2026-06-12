@@ -24,6 +24,8 @@ export class ClassController {
         sections: req.body.sections,
         classTeacherId: req.body.classTeacherId,
         schedule: req.body.schedule,
+        monthlyFee: req.body.monthlyFee,
+        yearlyFee: req.body.yearlyFee,
       });
 
       sendSuccess(res, 201, result);
@@ -76,6 +78,8 @@ export class ClassController {
           sections: req.body.sections,
           classTeacherId: req.body.classTeacherId,
           schedule: req.body.schedule,
+          monthlyFee: req.body.monthlyFee,
+          yearlyFee: req.body.yearlyFee,
         },
         req.schoolId
       );

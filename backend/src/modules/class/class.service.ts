@@ -13,6 +13,8 @@ export class ClassService {
     schoolId: string;
     sections?: string[];
     classTeacherId?: string;
+    monthlyFee?: number;
+    yearlyFee?: number;
     schedule?: { startTime: string; endTime: string; subjectId: string; teacherId: string }[];
   }): Promise<any> {
     const cls = new ClassModel({
@@ -25,6 +27,8 @@ export class ClassService {
         subjectId: new Types.ObjectId(s.subjectId),
         teacherId: new Types.ObjectId(s.teacherId),
       })),
+      monthlyFee: input.monthlyFee,
+      yearlyFee: input.yearlyFee,
     });
     await cls.save();
 
@@ -108,6 +112,8 @@ export class ClassService {
       name?: string;
       sections?: string[];
       classTeacherId?: string;
+      monthlyFee?: number;
+      yearlyFee?: number;
       schedule?: { startTime: string; endTime: string; subjectId: string; teacherId: string }[];
     },
     schoolId?: string
@@ -131,6 +137,12 @@ export class ClassService {
         subjectId: new Types.ObjectId(s.subjectId),
         teacherId: new Types.ObjectId(s.teacherId),
       }));
+    }
+    if (input.monthlyFee !== undefined) {
+      cls.monthlyFee = input.monthlyFee;
+    }
+    if (input.yearlyFee !== undefined) {
+      cls.yearlyFee = input.yearlyFee;
     }
     await cls.save();
 

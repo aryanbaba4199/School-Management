@@ -31,6 +31,10 @@ export interface IUser extends Document {
   classId?: Types.ObjectId;
   sectionId?: Types.ObjectId;
   subjects?: Types.ObjectId[];
+  regDate?: Date;
+  startDate?: Date;
+  leaveDate?: Date;
+  feeCycle?: 'MONTHLY' | 'YEARLY';
   createdAt: Date;
   updatedAt: Date;
 }
@@ -123,6 +127,14 @@ const UserSchema = new Schema<IUser>(
         index: true,
       },
     ],
+    regDate: { type: Date },
+    startDate: { type: Date },
+    leaveDate: { type: Date },
+    feeCycle: {
+      type: String,
+      enum: ['MONTHLY', 'YEARLY'],
+      default: 'MONTHLY',
+    },
   },
   {
     timestamps: true,
