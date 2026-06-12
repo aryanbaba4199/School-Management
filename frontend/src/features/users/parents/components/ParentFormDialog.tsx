@@ -4,10 +4,10 @@ import type { Resolver } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { DialogTitle, DialogContent, DialogActions, Button, Grid, Box, CircularProgress } from '@mui/material';
 import { FormTextField, FormSelectField } from '@common/Forms';
-import { useGetUsersQuery, useGetUserByIdQuery } from '../../../../api/usersApi';
-import { useGetStatesQuery, useGetDistrictsQuery } from '../../../../api/masterApi';
+import { useGetUsersQuery, useGetUserByIdQuery } from '@api/usersApi';
+import { useGetStatesQuery, useGetDistrictsQuery } from '@api/masterApi';
 import { parentSchema, type ParentFormData } from '../schema/parent.schema';
-import type { ISchoolUser } from '../../../../api/usersApi';
+import type { ISchoolUser } from '@api/usersApi';
 
 interface ParentFormDialogProps {
   onClose: () => void;

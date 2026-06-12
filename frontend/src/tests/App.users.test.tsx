@@ -2,8 +2,8 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, beforeEach } from 'vitest';
 import App from '../App';
 import { AppThemeProvider } from '../features/themes/components/AppThemeProvider';
-import { store } from '../api/store';
-import { baseApi } from '../api/baseApi';
+import { store } from '@api/store';
+import { baseApi } from '@api/baseApi';
 import { fetchStub, resetMockSchools } from './mockFetch';
 
 describe('App Users - Students Management', () => {

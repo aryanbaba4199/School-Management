@@ -1,6 +1,6 @@
 import { Chip, Typography } from '@mui/material';
 import type { Column } from '@common/Datatable';
-import type { IFeeInvoice } from '../../../../api/feesApi';
+import type { IFeeInvoice } from '@api/feesApi';
 
 export const transactionColumns: Column<IFeeInvoice>[] = [
   {

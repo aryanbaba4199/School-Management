@@ -209,4 +209,80 @@ describe('Fee Module API Endpoints', () => {
       expect(response.body.success).toBe(true);
     });
   });
+
+  describe('GET /api/fees/cycle/:year/:month', () => {
+    it('should fetch cycle details for the school admin', async () => {
+      const mockPopulate = jest.fn().mockReturnValue({
+        populate: jest.fn().mockResolvedValue([mockFeeDoc]),
+      });
+      (FeeInvoice.find as jest.Mock).mockReturnValue({
+        populate: mockPopulate,
+      });
+
+      const response = await request(app)
+        .get('/api/fees/cycle/2024/6')
+        .set('Authorization', `Bearer ${schoolAdminToken}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(response.body.data[0].amount).toBe(5000);
+    });
+  });
+
+  describe('POST /api/fees/pay-receipt', () => {
+    it('should process money receipt and update wallet balance', async () => {
+      (UserModel.findOne as jest.Mock).mockResolvedValue({
+        _id: 'student123',
+        walletBal: 0,
+        save: jest.fn().mockResolvedValue({}),
+      });
+
+      (FeeInvoice.find as jest.Mock).mockResolvedValue([
+        { ...mockFeeDoc, _id: 'inv1', amount: 300, save: jest.fn().mockResolvedValue({}) },
+        { ...mockFeeDoc, _id: 'inv2', amount: 300, save: jest.fn().mockResolvedValue({}) },
+      ]);
+
+      const response = await request(app)
+        .post('/api/fees/pay-receipt')
+        .set('Authorization', `Bearer ${schoolAdminToken}`)
+        .send({
+          studentId: 'student123',
+          invoiceIds: ['inv1', 'inv2'],
+          paidAmount: 800,
+          paymentMode: 'CASH',
+          paymentMessage: 'Test Payment'
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(response.body.data.walletAdded).toBe(200); // 800 - 600
+      expect(response.body.data.paidInvoices).toBe(2);
+    });
+
+    it('should use existing wallet balance to pay for invoices', async () => {
+      (UserModel.findOne as jest.Mock).mockResolvedValue({
+        _id: 'student123',
+        walletBal: 300,
+        save: jest.fn().mockResolvedValue({}),
+      });
+
+      (FeeInvoice.find as jest.Mock).mockResolvedValue([
+        { ...mockFeeDoc, _id: 'inv1', amount: 500, save: jest.fn().mockResolvedValue({}) },
+      ]);
+
+      const response = await request(app)
+        .post('/api/fees/pay-receipt')
+        .set('Authorization', `Bearer ${schoolAdminToken}`)
+        .send({
+          studentId: 'student123',
+          invoiceIds: ['inv1'],
+          paidAmount: 200, // 200 + 300 (wallet) = 500
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(response.body.data.walletUsed).toBe(300); // wallet was 300, now 0
+      expect(response.body.data.newWalletBal).toBe(0);
+    });
+  });
 });

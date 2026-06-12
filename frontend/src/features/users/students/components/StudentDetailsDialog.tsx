@@ -3,9 +3,9 @@ import {
   Divider, IconButton, DialogTitle, DialogContent 
 } from '@mui/material';
 import { FaTimes, FaCalendarAlt } from 'react-icons/fa';
-import { useGetUserByIdQuery } from '../../../../api/usersApi';
-import { useGetClassByIdQuery } from '../../../../api/classesApi';
-import { useGetStudentFeesQuery, usePayFeeMutation, useMarkFeeDueMutation } from '../../../../api/feesApi';
+import { useGetUserByIdQuery } from '@api/usersApi';
+import { useGetClassByIdQuery } from '@api/classesApi';
+import { useGetStudentFeesQuery, usePayFeeMutation, useMarkFeeDueMutation } from '@api/feesApi';
 
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button

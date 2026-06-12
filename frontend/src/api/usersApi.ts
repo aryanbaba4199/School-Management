@@ -29,6 +29,7 @@ export interface ISchoolUser {
   startDate?: string;
   leaveDate?: string;
   feeCycle?: 'MONTHLY' | 'YEARLY';
+  walletBal?: number;
   createdAt: string;
   updatedAt: string;
 }

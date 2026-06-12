@@ -6,7 +6,7 @@ import {
   useCreateSubjectMutation,
   useUpdateSubjectMutation,
   useDeleteSubjectMutation,
-} from '../../../../api/subjectsApi';
+} from '@api/subjectsApi';
 import type { ISubject } from '../types/subjects.types';
 
 interface ApiError {

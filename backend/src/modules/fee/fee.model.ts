@@ -11,6 +11,8 @@ export interface IFeeInvoice extends Document {
   status: 'PAID' | 'PENDING' | 'OVERDUE';
   dueDate?: Date;
   paidAt?: Date;
+  paymentMode?: 'CASH' | 'ONLINE' | 'CHEQUE' | 'BANK_TRANSFER';
+  paymentMessage?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -31,6 +33,11 @@ const feeInvoiceSchema = new Schema<IFeeInvoice>(
     status: { type: String, enum: ['PAID', 'PENDING', 'OVERDUE'], default: 'PENDING' },
     dueDate: { type: Date },
     paidAt: { type: Date },
+    paymentMode: {
+      type: String,
+      enum: ['CASH', 'ONLINE', 'CHEQUE', 'BANK_TRANSFER'],
+    },
+    paymentMessage: { type: String },
   },
   { timestamps: true }
 );

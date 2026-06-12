@@ -1,12 +1,13 @@
 import { useState, useMemo } from 'react';
 import { PageWrapper, Datatable, DatatableHeader, DatatableFooter } from '@common/Datatable';
-import { feeSummaryColumns } from '../components/feeColumns';
+import { getFeeSummaryColumns } from '../components/feeColumns';
 import type { IFeeSummary } from '../components/feeColumns';
+import { useNavigate } from 'react-router-dom';
 import { 
   useGetAllTransactionsQuery, 
   useGenerateGlobalFeesMutation 
-} from '../../../../api/feesApi';
-import { useGetUsersQuery } from '../../../../api/usersApi';
+} from '@api/feesApi';
+import { useGetUsersQuery } from '@api/usersApi';
 import { Box, Typography, Button, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, Select, MenuItem, FormControl, InputLabel, Tooltip, IconButton, Divider } from '@mui/material';
 import { FaPlusCircle, FaInfoCircle } from 'react-icons/fa';
 
@@ -14,6 +15,7 @@ export function FeesPage() {
   const { data: res, isLoading, error } = useGetAllTransactionsQuery();
   const [generateFees, { isLoading: isGenerating }] = useGenerateGlobalFeesMutation();
   const { data: studentsData } = useGetUsersQuery({ role: 'STUDENT', limit: 10000 });
+  const navigate = useNavigate();
 
   const students = studentsData?.data || [];
   const activeStudents = students.filter(s => s.isActive).length;
@@ -116,6 +118,10 @@ export function FeesPage() {
     }
   ];
 
+  const handleViewDetails = (row: IFeeSummary) => {
+    navigate(`/account-management/fees/${row._id}`);
+  };
+
   return (
     <PageWrapper title="Fees Management" actions={pageActions}>
       <Box sx={{ mb: 2 }}>
@@ -132,7 +138,7 @@ export function FeesPage() {
         </Box>
       ) : (
         <Datatable<IFeeSummary>
-          columns={feeSummaryColumns}
+          columns={getFeeSummaryColumns(handleViewDetails)}
           data={paginatedSummaries}
           loading={isLoading}
           tableName="fees_summary"
@@ -158,19 +164,19 @@ export function FeesPage() {
         </DialogTitle>
         <DialogContent sx={{ mt: 1 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-around', p: 2, bgcolor: 'var(--color-background-default)', borderRadius: 2, mb: 3 }}>
-            <Box textAlign="center">
+            <Box sx={{ textAlign: 'center' }}>
               <Typography variant="caption" color="textSecondary">Total Students</Typography>
-              <Typography variant="h6" fontWeight={700}>{totalStudents}</Typography>
+              <Typography variant="h6" sx={{ fontWeight: 700 }}>{totalStudents}</Typography>
             </Box>
             <Divider orientation="vertical" flexItem />
-            <Box textAlign="center">
+            <Box sx={{ textAlign: 'center' }}>
               <Typography variant="caption" color="textSecondary">Active</Typography>
-              <Typography variant="h6" fontWeight={700} color="success.main">{activeStudents}</Typography>
+              <Typography variant="h6" color="success.main" sx={{ fontWeight: 700 }}>{activeStudents}</Typography>
             </Box>
             <Divider orientation="vertical" flexItem />
-            <Box textAlign="center">
+            <Box sx={{ textAlign: 'center' }}>
               <Typography variant="caption" color="textSecondary">Deactive</Typography>
-              <Typography variant="h6" fontWeight={700} color="error.main">{deactiveStudents}</Typography>
+              <Typography variant="h6" color="error.main" sx={{ fontWeight: 700 }}>{deactiveStudents}</Typography>
             </Box>
           </Box>
 

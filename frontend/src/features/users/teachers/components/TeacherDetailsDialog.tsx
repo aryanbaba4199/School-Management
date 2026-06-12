@@ -3,7 +3,7 @@ import {
   Divider, IconButton, DialogTitle, DialogContent 
 } from '@mui/material';
 import { FaTimes } from 'react-icons/fa';
-import { useGetUserByIdQuery } from '../../../../api/usersApi';
+import { useGetUserByIdQuery } from '@api/usersApi';
 
 interface TeacherDetailsDialogProps {
   userId: string;

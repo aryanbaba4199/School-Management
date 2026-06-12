@@ -36,6 +36,7 @@ export interface IUser extends Document {
   startDate?: Date;
   leaveDate?: Date;
   feeCycle?: 'MONTHLY' | 'YEARLY';
+  walletBal?: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -139,6 +140,10 @@ const UserSchema = new Schema<IUser>(
       type: String,
       enum: ['MONTHLY', 'YEARLY'],
       default: 'MONTHLY',
+    },
+    walletBal: {
+      type: Number,
+      default: 0,
     },
   },
   {

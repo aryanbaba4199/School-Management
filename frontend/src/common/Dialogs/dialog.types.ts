@@ -2,7 +2,7 @@ import type { SchoolFormData } from '../../features/school-management/manage-sch
 import type { PlanFormData } from '../../features/app-management/plan-management/schema/plan.schema';
 import type { ISubscriptionPlan } from '../../features/app-management/plan-management/types/plans.types';
 
-import type { ISchoolUser } from '../../api/usersApi';
+import type { ISchoolUser } from '@api/usersApi';
 
 /*------------- Dialog Types Definitions -------------*/
 

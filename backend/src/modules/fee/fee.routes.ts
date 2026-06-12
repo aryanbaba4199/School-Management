@@ -1,5 +1,5 @@
 import express from 'express';
-import { getStudentFees, generateStudentFees, payFee, getAllTransactions, markFeeDue, generateGlobalFees } from './fee.controller';
+import { getStudentFees, generateStudentFees, payFee, getAllTransactions, markFeeDue, generateGlobalFees, getFeeCycleDetails, payMoneyReceipt } from './fee.controller';
 import { authenticate, requireRoles, injectSchoolId } from '../../common/middleware/auth.middleware';
 
 const router = express.Router();
@@ -10,6 +10,8 @@ router.get('/transactions', requireRoles('SCHOOL_ADMIN', 'SUPER_ADMIN'), injectS
 router.get('/student/:studentId', getStudentFees);
 router.post('/generate', requireRoles('SCHOOL_ADMIN'), generateStudentFees);
 router.post('/generate-bulk', requireRoles('SCHOOL_ADMIN', 'SUPER_ADMIN'), injectSchoolId, generateGlobalFees);
+router.get('/cycle/:year/:month', requireRoles('SCHOOL_ADMIN', 'SUPER_ADMIN'), injectSchoolId, getFeeCycleDetails);
+router.post('/pay-receipt', requireRoles('SCHOOL_ADMIN', 'SUPER_ADMIN'), injectSchoolId, payMoneyReceipt);
 router.put('/:id/pay', requireRoles('SCHOOL_ADMIN'), payFee);
 router.put('/:id/mark-due', requireRoles('SCHOOL_ADMIN'), markFeeDue);
 

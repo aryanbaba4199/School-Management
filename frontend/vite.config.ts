@@ -10,6 +10,7 @@ export default defineConfig({
     alias: {
       '@common': path.resolve(__dirname, './src/common'),
       '@constants': path.resolve(__dirname, './src/common/constants'),
+      '@api': path.resolve(__dirname, './src/api'),
       'react-transition-group/TransitionGroupContext': 'react-transition-group/cjs/TransitionGroupContext.js',
       'react-transition-group/Transition': 'react-transition-group/cjs/Transition.js',
     },

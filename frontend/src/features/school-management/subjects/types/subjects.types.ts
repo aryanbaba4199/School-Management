@@ -1,4 +1,4 @@
-import type { ISubject } from '../../../../api/subjectsApi';
+import type { ISubject } from '@api/subjectsApi';
 
 export type { ISubject };
 

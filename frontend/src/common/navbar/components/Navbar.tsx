@@ -4,7 +4,7 @@ import { FaBars, FaBell, FaSun, FaMoon, FaSignOutAlt, FaUser } from 'react-icons
 import { useAppTheme } from '../../../features/themes/components/AppThemeProvider';
 import { useAuth } from '@common/hooks/useAuth';
 import { useDialog } from '@common/Dialogs/dialog.provider';
-import { useUpdateSchoolMutation } from '../../../api/schoolsApi';
+import { useUpdateSchoolMutation } from '@api/schoolsApi';
 import { useNotifier } from '@common/Notifier/NotifierProvider';
 import type { NavbarProps } from '../types/navbar.types';
 import { NavbarWrapper, BrandBox } from '../styles/navbar.styles';

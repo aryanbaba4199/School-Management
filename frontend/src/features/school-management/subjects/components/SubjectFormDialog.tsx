@@ -4,11 +4,11 @@ import type { Resolver } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { DialogTitle, DialogContent, DialogActions, Button, Grid, Box, CircularProgress } from '@mui/material';
 import { FormTextField, FormSelectField } from '@common/Forms';
-import { useGetUsersQuery } from '../../../../api/usersApi';
-import { useGetSchoolsQuery } from '../../../../api/schoolsApi';
+import { useGetUsersQuery } from '@api/usersApi';
+import { useGetSchoolsQuery } from '@api/schoolsApi';
 import { useAuth } from '@common/hooks/useAuth';
 import { subjectSchema } from '../schema/subject.schema';
-import { useGetSubjectByIdQuery } from '../../../../api/subjectsApi';
+import { useGetSubjectByIdQuery } from '@api/subjectsApi';
 import type { SubjectFormData } from '../types/subjects.types';
 
 interface SubjectFormDialogProps {

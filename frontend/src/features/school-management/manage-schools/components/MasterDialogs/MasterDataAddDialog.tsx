@@ -2,7 +2,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Grid, Box } 
 import { useForm } from 'react-hook-form';
 import { FormTextField, FormSelectField } from '@common/Forms';
 import { Currencies } from '@common/constants/Currency';
-import { useGetCountriesQuery, useGetStatesQuery } from '../../../../../api/masterApi';
+import { useGetCountriesQuery, useGetStatesQuery } from '@api/masterApi';
 
 export interface MasterDataPayload {
   name: string;

@@ -31,7 +31,7 @@ const InfoBox = styled(Box)`
   height: 100%;
 `;
 
-import { useGetSchoolByIdQuery } from '../../api/schoolsApi';
+import { useGetSchoolByIdQuery } from '@api/schoolsApi';
 
 interface SchoolDetailsDialogProps {
   schoolId: string;

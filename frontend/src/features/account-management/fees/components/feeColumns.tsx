@@ -11,13 +11,20 @@ export interface IFeeSummary {
   status: 'PAID' | 'PENDING' | 'OVERDUE';
 }
 
-export const feeSummaryColumns: Column<IFeeSummary>[] = [
+import { IconButton, Tooltip } from '@mui/material';
+import { FaEye } from 'react-icons/fa';
+
+export const getFeeSummaryColumns = (onViewDetails: (row: IFeeSummary) => void): Column<IFeeSummary>[] => [
   {
     id: 'monthName',
     label: 'Fee Cycle / Month',
     sortable: true,
     render: (row) => (
-      <Typography variant="body2" sx={{ fontWeight: 600 }}>
+      <Typography 
+        variant="body2" 
+        sx={{ fontWeight: 600, color: 'primary.main', cursor: 'pointer', textDecoration: 'underline' }}
+        onClick={() => onViewDetails(row)}
+      >
         {row.monthName}
       </Typography>
     ),
@@ -78,5 +85,17 @@ export const feeSummaryColumns: Column<IFeeSummary>[] = [
         />
       );
     },
+  },
+  {
+    id: 'actions',
+    label: 'Action',
+    sortable: false,
+    render: (row) => (
+      <Tooltip title="View Details">
+        <IconButton size="small" onClick={() => onViewDetails(row)} color="primary">
+          <FaEye />
+        </IconButton>
+      </Tooltip>
+    ),
   },
 ];

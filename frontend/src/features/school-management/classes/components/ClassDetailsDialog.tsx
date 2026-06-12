@@ -4,7 +4,7 @@ import {
   Divider, IconButton, DialogTitle, DialogContent, Paper
 } from '@mui/material';
 import { FaTimes } from 'react-icons/fa';
-import { useGetClassByIdQuery } from '../../../../api/classesApi';
+import { useGetClassByIdQuery } from '@api/classesApi';
 
 interface ClassDetailsDialogProps {
   classId: string;

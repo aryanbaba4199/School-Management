@@ -6,7 +6,7 @@ import {
   useCreateClassMutation,
   useUpdateClassMutation,
   useDeleteClassMutation,
-} from '../../../../api/classesApi';
+} from '@api/classesApi';
 import type { IClass } from '../types/classes.types';
 
 interface ApiError {

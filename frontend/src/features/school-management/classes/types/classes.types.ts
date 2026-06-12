@@ -1,4 +1,4 @@
-import type { ISection, IClass } from '../../../../api/classesApi';
+import type { ISection, IClass } from '@api/classesApi';
 
 export type { ISection, IClass };
 

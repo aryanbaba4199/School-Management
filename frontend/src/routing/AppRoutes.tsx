@@ -10,6 +10,7 @@ import { StudentsPage } from '../features/users/students';
 import { TeachersPage } from '../features/users/teachers';
 import { ParentsPage } from '../features/users/parents';
 import { FeesPage } from '../features/account-management/fees';
+import { FeeDetailsPage } from '../features/account-management/fees/pages/FeeDetailsPage';
 import { TransactionsPage } from '../features/account-management/transactions';
 import { MainLayout } from '@common/navbar';
 
@@ -56,6 +57,11 @@ export function AppRoutes() {
         <Route path="/account-management/fees" element={
           user.role.name === 'SUPER_ADMIN' || user.role.name === 'SCHOOL_ADMIN' 
             ? <FeesPage /> 
+            : <Navigate to="/" replace />
+        } />
+        <Route path="/account-management/fees/:id" element={
+          user.role.name === 'SUPER_ADMIN' || user.role.name === 'SCHOOL_ADMIN' 
+            ? <FeeDetailsPage /> 
             : <Navigate to="/" replace />
         } />
         <Route path="/account-management/transactions" element={

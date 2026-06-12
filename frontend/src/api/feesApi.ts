@@ -12,8 +12,12 @@ export interface IFeeInvoice {
   status: 'PAID' | 'PENDING' | 'OVERDUE';
   dueDate?: string;
   paidAt?: string;
+  paymentMode?: 'CASH' | 'ONLINE' | 'CHEQUE' | 'BANK_TRANSFER';
+  paymentMessage?: string;
   createdAt: string;
   updatedAt: string;
+  studentId_ref?: any; // populated student object
+  classId_ref?: any;   // populated class object
 }
 
 interface FeesResponse {
@@ -65,7 +69,33 @@ export const feesApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: [{ type: 'Fee', id: 'LIST' }],
     }),
+    getFeeCycleDetails: builder.query<FeesResponse, { year: number; month: number }>({
+      query: ({ year, month }) => `/fees/cycle/${year}/${month}`,
+      providesTags: (result) =>
+        result?.data
+          ? [
+              ...result.data.map(({ _id }) => ({ type: 'Fee' as const, id: _id })),
+              { type: 'Fee', id: 'LIST' },
+            ]
+          : [{ type: 'Fee', id: 'LIST' }],
+    }),
+    payMoneyReceipt: builder.mutation<{ success: boolean; message: string; data: any }, { studentId: string; invoiceIds: string[]; paidAmount: number; paymentMode?: string; paymentMessage?: string }>({
+      query: (body) => ({
+        url: '/fees/pay-receipt',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: [{ type: 'Fee', id: 'LIST' }],
+    }),
   }),
 });
 
-export const { useGetStudentFeesQuery, useGetAllTransactionsQuery, usePayFeeMutation, useMarkFeeDueMutation, useGenerateGlobalFeesMutation } = feesApi;
+export const { 
+  useGetStudentFeesQuery, 
+  useGetAllTransactionsQuery, 
+  usePayFeeMutation, 
+  useMarkFeeDueMutation, 
+  useGenerateGlobalFeesMutation,
+  useGetFeeCycleDetailsQuery,
+  usePayMoneyReceiptMutation
+} = feesApi;

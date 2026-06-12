@@ -7,8 +7,8 @@ import {
   useUpdateUserMutation,
   useToggleUserStatusMutation,
   useDeleteUserMutation
-} from '../../../../api/usersApi';
-import type { ISchoolUser } from '../../../../api/usersApi';
+} from '@api/usersApi';
+import type { ISchoolUser } from '@api/usersApi';
 
 interface ApiError {
   data?: { message?: string };

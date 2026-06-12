@@ -3,7 +3,7 @@ import { Chip, Box, Typography } from '@mui/material';
 import { ActionMenu, type ActionMenuItem } from '@common/Datatable';
 import { FaEdit, FaCheckCircle, FaBan, FaTrash } from 'react-icons/fa';
 import type { Column } from '@common/Datatable';
-import type { ISchoolUser } from '../../../../api/usersApi';
+import type { ISchoolUser } from '@api/usersApi';
 
 interface GetStudentColumnsProps {
   onView: (student: ISchoolUser) => void;

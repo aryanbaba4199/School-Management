@@ -340,6 +340,26 @@ export const fetchStub = vi.fn(async (url: string | Request, options?: RequestIn
           data: mockFeesList.filter((f: { studentId: { _id: string } | string }) => typeof f.studentId === 'object' ? f.studentId._id === studentId : f.studentId === studentId)
         }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
       }
+      if (urlString.includes('/generate-bulk')) {
+        return Promise.resolve(new Response(JSON.stringify({
+          success: true,
+          count: 5,
+          message: 'Fees generated successfully'
+        }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+      }
+      if (urlString.includes('/cycle/')) {
+        return Promise.resolve(new Response(JSON.stringify({
+          success: true,
+          data: mockFeesList
+        }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+      }
+      if (urlString.includes('/pay-receipt')) {
+        return Promise.resolve(new Response(JSON.stringify({
+          success: true,
+          message: 'Payment processed successfully',
+          data: { walletAdded: 0 }
+        }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+      }
     }
 
     if (urlString.includes('/api/masters/subscription-plans')) {

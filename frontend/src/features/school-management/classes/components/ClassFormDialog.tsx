@@ -26,10 +26,10 @@ import { FaTrash, FaPlus, FaInfoCircle } from 'react-icons/fa';
 
 import { FormTextField, FormSelectField, FormAutocompleteField } from '@common/Forms';
 
-import { useGetSchoolsQuery, useGetSchoolByIdQuery } from '../../../../api/schoolsApi';
-import { useGetUsersQuery } from '../../../../api/usersApi';
-import { useGetClassByIdQuery } from '../../../../api/classesApi';
-import { useGetSubjectsQuery } from '../../../../api/subjectsApi';
+import { useGetSchoolsQuery, useGetSchoolByIdQuery } from '@api/schoolsApi';
+import { useGetUsersQuery } from '@api/usersApi';
+import { useGetClassByIdQuery } from '@api/classesApi';
+import { useGetSubjectsQuery } from '@api/subjectsApi';
 import { useAuth } from '@common/hooks/useAuth';
 import { useNotifier } from '@common/Notifier/NotifierProvider';
 import { classSchema } from '../schema/class.schema';

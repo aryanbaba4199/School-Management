@@ -25,7 +25,8 @@
     "paths": {
       "@common/*": ["./src/common/*"],
       "@constants": ["./src/common/constants/index.ts"],
-      "@constants/*": ["./src/common/constants/*"]
+      "@constants/*": ["./src/common/constants/*"],
+      "@api/*": ["./src/api/*"]
     }
   },
   "include": ["src"]

@@ -4,13 +4,13 @@ import type { Resolver } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { DialogTitle, DialogContent, DialogActions, Button, Grid, Box, CircularProgress } from '@mui/material';
 import { FormTextField, FormSelectField } from '@common/Forms';
-import { useGetStatesQuery, useGetDistrictsQuery } from '../../../../api/masterApi';
-import { useGetSubjectsQuery } from '../../../../api/subjectsApi';
-import { useGetSchoolsQuery } from '../../../../api/schoolsApi';
+import { useGetStatesQuery, useGetDistrictsQuery } from '@api/masterApi';
+import { useGetSubjectsQuery } from '@api/subjectsApi';
+import { useGetSchoolsQuery } from '@api/schoolsApi';
 import { useAuth } from '@common/hooks/useAuth';
 import { teacherSchema, type TeacherFormData } from '../schema/teacher.schema';
-import { useGetUserByIdQuery } from '../../../../api/usersApi';
-import type { ISchoolUser } from '../../../../api/usersApi';
+import { useGetUserByIdQuery } from '@api/usersApi';
+import type { ISchoolUser } from '@api/usersApi';
 
 interface TeacherFormDialogProps {
   onClose: () => void;

@@ -237,3 +237,87 @@ export const markFeeDue = async (req: Request, res: Response) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
+export const getFeeCycleDetails = async (req: Request, res: Response) => {
+  try {
+    const { year, month } = req.params;
+    const schoolId = req.schoolId;
+
+    if (!year || !month) {
+      return res.status(400).json({ success: false, error: 'Year and Month are required' });
+    }
+
+    const fees = await FeeInvoice.find({
+      schoolId,
+      year: parseInt(year as string),
+      month: parseInt(month as string),
+      type: 'MONTHLY'
+    })
+      .populate('studentId', 'name userCode email phone')
+      .populate('classId', 'name');
+
+    res.status(200).json({ success: true, data: fees });
+  } catch (error: any) {
+    console.error('Error fetching fee cycle details:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+export const payMoneyReceipt = async (req: Request, res: Response) => {
+  try {
+    const { studentId, invoiceIds, paidAmount, paymentMode, paymentMessage } = req.body;
+    const schoolId = req.schoolId;
+
+    if (!studentId || !invoiceIds || !Array.isArray(invoiceIds) || paidAmount == null) {
+      return res.status(400).json({ success: false, error: 'studentId, invoiceIds array, and paidAmount are required' });
+    }
+
+    const student = await UserModel.findOne({ _id: studentId, schoolId });
+    if (!student) {
+      return res.status(404).json({ success: false, error: 'Student not found' });
+    }
+
+    const invoices = await FeeInvoice.find({ _id: { $in: invoiceIds }, studentId });
+    if (invoices.length !== invoiceIds.length) {
+      return res.status(400).json({ success: false, error: 'Some invoices were not found or belong to another student' });
+    }
+
+    // Calculate total dues of selected invoices
+    const totalDues = invoices.reduce((sum, inv) => sum + inv.amount, 0);
+    const effectiveAmount = paidAmount + (student.walletBal || 0);
+
+    if (effectiveAmount < totalDues) {
+      return res.status(400).json({ success: false, error: 'Paid amount plus wallet balance is less than the total amount of selected invoices' });
+    }
+
+    // Mark invoices as PAID
+    for (const inv of invoices) {
+      inv.status = 'PAID';
+      inv.paidAt = new Date();
+      if (paymentMode) inv.paymentMode = paymentMode;
+      if (paymentMessage) inv.paymentMessage = paymentMessage;
+      await inv.save();
+    }
+
+    // Calculate new wallet balance
+    const newWalletBal = effectiveAmount - totalDues;
+    const walletAdded = newWalletBal - (student.walletBal || 0); // Difference for display
+    student.walletBal = newWalletBal;
+    await student.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Payment successful',
+      data: {
+        paidInvoices: invoices.length,
+        walletAdded: walletAdded > 0 ? walletAdded : 0,
+        walletUsed: walletAdded < 0 ? Math.abs(walletAdded) : 0,
+        newWalletBal: student.walletBal
+      }
+    });
+
+  } catch (error: any) {
+    console.error('Error processing money receipt:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
