@@ -15,6 +15,7 @@ export interface IClass extends Document {
   }[];
   monthlyFee?: number;
   yearlyFee?: number;
+  subjects?: Types.ObjectId[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -49,6 +50,13 @@ const ClassSchema = new Schema<IClass>(
     ],
     monthlyFee: { type: Number },
     yearlyFee: { type: Number },
+    subjects: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Subject',
+        index: true,
+      }
+    ],
     isActive: {
       type: Boolean,
       default: true,

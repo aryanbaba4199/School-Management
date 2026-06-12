@@ -1,23 +1,74 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { PageWrapper, Datatable, DatatableHeader, DatatableFooter } from '@common/Datatable';
-import { transactionColumns } from '../../transactions/components/transactionColumns';
+import { feeSummaryColumns } from '../components/feeColumns';
+import type { IFeeSummary } from '../components/feeColumns';
 import { 
   useGetAllTransactionsQuery, 
-  usePayFeeMutation, 
-  useMarkFeeDueMutation,
-  useGenerateStudentFeesMutation 
+  useGenerateGlobalFeesMutation 
 } from '../../../../api/feesApi';
-import type { IFeeInvoice } from '../../../../api/feesApi';
-import { Box, Typography, Button, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-import { FaCheckCircle, FaUndo, FaPlusCircle } from 'react-icons/fa';
+import { useGetUsersQuery } from '../../../../api/usersApi';
+import { Box, Typography, Button, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, Select, MenuItem, FormControl, InputLabel, Tooltip, IconButton, Divider } from '@mui/material';
+import { FaPlusCircle, FaInfoCircle } from 'react-icons/fa';
 
 export function FeesPage() {
   const { data: res, isLoading, error } = useGetAllTransactionsQuery();
-  const [payFee] = usePayFeeMutation();
-  const [markDue] = useMarkFeeDueMutation();
-  const [generateFees, { isLoading: isGenerating }] = useGenerateStudentFeesMutation();
+  const [generateFees, { isLoading: isGenerating }] = useGenerateGlobalFeesMutation();
+  const { data: studentsData } = useGetUsersQuery({ role: 'STUDENT', limit: 10000 });
+
+  const students = studentsData?.data || [];
+  const activeStudents = students.filter(s => s.isActive).length;
+  const deactiveStudents = students.filter(s => !s.isActive).length;
+  const totalStudents = students.length;
 
   const transactions = res?.data || [];
+
+  const summaries = useMemo(() => {
+    const map = new Map<string, IFeeSummary>();
+    
+    transactions.forEach(fee => {
+      let key = '';
+      let monthName = '';
+      
+      if (fee.type === 'MONTHLY') {
+        key = `MONTHLY-${fee.year}-${fee.month}`;
+        monthName = `Monthly (${new Date(fee.year, (fee.month || 1) - 1).toLocaleString('default', { month: 'short' })} ${fee.year})`;
+      } else {
+        key = `${fee.type}-${fee.year}`;
+        monthName = `${fee.type.charAt(0) + fee.type.slice(1).toLowerCase()} (${fee.year})`;
+      }
+
+      const existing = map.get(key) || {
+        _id: key,
+        monthName,
+        generatedDate: fee.createdAt,
+        totalAmount: 0,
+        collected: 0,
+        due: 0,
+        status: 'PENDING'
+      };
+
+      existing.totalAmount += fee.amount;
+      if (fee.status === 'PAID') {
+        existing.collected += fee.amount;
+      } else {
+        existing.due += fee.amount;
+      }
+      
+      if (new Date(fee.createdAt) < new Date(existing.generatedDate)) {
+        existing.generatedDate = fee.createdAt;
+      }
+      
+      if (existing.due === 0 && existing.totalAmount > 0) {
+        existing.status = 'PAID';
+      } else {
+        existing.status = 'PENDING';
+      }
+
+      map.set(key, existing);
+    });
+
+    return Array.from(map.values()).sort((a, b) => new Date(b.generatedDate).getTime() - new Date(a.generatedDate).getTime());
+  }, [transactions]);
 
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -26,16 +77,12 @@ export function FeesPage() {
   const [generateType, setGenerateType] = useState<'MONTHLY' | 'ADMISSION'>('MONTHLY');
   const [generateMonth, setGenerateMonth] = useState(new Date().getMonth() + 1);
 
-  const filteredTransactions = transactions.filter((t) => {
+  const filteredSummaries = summaries.filter((s) => {
     if (!search) return true;
-    const searchLower = search.toLowerCase();
-    const student = t.studentId as any;
-    const studentName = student?.name?.toLowerCase() || '';
-    const userCode = student?.userCode?.toLowerCase() || '';
-    return studentName.includes(searchLower) || userCode.includes(searchLower);
+    return s.monthName.toLowerCase().includes(search.toLowerCase());
   });
 
-  const paginatedTransactions = filteredTransactions.slice((page - 1) * limit, page * limit);
+  const paginatedSummaries = filteredSummaries.slice((page - 1) * limit, page * limit);
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
@@ -44,22 +91,6 @@ export function FeesPage() {
   const handleLimitChange = (newLimit: number) => {
     setLimit(newLimit);
     setPage(1);
-  };
-
-  const handlePay = async (fee: IFeeInvoice) => {
-    try {
-      await payFee(fee._id).unwrap();
-    } catch (err) {
-      console.error('Failed to pay fee:', err);
-    }
-  };
-
-  const handleMarkDue = async (fee: IFeeInvoice) => {
-    try {
-      await markDue(fee._id).unwrap();
-    } catch (err) {
-      console.error('Failed to mark due:', err);
-    }
   };
 
   const handleGenerateFees = async () => {
@@ -75,40 +106,24 @@ export function FeesPage() {
     }
   };
 
-  const actions = [
+  const pageActions = [
     {
-      label: 'Mark as Paid',
-      icon: <FaCheckCircle />,
-      color: 'success' as const,
-      onClick: handlePay,
-    },
-    {
-      label: 'Mark as Due',
-      icon: <FaUndo />,
-      color: 'warning' as const,
-      onClick: handleMarkDue,
+      label: 'Generate Bill',
+      icon: <FaPlusCircle />,
+      onClick: () => setGenerateDialogOpen(true),
+      variant: 'contained' as const,
+      color: 'primary' as const,
     }
   ];
 
   return (
-    <PageWrapper title="Fees Management">
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 2 }}>
-        <Box sx={{ flexGrow: 1, minWidth: 300 }}>
-          <DatatableHeader 
-            searchValue={search}
-            onSearchChange={setSearch}
-            searchPlaceholder="Search fees by student name or code..."
-          />
-        </Box>
-        <Button 
-          variant="contained" 
-          color="primary" 
-          startIcon={<FaPlusCircle />}
-          onClick={() => setGenerateDialogOpen(true)}
-          sx={{ height: 40 }}
-        >
-          Generate Fees
-        </Button>
+    <PageWrapper title="Fees Management" actions={pageActions}>
+      <Box sx={{ mb: 2 }}>
+        <DatatableHeader 
+          searchValue={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search by fee cycle..."
+        />
       </Box>
       
       {error ? (
@@ -116,29 +131,49 @@ export function FeesPage() {
           <Typography color="error">Failed to load fees</Typography>
         </Box>
       ) : (
-        <Datatable<IFeeInvoice>
-          columns={transactionColumns}
-          data={paginatedTransactions}
+        <Datatable<IFeeSummary>
+          columns={feeSummaryColumns}
+          data={paginatedSummaries}
           loading={isLoading}
-          tableName="fees"
-          actions={actions}
+          tableName="fees_summary"
         />
       )}
 
       <DatatableFooter
-        pagination={{
-          page,
-          limit,
-          total: filteredTransactions.length,
-          totalPages: Math.ceil(filteredTransactions.length / limit)
-        }}
-        onPageChange={handlePageChange}
-        onLimitChange={handleLimitChange}
+        page={page - 1} // MUI TablePagination is 0-indexed
+        rowsPerPage={limit}
+        totalCount={filteredSummaries.length}
+        onChangePage={(newPage) => handlePageChange(newPage + 1)} // Re-adjust to 1-indexed state
+        onChangeRowsPerPage={handleLimitChange}
       />
 
       <Dialog open={generateDialogOpen} onClose={() => setGenerateDialogOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>Generate Fees</DialogTitle>
-        <DialogContent sx={{ mt: 2 }}>
+        <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          Generate Fees
+          <Tooltip title="Bills will only be generated for active students" placement="right">
+            <IconButton size="small" sx={{ color: 'var(--color-text-secondary)' }}>
+              <FaInfoCircle size={16} />
+            </IconButton>
+          </Tooltip>
+        </DialogTitle>
+        <DialogContent sx={{ mt: 1 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-around', p: 2, bgcolor: 'var(--color-background-default)', borderRadius: 2, mb: 3 }}>
+            <Box textAlign="center">
+              <Typography variant="caption" color="textSecondary">Total Students</Typography>
+              <Typography variant="h6" fontWeight={700}>{totalStudents}</Typography>
+            </Box>
+            <Divider orientation="vertical" flexItem />
+            <Box textAlign="center">
+              <Typography variant="caption" color="textSecondary">Active</Typography>
+              <Typography variant="h6" fontWeight={700} color="success.main">{activeStudents}</Typography>
+            </Box>
+            <Divider orientation="vertical" flexItem />
+            <Box textAlign="center">
+              <Typography variant="caption" color="textSecondary">Deactive</Typography>
+              <Typography variant="h6" fontWeight={700} color="error.main">{deactiveStudents}</Typography>
+            </Box>
+          </Box>
+
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, pt: 1 }}>
             <FormControl fullWidth>
               <InputLabel>Fee Type</InputLabel>

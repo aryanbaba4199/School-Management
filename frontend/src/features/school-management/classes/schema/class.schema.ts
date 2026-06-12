@@ -15,6 +15,7 @@ export const classSchema = yup.object({
     }),
   schoolId: yup.string().optional(),
   classTeacherId: yup.string().optional(),
+  subjects: yup.array().of(yup.string().required()).optional(),
   schedule: yup.array().of(
     yup.object({
       startTime: yup.string().required('Start time is required'),

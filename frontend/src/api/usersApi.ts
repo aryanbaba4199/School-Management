@@ -22,6 +22,7 @@ export interface ISchoolUser {
   parentId?: { _id: string; name: string; userCode: string; email: string } | string;
   childrenIds?: ({ _id: string; name: string; userCode: string; email: string } | string)[];
   classId?: string;
+  joinedClassId?: string;
   sectionId?: string;
   subjects?: ({ _id: string; name: string; code: string } | string)[];
   regDate?: string;

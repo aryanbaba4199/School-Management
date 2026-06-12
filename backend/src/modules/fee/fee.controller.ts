@@ -120,6 +120,72 @@ export const generateStudentFees = async (req: Request, res: Response) => {
   }
 };
 
+export const generateGlobalFees = async (req: Request, res: Response) => {
+  try {
+    const schoolId = req.schoolId;
+    const { type, month, year, classId } = req.body;
+
+    if (!schoolId) {
+      return res.status(400).json({ success: false, error: 'School ID required' });
+    }
+
+    const currentYear = year || new Date().getFullYear();
+    const currentMonth = month || new Date().getMonth() + 1;
+
+    // Fetch students
+    const query: any = { schoolId, 'role.name': 'STUDENT', isActive: true };
+    if (classId) query.classId = classId;
+    
+    const students = await UserModel.find(query).populate('schoolId').populate('classId');
+
+    let count = 0;
+
+    for (const student of students) {
+      const school: any = student.schoolId;
+      const classObj: any = student.classId;
+
+      if (!school || !classObj) continue;
+
+      if (type === 'ADMISSION') {
+        const existing = await FeeInvoice.findOne({ studentId: student._id, type: 'ADMISSION' });
+        if (!existing && school.admissionFee > 0) {
+          await FeeInvoice.create({
+            studentId: student._id,
+            schoolId: school._id,
+            classId: classObj._id,
+            amount: school.admissionFee,
+            type: 'ADMISSION',
+            year: currentYear,
+            status: 'PENDING',
+          });
+          count++;
+        }
+      } else if (type === 'MONTHLY') {
+        const existing = await FeeInvoice.findOne({ studentId: student._id, type: 'MONTHLY', month: currentMonth, year: currentYear });
+        if (!existing && classObj.monthlyFee > 0) {
+          await FeeInvoice.create({
+            studentId: student._id,
+            schoolId: school._id,
+            classId: classObj._id,
+            amount: classObj.monthlyFee,
+            type: 'MONTHLY',
+            month: currentMonth,
+            year: currentYear,
+            status: 'PENDING',
+            dueDate: new Date(currentYear, currentMonth - 1, 15),
+          });
+          count++;
+        }
+      }
+    }
+
+    res.status(200).json({ success: true, count, message: `Generated ${count} invoices successfully` });
+  } catch (error: any) {
+    console.error('Error generating global fees:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
 export const payFee = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;

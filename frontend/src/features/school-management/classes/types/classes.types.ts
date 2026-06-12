@@ -14,6 +14,7 @@ export interface ClassFormData {
   sections: string; // Comma-separated section names entered in the form
   schoolId?: string;
   classTeacherId?: string;
+  subjects?: string[];
   schedule?: PeriodScheduleInput[];
   monthlyFee?: number;
   yearlyFee?: number;

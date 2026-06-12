@@ -57,9 +57,9 @@ export const feesApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: (result, error, id) => [{ type: 'Fee', id }, { type: 'Fee', id: 'LIST' }],
     }),
-    generateStudentFees: builder.mutation<{ success: boolean; count: number; message: string }, { classId?: string; type: 'MONTHLY' | 'ADMISSION'; month?: number; year: number }>({
+    generateGlobalFees: builder.mutation<{ success: boolean; count: number; message: string }, { classId?: string; type: 'MONTHLY' | 'ADMISSION'; month?: number; year: number }>({
       query: (body) => ({
-        url: '/fees/generate',
+        url: '/fees/generate-bulk',
         method: 'POST',
         body,
       }),
@@ -68,4 +68,4 @@ export const feesApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useGetStudentFeesQuery, useGetAllTransactionsQuery, usePayFeeMutation, useMarkFeeDueMutation, useGenerateStudentFeesMutation } = feesApi;
+export const { useGetStudentFeesQuery, useGetAllTransactionsQuery, usePayFeeMutation, useMarkFeeDueMutation, useGenerateGlobalFeesMutation } = feesApi;

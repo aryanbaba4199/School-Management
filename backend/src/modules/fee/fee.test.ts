@@ -132,6 +132,37 @@ describe('Fee Module API Endpoints', () => {
     });
   });
 
+  describe('POST /api/fees/generate-bulk', () => {
+    it('should bulk generate fees for all active students', async () => {
+      const mockStudent = {
+        _id: 'student123',
+        role: { name: 'STUDENT' },
+        feeCycle: 'MONTHLY',
+        schoolId: { _id: 'school123', admissionFee: 1000 },
+        classId: { _id: 'class123', monthlyFee: 500 },
+      };
+
+      const mockQuery = {
+        populate: jest.fn().mockReturnValue({
+          populate: jest.fn().mockResolvedValue([mockStudent]),
+        }),
+      };
+      (UserModel.find as jest.Mock).mockReturnValue(mockQuery);
+      (FeeInvoice.findOne as jest.Mock).mockResolvedValue(null);
+      (FeeInvoice.create as jest.Mock).mockResolvedValue({});
+
+      const response = await request(app)
+        .post('/api/fees/generate-bulk')
+        .set('Authorization', `Bearer ${schoolAdminToken}`)
+        .send({ type: 'MONTHLY', month: 6, year: 2024 });
+
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(response.body.count).toBe(1);
+      expect(FeeInvoice.create).toHaveBeenCalled();
+    });
+  });
+
   describe('PUT /api/fees/:id/pay', () => {
     it('should mark fee as PAID', async () => {
       (FeeInvoice.findById as jest.Mock).mockResolvedValue({

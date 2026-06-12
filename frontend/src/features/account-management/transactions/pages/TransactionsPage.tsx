@@ -36,9 +36,9 @@ export function TransactionsPage() {
   return (
     <PageWrapper title="Transaction Management">
       <DatatableHeader 
-        search={search}
+        searchValue={search}
         onSearchChange={setSearch}
-        title="All Transactions"
+        searchPlaceholder="Search all transactions..."
       />
       
       {error ? (
@@ -49,20 +49,17 @@ export function TransactionsPage() {
         <Datatable<IFeeInvoice>
           columns={transactionColumns}
           data={paginatedTransactions}
-          isLoading={isLoading}
+          loading={isLoading}
           tableName="transactions"
         />
       )}
 
       <DatatableFooter
-        pagination={{
-          page,
-          limit,
-          total: filteredTransactions.length,
-          totalPages: Math.ceil(filteredTransactions.length / limit)
-        }}
-        onPageChange={handlePageChange}
-        onLimitChange={handleLimitChange}
+        page={page - 1}
+        rowsPerPage={limit}
+        totalCount={filteredTransactions.length}
+        onChangePage={(newPage) => handlePageChange(newPage + 1)}
+        onChangeRowsPerPage={handleLimitChange}
       />
     </PageWrapper>
   );

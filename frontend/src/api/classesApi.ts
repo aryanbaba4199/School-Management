@@ -26,6 +26,7 @@ export interface IClass {
   classTeacherId?: string | { _id: string; name: string; email: string };
   monthlyFee?: number;
   yearlyFee?: number;
+  subjects?: { _id: string; name: string; code: string }[];
   schedule?: IPeriodSchedule[];
 }
 

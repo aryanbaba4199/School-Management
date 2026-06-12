@@ -15,6 +15,7 @@ export class ClassService {
     classTeacherId?: string;
     monthlyFee?: number;
     yearlyFee?: number;
+    subjects?: string[];
     schedule?: { startTime: string; endTime: string; subjectId: string; teacherId: string }[];
   }): Promise<any> {
     const cls = new ClassModel({
@@ -29,6 +30,7 @@ export class ClassService {
       })),
       monthlyFee: input.monthlyFee,
       yearlyFee: input.yearlyFee,
+      subjects: input.subjects?.map(s => new Types.ObjectId(s)),
     });
     await cls.save();
 
@@ -49,7 +51,8 @@ export class ClassService {
     const populatedCls = await ClassModel.findById(cls._id)
       .populate('classTeacherId', 'name email')
       .populate('schedule.subjectId', 'name code')
-      .populate('schedule.teacherId', 'name email');
+      .populate('schedule.teacherId', 'name email')
+      .populate('subjects', 'name code');
 
     return { ...(populatedCls?.toObject() || cls.toObject()), sections: createdSections };
   }
@@ -70,7 +73,8 @@ export class ClassService {
       .sort({ name: 1 })
       .populate('classTeacherId', 'name email')
       .populate('schedule.subjectId', 'name code')
-      .populate('schedule.teacherId', 'name email');
+      .populate('schedule.teacherId', 'name email')
+      .populate('subjects', 'name code');
 
     const results = [];
 
@@ -95,7 +99,8 @@ export class ClassService {
     const cls = await ClassModel.findOne(filter)
       .populate('classTeacherId', 'name email')
       .populate('schedule.subjectId', 'name code')
-      .populate('schedule.teacherId', 'name email');
+      .populate('schedule.teacherId', 'name email')
+      .populate('subjects', 'name code');
 
     if (!cls) return null;
 
@@ -114,6 +119,7 @@ export class ClassService {
       classTeacherId?: string;
       monthlyFee?: number;
       yearlyFee?: number;
+      subjects?: string[];
       schedule?: { startTime: string; endTime: string; subjectId: string; teacherId: string }[];
     },
     schoolId?: string
@@ -143,6 +149,9 @@ export class ClassService {
     }
     if (input.yearlyFee !== undefined) {
       cls.yearlyFee = input.yearlyFee;
+    }
+    if (input.subjects !== undefined) {
+      cls.subjects = input.subjects.map(s => new Types.ObjectId(s));
     }
     await cls.save();
 
@@ -174,7 +183,8 @@ export class ClassService {
     const populatedCls = await ClassModel.findById(cls._id)
       .populate('classTeacherId', 'name email')
       .populate('schedule.subjectId', 'name code')
-      .populate('schedule.teacherId', 'name email');
+      .populate('schedule.teacherId', 'name email')
+      .populate('subjects', 'name code');
 
     const sections = await SectionModel.find({ classId: cls._id }).sort({ name: 1 });
     return { ...(populatedCls?.toObject() || cls.toObject()), sections };

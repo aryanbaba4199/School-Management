@@ -34,11 +34,14 @@ describe('Class Module API Endpoints', () => {
 
       const mockPopulate = jest.fn().mockReturnValue({
         populate: jest.fn().mockReturnValue({
-          populate: jest.fn().mockResolvedValue({
-            _id: 'class123',
-            name: 'Class 10',
-            schoolId: 'school123',
-            toObject: () => ({ _id: 'class123', name: 'Class 10', schoolId: 'school123' }),
+          populate: jest.fn().mockReturnValue({
+            populate: jest.fn().mockResolvedValue({
+              _id: 'class123',
+              name: 'Class 10',
+              schoolId: 'school123',
+              subjects: [{ _id: 'sub1', name: 'Math' }],
+              toObject: () => ({ _id: 'class123', name: 'Class 10', schoolId: 'school123', subjects: [{ _id: 'sub1', name: 'Math' }] }),
+            }),
           }),
         }),
       });
@@ -59,7 +62,7 @@ describe('Class Module API Endpoints', () => {
       const response = await request(app)
         .post('/api/classes')
         .set('Authorization', `Bearer ${schoolAdminToken}`)
-        .send({ name: 'Class 10', sections: ['A', 'B'] });
+        .send({ name: 'Class 10', sections: ['A', 'B'], subjects: ['sub1'] });
 
       expect(response.status).toBe(201);
       expect(response.body.success).toBe(true);
@@ -71,9 +74,11 @@ describe('Class Module API Endpoints', () => {
     it('should list classes for school admin', async () => {
       const mockPopulate = jest.fn().mockReturnValue({
         populate: jest.fn().mockReturnValue({
-          populate: jest.fn().mockResolvedValue([
-            { _id: 'class123', name: 'Class 10', schoolId: 'school123', toObject: function() { return this; } },
-          ]),
+          populate: jest.fn().mockReturnValue({
+            populate: jest.fn().mockResolvedValue([
+              { _id: 'class123', name: 'Class 10', schoolId: 'school123', toObject: function() { return this; } },
+            ]),
+          }),
         }),
       });
       (ClassModel.find as jest.Mock).mockReturnValue({
@@ -111,11 +116,13 @@ describe('Class Module API Endpoints', () => {
 
       const mockPopulate = jest.fn().mockReturnValue({
         populate: jest.fn().mockReturnValue({
-          populate: jest.fn().mockResolvedValue({
-            _id: 'class123',
-            name: 'Class 10 Updated',
-            schoolId: 'school123',
-            toObject: () => ({ _id: 'class123', name: 'Class 10 Updated', schoolId: 'school123' }),
+          populate: jest.fn().mockReturnValue({
+            populate: jest.fn().mockResolvedValue({
+              _id: 'class123',
+              name: 'Class 10 Updated',
+              schoolId: 'school123',
+              toObject: () => ({ _id: 'class123', name: 'Class 10 Updated', schoolId: 'school123' }),
+            }),
           }),
         }),
       });

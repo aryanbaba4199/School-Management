@@ -13,6 +13,7 @@ interface FormAutocompleteFieldProps<TFieldValues extends FieldValues> {
   disabled?: boolean;
   required?: boolean;
   placeholder?: string;
+  multiple?: boolean;
 }
 
 /*------------- FormAutocompleteField Component -------------*/
@@ -25,17 +26,28 @@ export function FormAutocompleteField<TFieldValues extends FieldValues>({
   disabled = false,
   required = false,
   placeholder,
+  multiple = false,
 }: FormAutocompleteFieldProps<TFieldValues>) {
   return (
     <Controller
       name={name}
       control={control}
       render={({ field: { onChange, value }, fieldState: { error } }) => {
-        const selectedOption = options.find((o) => String(o.value) === String(value)) || null;
+        let selectedOption: SelectOption | SelectOption[] | null = null;
+        if (multiple) {
+          const valArray = Array.isArray(value) ? value : [];
+          selectedOption = valArray
+            .map((v) => options.find((o) => String(o.value) === String(v)))
+            .filter(Boolean) as SelectOption[];
+        } else {
+          selectedOption = options.find((o) => String(o.value) === String(value)) || null;
+        }
+
         return (
           <Autocomplete
             id={`${name}-autocomplete`}
             options={options}
+            multiple={multiple}
             getOptionLabel={(option) => option?.label ? String(option.label) : ''}
             isOptionEqualToValue={(option, val) => {
               if (!option || !val) return false;
@@ -43,7 +55,13 @@ export function FormAutocompleteField<TFieldValues extends FieldValues>({
             }}
             value={selectedOption}
             onChange={(_, newValue) => {
-              onChange(newValue ? newValue.value : '');
+              if (multiple) {
+                const newArray = newValue as SelectOption[];
+                onChange(newArray.map(n => n.value));
+              } else {
+                const singleVal = newValue as SelectOption | null;
+                onChange(singleVal ? singleVal.value : '');
+              }
             }}
             disabled={disabled}
             fullWidth

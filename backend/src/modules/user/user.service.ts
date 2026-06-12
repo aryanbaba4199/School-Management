@@ -46,6 +46,7 @@ export class UserService {
       parentId: input.parentId ? new Types.ObjectId(input.parentId) : undefined,
       childrenIds: input.childrenIds?.map(c => new Types.ObjectId(c)),
       classId: input.classId ? new Types.ObjectId(input.classId) : undefined,
+      joinedClassId: (input.role.name === 'STUDENT' && input.classId) ? new Types.ObjectId(input.classId) : undefined,
       sectionId: input.sectionId ? new Types.ObjectId(input.sectionId) : undefined,
       subjects: input.subjects?.map(s => new Types.ObjectId(s)),
     });

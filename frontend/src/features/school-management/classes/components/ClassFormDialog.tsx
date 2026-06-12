@@ -24,7 +24,7 @@ import {
 } from '@mui/material';
 import { FaTrash, FaPlus, FaInfoCircle } from 'react-icons/fa';
 
-import { FormTextField, FormSelectField } from '@common/Forms';
+import { FormTextField, FormSelectField, FormAutocompleteField } from '@common/Forms';
 
 import { useGetSchoolsQuery, useGetSchoolByIdQuery } from '../../../../api/schoolsApi';
 import { useGetUsersQuery } from '../../../../api/usersApi';
@@ -42,6 +42,7 @@ interface ClassFormDialogProps {
     sections: string[];
     schoolId?: string;
     classTeacherId?: string;
+    subjects?: string[];
     monthlyFee?: number;
     yearlyFee?: number;
     schedule?: { startTime: string; endTime: string; subjectId: string; teacherId: string }[];
@@ -82,6 +83,7 @@ export function ClassFormDialog({ onClose, onSubmit, classId, isLoading = false 
       sections: 'A',
       schoolId: '',
       classTeacherId: '',
+      subjects: [],
       monthlyFee: 0,
       yearlyFee: 0,
       schedule: [],
@@ -133,6 +135,7 @@ export function ClassFormDialog({ onClose, onSubmit, classId, isLoading = false 
         sections: classItem.sections ? classItem.sections.map((s: any) => s.name).join(', ') : 'A',
         schoolId: typeof classItem.schoolId === 'object' ? (classItem.schoolId as { _id: string })._id : classItem.schoolId || '',
         classTeacherId: typeof classItem.classTeacherId === 'object' ? (classItem.classTeacherId as { _id: string })._id : classItem.classTeacherId || '',
+        subjects: classItem.subjects?.map((s: any) => typeof s === 'object' ? s._id : s) || [],
         monthlyFee: classItem.monthlyFee || 0,
         yearlyFee: classItem.yearlyFee || 0,
         schedule: classItem.schedule?.map((s: any) => ({
@@ -186,6 +189,7 @@ export function ClassFormDialog({ onClose, onSubmit, classId, isLoading = false 
       name: formData.name,
       sections: sectionList,
       classTeacherId: formData.classTeacherId || undefined,
+      subjects: formData.subjects,
       monthlyFee: formData.monthlyFee || 0,
       yearlyFee: formData.yearlyFee || 0,
       schedule: formData.schedule || undefined,
@@ -232,6 +236,16 @@ export function ClassFormDialog({ onClose, onSubmit, classId, isLoading = false 
                 control={control}
                 label="Class Teacher"
                 options={teacherOptions}
+                disabled={isLoading}
+              />
+            </Grid>
+            <Grid size={{ xs: 12 }}>
+              <FormAutocompleteField
+                name="subjects"
+                control={control}
+                label="Subjects"
+                options={subjectOptions}
+                multiple
                 disabled={isLoading}
               />
             </Grid>

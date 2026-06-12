@@ -29,6 +29,7 @@ export interface IUser extends Document {
   parentId?: Types.ObjectId;
   childrenIds?: Types.ObjectId[];
   classId?: Types.ObjectId;
+  joinedClassId?: Types.ObjectId;
   sectionId?: Types.ObjectId;
   subjects?: Types.ObjectId[];
   regDate?: Date;
@@ -114,6 +115,10 @@ const UserSchema = new Schema<IUser>(
       type: Schema.Types.ObjectId,
       ref: 'Class',
       index: true,
+    },
+    joinedClassId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Class',
     },
     sectionId: {
       type: Schema.Types.ObjectId,
