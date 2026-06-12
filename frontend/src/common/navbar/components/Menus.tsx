@@ -43,7 +43,17 @@ const MENU_ITEMS: MenuItemType[] = [
     ]
   },
   { label: 'Attendance', icon: <FaUserCheck size={16} />, roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'], path: '/attendance' },
-  { label: 'Exams & Marks', icon: <FaFileSignature size={16} />, roles: ['SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'], path: '/exams' },
+  {
+    label: 'Exam and Events',
+    icon: <FaFileSignature size={16} />,
+    roles: ['SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
+    children: [
+      { label: 'Examination', roles: ['SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'], path: '/exams' },
+      { label: 'Results', roles: ['SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'], path: '/results' },
+      { label: 'PTM', roles: ['SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'], path: '/ptm' },
+      { label: 'Celebration', roles: ['SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'], path: '/celebration' }
+    ]
+  },
   { label: 'Homeworks', icon: <FaBookOpen size={16} />, roles: ['TEACHER', 'STUDENT', 'PARENT'], path: '/homeworks' },
   {
     label: 'Account Management',
