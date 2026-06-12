@@ -41,8 +41,58 @@ export const INITIAL_MOCK_SCHOOLS = [
 
 export let mockSchoolsList = [...INITIAL_MOCK_SCHOOLS];
 
+export let mockUsersList = [
+  {
+    _id: 'user-stu-1',
+    name: 'Aryan Student',
+    email: 'aryanstudent@school.com',
+    userCode: 'STU-001',
+    role: { name: 'STUDENT', access: ['READ'] },
+    schoolId: '60f7c223405c102c98d6c801',
+    classId: { _id: 'class-1', name: 'Class 10' },
+    isActive: true,
+  }
+];
+
+export let mockFeesList = [
+  {
+    _id: 'fee-1',
+    studentId: { _id: 'user-stu-1', name: 'Aryan Student', userCode: 'STU-001' },
+    classId: { _id: 'class-1', name: 'Class 10' },
+    amount: 5000,
+    type: 'ADMISSION',
+    status: 'PENDING',
+    year: 2024,
+    createdAt: new Date().toISOString(),
+  }
+];
+
 export const resetMockSchools = () => {
   mockSchoolsList = [...INITIAL_MOCK_SCHOOLS];
+  mockUsersList = [
+    {
+      _id: 'user-stu-1',
+      name: 'Aryan Student',
+      email: 'aryanstudent@school.com',
+      userCode: 'STU-001',
+      role: { name: 'STUDENT', access: ['READ'] },
+      schoolId: '60f7c223405c102c98d6c801',
+      classId: { _id: 'class-1', name: 'Class 10' },
+      isActive: true,
+    }
+  ];
+  mockFeesList = [
+    {
+      _id: 'fee-1',
+      studentId: { _id: 'user-stu-1', name: 'Aryan Student', userCode: 'STU-001' },
+      classId: { _id: 'class-1', name: 'Class 10' },
+      amount: 5000,
+      type: 'ADMISSION',
+      status: 'PENDING',
+      year: 2024,
+      createdAt: new Date().toISOString(),
+    }
+  ];
 };
 
 export const fetchStub = vi.fn(async (url: string | Request, options?: RequestInit) => {
@@ -57,6 +107,7 @@ export const fetchStub = vi.fn(async (url: string | Request, options?: RequestIn
     subdomain?: string;
     phone?: string;
     subscriptionPlan?: string;
+    role?: any;
   } | null = null;
   try {
     if (options?.body) {
@@ -233,6 +284,60 @@ export const fetchStub = vi.fn(async (url: string | Request, options?: RequestIn
         return Promise.resolve(new Response(JSON.stringify({
           success: true,
           data: mockSchoolsList
+        }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+      }
+    }
+
+    if (urlString.includes('/api/classes')) {
+      return Promise.resolve(new Response(JSON.stringify({
+        success: true,
+        data: [{ _id: 'class-1', name: 'Class 10' }]
+      }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+    }
+
+    if (urlString.includes('/api/users') && !urlString.includes('login')) {
+      if (method === 'POST') {
+        const newUser = {
+          _id: `user-mock-new-${Date.now()}`,
+          ...parsedBody,
+          role: parsedBody && 'role' in parsedBody ? (parsedBody as { role: any }).role : { name: 'STUDENT' },
+          createdAt: new Date().toISOString()
+        };
+        // @ts-expect-error Mock data type mismatch
+        mockUsersList.push(newUser);
+        return Promise.resolve(new Response(JSON.stringify({
+          success: true,
+          data: newUser
+        }), { status: 201, headers: { 'Content-Type': 'application/json' } }));
+      } else if (urlString.includes('/api/users/profile')) {
+        return Promise.resolve(new Response(JSON.stringify({
+          success: true,
+          data: mockUsersList[0]
+        }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+      } else {
+        const urlObj = new URL(urlString, 'http://localhost');
+        const role = urlObj.searchParams.get('role');
+        const filtered = role ? mockUsersList.filter(u => u.role.name === role) : mockUsersList;
+        return Promise.resolve(new Response(JSON.stringify({
+          success: true,
+          data: filtered,
+          pagination: { total: filtered.length, page: 1, limit: 10, totalPages: 1 }
+        }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+      }
+    }
+
+    if (urlString.includes('/api/fees')) {
+      if (urlString.includes('/transactions')) {
+        return Promise.resolve(new Response(JSON.stringify({
+          success: true,
+          data: mockFeesList
+        }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+      }
+      if (urlString.includes('/student/')) {
+        const studentId = urlString.split('/').pop();
+        return Promise.resolve(new Response(JSON.stringify({
+          success: true,
+          data: mockFeesList.filter((f: { studentId: { _id: string } | string }) => typeof f.studentId === 'object' ? f.studentId._id === studentId : f.studentId === studentId)
         }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
       }
     }

@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
 import { FeeInvoice } from './fee.model';
-import { SchoolUser } from '../user/user.model';
-import { Class } from '../class/class.model';
+import { UserModel } from '../user/user.model';
+import { ClassModel } from '../class/class.model';
 import { Types } from 'mongoose';
 
 export const getStudentFees = async (req: Request, res: Response) => {
   try {
     const { studentId } = req.params;
 
-    if (!studentId || !Types.ObjectId.isValid(studentId)) {
+    if (!studentId || !Types.ObjectId.isValid(studentId as string)) {
       return res.status(400).json({ success: false, error: 'Invalid student ID' });
     }
 
@@ -50,7 +50,7 @@ export const generateStudentFees = async (req: Request, res: Response) => {
       return res.status(400).json({ success: false, error: 'Invalid student ID' });
     }
 
-    const student = await SchoolUser.findById(studentId).populate('schoolId').populate('classId');
+    const student = await UserModel.findById(studentId).populate('schoolId').populate('classId');
     if (!student || student.role?.name !== 'STUDENT') {
       return res.status(404).json({ success: false, error: 'Student not found' });
     }
@@ -124,7 +124,7 @@ export const payFee = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    if (!id || !Types.ObjectId.isValid(id)) {
+    if (!id || !Types.ObjectId.isValid(id as string)) {
       return res.status(400).json({ success: false, error: 'Invalid fee ID' });
     }
 
@@ -152,7 +152,7 @@ export const markFeeDue = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    if (!id || !Types.ObjectId.isValid(id)) {
+    if (!id || !Types.ObjectId.isValid(id as string)) {
       return res.status(400).json({ success: false, error: 'Invalid fee ID' });
     }
 

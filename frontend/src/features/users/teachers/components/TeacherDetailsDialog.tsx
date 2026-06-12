@@ -50,7 +50,7 @@ export default function TeacherDetailsDialog({ userId, onClose }: TeacherDetails
       
       <DialogContent sx={{ p: 3 }}>
         <Grid container spacing={3}>
-          <Grid item xs={12}>
+          <Grid size={{ xs: 12 }}>
             <Box sx={{ mb: 2 }}>
               <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>
                 Personal Information
@@ -58,7 +58,7 @@ export default function TeacherDetailsDialog({ userId, onClose }: TeacherDetails
               <Divider sx={{ mb: 2 }} />
               
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <Typography variant="caption" sx={{ color: 'var(--color-text-secondary)', display: 'block' }}>
                     Name
                   </Typography>
@@ -66,7 +66,7 @@ export default function TeacherDetailsDialog({ userId, onClose }: TeacherDetails
                     {teacherData.name}
                   </Typography>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <Typography variant="caption" sx={{ color: 'var(--color-text-secondary)', display: 'block' }}>
                     Employee ID
                   </Typography>
@@ -74,7 +74,7 @@ export default function TeacherDetailsDialog({ userId, onClose }: TeacherDetails
                     {teacherData.userCode}
                   </Typography>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <Typography variant="caption" sx={{ color: 'var(--color-text-secondary)', display: 'block' }}>
                     Email
                   </Typography>
@@ -82,7 +82,7 @@ export default function TeacherDetailsDialog({ userId, onClose }: TeacherDetails
                     {teacherData.email}
                   </Typography>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <Typography variant="caption" sx={{ color: 'var(--color-text-secondary)', display: 'block' }}>
                     Phone
                   </Typography>
@@ -90,7 +90,7 @@ export default function TeacherDetailsDialog({ userId, onClose }: TeacherDetails
                     {teacherData.phone || '-'}
                   </Typography>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12 }}>
                   <Typography variant="caption" sx={{ color: 'var(--color-text-secondary)', display: 'block' }}>
                     Institute
                   </Typography>
@@ -104,7 +104,7 @@ export default function TeacherDetailsDialog({ userId, onClose }: TeacherDetails
             </Box>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid size={{ xs: 12 }}>
             <Box>
               <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>
                 Subjects Taught
@@ -114,7 +114,7 @@ export default function TeacherDetailsDialog({ userId, onClose }: TeacherDetails
                 {teacherData.subjects && teacherData.subjects.length > 0 ? (
                   teacherData.subjects.map((sub: { _id: string; name: string } | string) => (
                     <Chip 
-                      key={sub._id || sub} 
+                      key={typeof sub === 'object' ? sub._id : sub as string} 
                       label={typeof sub === 'object' ? sub.name : sub} 
                       color="primary" 
                       variant="outlined" 

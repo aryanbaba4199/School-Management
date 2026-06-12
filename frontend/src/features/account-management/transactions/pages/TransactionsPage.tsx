@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { PageWrapper, Datatable, DatatableHeader, DatatableFooter } from '@common/Datatable';
 import { transactionColumns } from '../components/transactionColumns';
-import { useGetAllTransactionsQuery, IFeeInvoice } from '../../../../api/feesApi';
+import { useGetAllTransactionsQuery } from '../../../../api/feesApi';
+import type { IFeeInvoice } from '../../../../api/feesApi';
 import { Box, Typography } from '@mui/material';
 
 export function TransactionsPage() {

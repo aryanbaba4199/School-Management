@@ -68,10 +68,8 @@ export class UserController {
         sendError(res, 404, 'User not found');
         return;
       }
-      const userSchoolId = typeof user.schoolId === 'object' && user.schoolId !== null && '_id' in user.schoolId 
-        ? user.schoolId._id?.toString() 
-        : user.schoolId?.toString();
-        
+      const userSchoolId = user.schoolId ? (typeof user.schoolId === 'object' && '_id' in user.schoolId ? String((user.schoolId as any)._id) : String(user.schoolId)) : undefined;
+      
       if (req.schoolId && userSchoolId !== req.schoolId) {
         sendError(res, 403, 'Unauthorized access to user profile');
         return;

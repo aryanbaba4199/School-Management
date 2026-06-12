@@ -10,6 +10,8 @@ export default defineConfig({
     alias: {
       '@common': path.resolve(__dirname, './src/common'),
       '@constants': path.resolve(__dirname, './src/common/constants'),
+      'react-transition-group/TransitionGroupContext': 'react-transition-group/cjs/TransitionGroupContext.js',
+      'react-transition-group/Transition': 'react-transition-group/cjs/Transition.js',
     },
   },
   test: {
@@ -18,7 +20,7 @@ export default defineConfig({
     setupFiles: './src/setupTests.ts',
     server: {
       deps: {
-        inline: [/@mui\/material/, /@emotion/],
+        inline: [/@mui\/material/, /@emotion/, /react-transition-group/],
       },
     },
   },

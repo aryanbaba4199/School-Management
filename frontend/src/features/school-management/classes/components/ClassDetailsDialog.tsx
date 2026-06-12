@@ -52,7 +52,7 @@ export default function ClassDetailsDialog({ classId, onClose }: ClassDetailsDia
       <DialogContent sx={{ p: 3 }}>
         <Grid container spacing={3}>
           {/* Basic Information */}
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Paper variant="outlined" sx={{ p: 2, height: '100%' }}>
               <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>
                 Basic Information
@@ -108,7 +108,7 @@ export default function ClassDetailsDialog({ classId, onClose }: ClassDetailsDia
           </Grid>
 
           {/* Timetable / Schedule */}
-          <Grid item xs={12} md={8}>
+          <Grid size={{ xs: 12, md: 8 }}>
             <Paper variant="outlined" sx={{ p: 2, height: '100%' }}>
               <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>
                 Class Schedule

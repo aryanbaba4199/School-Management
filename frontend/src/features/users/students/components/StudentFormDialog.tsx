@@ -35,8 +35,8 @@ export function StudentFormDialog({ onClose, onSubmit, userId, isLoading = false
   const { data: parentsRes } = useGetUsersQuery({ role: 'PARENT' });
   const parents = parentsRes?.success ? parentsRes.data : [];
 
-  const { handleSubmit, control, watch, reset, trigger } = useForm<StudentFormData>({
-    resolver: yupResolver(studentSchema) as unknown as Resolver<StudentFormData>,
+  const { handleSubmit, control, watch, reset, trigger } = useForm<any>({
+    resolver: yupResolver(studentSchema),
     defaultValues: {
       name: '',
       email: '',
