@@ -12,13 +12,32 @@ import { ParentsPage } from '../features/users/parents';
 import { FeesPage } from '../features/account-management/fees';
 import { FeeDetailsPage } from '../features/account-management/fees/pages/FeeDetailsPage';
 import { TransactionsPage } from '../features/account-management/transactions';
-import { ExamMasterPage } from '../features/exams';
+import { PaymentsPage } from '../features/account-management/payments';
+import { ReceiptsPage } from '../features/account-management/receipts';
+import { ExamMasterPage, ExamResultsPage, WeeklyTestsPage, QuestionPapersPage } from '../features/exams';
 import { ExamDetailsPage } from '../features/exams/pages/ExamDetailsPage';
 import { PrintReportCardPage } from '../features/exams/pages/PrintReportCardPage';
 import { MainLayout } from '@common/navbar';
+import { StudentAttendancePage, TeacherAttendancePage, RfidAttendancePage, AttendanceReportsPage } from '../features/attendance';
+import { HomeworkPage, AssignmentsPage } from '../features/homework-management';
+import { AnnouncementsPage, AlertsPage, NotificationsPage } from '../features/communication';
+import { ClassTimetablePage, TeacherTimetablePage } from '../features/timetable';
+import { RecommendationsPage, VideosPage, QuizzesPage, PracticePage } from '../features/learning';
+import { WeaknessDetectionPage, AiAssistantPage, OcrEvaluationPage, SimulationLabsPage, SmartClassroomPage } from '../features/ai-learning';
+import { SupportPage } from '../features/support';
+import { AnalyticsPage } from '../features/analytics';
+import { GlobalSettingsPage, RegionalLanguagesPage } from '../features/settings';
 
 export function AppRoutes() {
   const { user } = useAuth();
+  const isSuperAdmin = user?.role.name === 'SUPER_ADMIN';
+  const isSchoolAdmin = user?.role.name === 'SCHOOL_ADMIN';
+  const isTeacher = user?.role.name === 'TEACHER';
+  const isStudent = user?.role.name === 'STUDENT';
+  const isParent = user?.role.name === 'PARENT';
+  const isSchoolStaff = isSuperAdmin || isSchoolAdmin;
+  const canUseExams = isSuperAdmin || isSchoolAdmin || isTeacher || isStudent || isParent;
+  const canUseLearning = isSchoolAdmin || isTeacher || isStudent || isParent;
 
   // If user is not authenticated, display the split login page
   if (!user) {
@@ -57,9 +76,57 @@ export function AppRoutes() {
           path="/app-management/plans"
           element={user.role.name === 'SUPER_ADMIN' ? <PlansPage /> : <Navigate to="/" replace />}
         />
+        <Route
+          path="/app-management/support"
+          element={isSuperAdmin ? <SupportPage /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/app-management/analytics"
+          element={isSuperAdmin ? <AnalyticsPage /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/app-management/settings"
+          element={isSuperAdmin ? <GlobalSettingsPage /> : <Navigate to="/" replace />}
+        />
         <Route path="/user-management/students" element={<StudentsPage />} />
         <Route path="/user-management/teachers" element={<TeachersPage />} />
         <Route path="/user-management/parents" element={<ParentsPage />} />
+        <Route path="/attendance/students" element={<StudentAttendancePage />} />
+        <Route
+          path="/attendance/teachers"
+          element={isSuperAdmin || isSchoolAdmin || isTeacher ? <TeacherAttendancePage /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/attendance/rfid"
+          element={isSchoolStaff ? <RfidAttendancePage /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/attendance/reports"
+          element={isSuperAdmin || isSchoolAdmin || isTeacher || isParent ? <AttendanceReportsPage /> : <Navigate to="/" replace />}
+        />
+        <Route path="/attendance" element={<Navigate to="/attendance/students" replace />} />
+        <Route
+          path="/homework"
+          element={isSchoolAdmin || isTeacher || isStudent || isParent ? <HomeworkPage /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/homework/assignments"
+          element={isSchoolAdmin || isTeacher || isStudent || isParent ? <AssignmentsPage /> : <Navigate to="/" replace />}
+        />
+        <Route path="/communication/announcements" element={<AnnouncementsPage />} />
+        <Route
+          path="/communication/alerts"
+          element={isSchoolAdmin || isTeacher || isParent ? <AlertsPage /> : <Navigate to="/" replace />}
+        />
+        <Route path="/communication/notifications" element={<NotificationsPage />} />
+        <Route
+          path="/timetable/classes"
+          element={canUseExams ? <ClassTimetablePage /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/timetable/teachers"
+          element={isSuperAdmin || isSchoolAdmin || isTeacher ? <TeacherTimetablePage /> : <Navigate to="/" replace />}
+        />
         <Route path="/account-management/fees" element={
           user.role.name === 'SUPER_ADMIN' || user.role.name === 'SCHOOL_ADMIN' 
             ? <FeesPage /> 
@@ -70,10 +137,29 @@ export function AppRoutes() {
             ? <FeeDetailsPage /> 
             : <Navigate to="/" replace />
         } />
+        <Route path="/account-management/payments" element={
+          isSuperAdmin || isSchoolAdmin || isParent
+            ? <PaymentsPage /> 
+            : <Navigate to="/" replace />
+        } />
+        <Route path="/account-management/receipts" element={
+          isSuperAdmin || isSchoolAdmin || isParent
+            ? <ReceiptsPage /> 
+            : <Navigate to="/" replace />
+        } />
         <Route path="/account-management/transactions" element={
           user.role.name === 'SUPER_ADMIN' || user.role.name === 'SCHOOL_ADMIN' 
             ? <TransactionsPage /> 
             : <Navigate to="/" replace />
+        } />
+        <Route path="/exams/results" element={
+          canUseExams ? <ExamResultsPage /> : <Navigate to="/" replace />
+        } />
+        <Route path="/exams/weekly-tests" element={
+          isSchoolAdmin || isTeacher || isStudent ? <WeeklyTestsPage /> : <Navigate to="/" replace />
+        } />
+        <Route path="/exams/question-papers" element={
+          isSchoolAdmin || isTeacher ? <QuestionPapersPage /> : <Navigate to="/" replace />
         } />
         <Route path="/exams" element={
           ['SUPER_ADMIN', 'SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'].includes(user.role.name)
@@ -85,7 +171,39 @@ export function AppRoutes() {
             ? <ExamDetailsPage /> 
             : <Navigate to="/" replace />
         } />
-        <Route path="/attendance" element={<Navigate to="/" replace />} />
+        <Route path="/learning/recommendations" element={
+          canUseLearning ? <RecommendationsPage /> : <Navigate to="/" replace />
+        } />
+        <Route path="/learning/videos" element={
+          isTeacher || isStudent || isParent ? <VideosPage /> : <Navigate to="/" replace />
+        } />
+        <Route path="/learning/quizzes" element={
+          isTeacher || isStudent ? <QuizzesPage /> : <Navigate to="/" replace />
+        } />
+        <Route path="/learning/practice" element={
+          isStudent || isParent ? <PracticePage /> : <Navigate to="/" replace />
+        } />
+        <Route path="/ai-learning/weakness-detection" element={
+          canUseLearning ? <WeaknessDetectionPage /> : <Navigate to="/" replace />
+        } />
+        <Route path="/ai-learning/assistant" element={
+          isTeacher || isStudent || isParent ? <AiAssistantPage /> : <Navigate to="/" replace />
+        } />
+        <Route path="/ai-learning/ocr-evaluation" element={
+          isSuperAdmin || isSchoolAdmin || isTeacher ? <OcrEvaluationPage /> : <Navigate to="/" replace />
+        } />
+        <Route path="/ai-learning/simulations" element={
+          isSchoolAdmin || isTeacher || isStudent ? <SimulationLabsPage /> : <Navigate to="/" replace />
+        } />
+        <Route path="/ai-learning/smart-classroom" element={
+          isSchoolAdmin || isTeacher ? <SmartClassroomPage /> : <Navigate to="/" replace />
+        } />
+        <Route path="/settings/languages" element={
+          isSchoolStaff ? <RegionalLanguagesPage /> : <Navigate to="/" replace />
+        } />
+        <Route path="/support" element={
+          isSchoolAdmin || isTeacher || isStudent || isParent ? <SupportPage /> : <Navigate to="/" replace />
+        } />
         
         {/* Catch-all */}
         <Route path="*" element={<Navigate to="/" replace />} />

@@ -4,6 +4,21 @@ This file tracks chronological updates, architectural decisions, and setups perf
 
 ---
 
+## [2026-06-13] Full Codebase Type Safety & Linting Overhaul
+
+### What Was Done
+1. **Frontend Type Safety & Hooks Cleanup**:
+   - Systematically eliminated all 14 `tsc` compilation errors by replacing legacy `any` types with strict mappings from `@api/examApi.ts` (`IExam`, `IExamSchedule`, `IReportCard`) into central dialog maps (`dialog.types.ts`).
+   - Cleaned up lint warnings (`react-hooks/exhaustive-deps`) in `ExamDetailsPage.tsx` using proper `useMemo` hooks.
+   - Successfully achieved **0 compilation errors** (`npx tsc -b`) and **0 ESLint errors** (`npm run lint`).
+
+2. **Backend ESLint Installation & Configuration**:
+   - Discovered backend lacked ESLint; initialized and installed modern Flat Config ESLint (`eslint.config.mjs`) alongside `typescript-eslint` plugins.
+   - Configured robust exceptions for standard Express practices (disabling `no-namespace` for global Express Request extension, mapping `argsIgnorePattern` for `next`).
+   - Achieved a perfectly clean backend type-check (`npx tsc --noEmit`) and linting (`npm run lint`) with **0 errors**.
+
+---
+
 ## [2026-06-10] School Schema Updates & Collapsible User Management with CRUD
 
 ### What Was Done

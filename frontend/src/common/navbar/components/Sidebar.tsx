@@ -11,8 +11,38 @@ export function Sidebar({ collapsed, mobileOpen, onClose }: SidebarProps) {
     if (location.pathname.startsWith('/app-management')) {
       return 'App Management';
     }
+    if (location.pathname.startsWith('/school-management')) {
+      return 'School Management';
+    }
     if (location.pathname.startsWith('/user-management')) {
       return 'User Management';
+    }
+    if (location.pathname.startsWith('/attendance')) {
+      return 'Attendance';
+    }
+    if (location.pathname.startsWith('/exams')) {
+      return 'Exams';
+    }
+    if (location.pathname.startsWith('/homework')) {
+      return 'Homework';
+    }
+    if (location.pathname.startsWith('/communication')) {
+      return 'Communication';
+    }
+    if (location.pathname.startsWith('/timetable')) {
+      return 'Timetable';
+    }
+    if (location.pathname.startsWith('/account-management')) {
+      return 'Account Management';
+    }
+    if (location.pathname.startsWith('/learning')) {
+      return 'Learning';
+    }
+    if (location.pathname.startsWith('/ai-learning')) {
+      return 'AI Learning';
+    }
+    if (location.pathname.startsWith('/settings')) {
+      return 'Languages';
     }
     return null;
   });
@@ -21,8 +51,28 @@ export function Sidebar({ collapsed, mobileOpen, onClose }: SidebarProps) {
     if (location.pathname.startsWith('/app-management')) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setOpenSubmenu('App Management');
+    } else if (location.pathname.startsWith('/school-management')) {
+      setOpenSubmenu('School Management');
     } else if (location.pathname.startsWith('/user-management')) {
       setOpenSubmenu('User Management');
+    } else if (location.pathname.startsWith('/attendance')) {
+      setOpenSubmenu('Attendance');
+    } else if (location.pathname.startsWith('/exams')) {
+      setOpenSubmenu('Exams');
+    } else if (location.pathname.startsWith('/homework')) {
+      setOpenSubmenu('Homework');
+    } else if (location.pathname.startsWith('/communication')) {
+      setOpenSubmenu('Communication');
+    } else if (location.pathname.startsWith('/timetable')) {
+      setOpenSubmenu('Timetable');
+    } else if (location.pathname.startsWith('/account-management')) {
+      setOpenSubmenu('Account Management');
+    } else if (location.pathname.startsWith('/learning')) {
+      setOpenSubmenu('Learning');
+    } else if (location.pathname.startsWith('/ai-learning')) {
+      setOpenSubmenu('AI Learning');
+    } else if (location.pathname.startsWith('/settings')) {
+      setOpenSubmenu('Languages');
     }
   }, [location.pathname]);
 

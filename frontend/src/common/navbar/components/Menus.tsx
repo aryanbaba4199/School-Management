@@ -5,7 +5,8 @@ import {
 import { 
   FaChartPie, FaSchool, FaUsers, 
   FaUserCheck, FaFileSignature, FaBookOpen, 
-  FaCreditCard, FaBell, FaChevronDown, FaChevronUp, FaCogs 
+  FaCreditCard, FaBell, FaChevronDown, FaChevronUp, FaCogs,
+  FaCalendarAlt, FaBrain, FaRobot, FaHeadset, FaLanguage
 } from 'react-icons/fa';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@common/hooks/useAuth';
@@ -19,7 +20,10 @@ const MENU_ITEMS: MenuItemType[] = [
     icon: <FaCogs size={16} />,
     roles: ['SUPER_ADMIN'],
     children: [
-      { label: 'Plans Management', roles: ['SUPER_ADMIN'], path: '/app-management/plans' }
+      { label: 'Plans Management', roles: ['SUPER_ADMIN'], path: '/app-management/plans' },
+      { label: 'Support', roles: ['SUPER_ADMIN'], path: '/app-management/support' },
+      { label: 'Analytics', roles: ['SUPER_ADMIN'], path: '/app-management/analytics' },
+      { label: 'Global Settings', roles: ['SUPER_ADMIN'], path: '/app-management/settings' }
     ]
   },
   {
@@ -42,29 +46,99 @@ const MENU_ITEMS: MenuItemType[] = [
       { label: 'Parents', roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN'], path: '/user-management/parents' }
     ]
   },
-  { label: 'Attendance', icon: <FaUserCheck size={16} />, roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'], path: '/attendance' },
   {
-    label: 'Exam and Events',
-    icon: <FaFileSignature size={16} />,
-    roles: ['SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
+    label: 'Attendance',
+    icon: <FaUserCheck size={16} />,
+    roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
     children: [
-      { label: 'Examination', roles: ['SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'], path: '/exams' },
-      { label: 'Results', roles: ['SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'], path: '/results' },
-      { label: 'PTM', roles: ['SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'], path: '/ptm' },
-      { label: 'Celebration', roles: ['SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'], path: '/celebration' }
+      { label: 'Student Attendance', roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'], path: '/attendance/students' },
+      { label: 'Teacher Attendance', roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN', 'TEACHER'], path: '/attendance/teachers' },
+      { label: 'RFID Attendance', roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN'], path: '/attendance/rfid' },
+      { label: 'Attendance Reports', roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN', 'TEACHER', 'PARENT'], path: '/attendance/reports' }
     ]
   },
-  { label: 'Homeworks', icon: <FaBookOpen size={16} />, roles: ['TEACHER', 'STUDENT', 'PARENT'], path: '/homeworks' },
+  {
+    label: 'Exams',
+    icon: <FaFileSignature size={16} />,
+    roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
+    children: [
+      { label: 'Examination', roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'], path: '/exams' },
+      { label: 'Results', roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'], path: '/exams/results' },
+      { label: 'Weekly Tests', roles: ['SCHOOL_ADMIN', 'TEACHER', 'STUDENT'], path: '/exams/weekly-tests' },
+      { label: 'Question Papers', roles: ['SCHOOL_ADMIN', 'TEACHER'], path: '/exams/question-papers' }
+    ]
+  },
+  {
+    label: 'Homework',
+    icon: <FaBookOpen size={16} />,
+    roles: ['SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
+    children: [
+      { label: 'Homework', roles: ['SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'], path: '/homework' },
+      { label: 'Assignments', roles: ['SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'], path: '/homework/assignments' }
+    ]
+  },
+  {
+    label: 'Communication',
+    icon: <FaBell size={16} />,
+    roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
+    children: [
+      { label: 'Announcements', roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'], path: '/communication/announcements' },
+      { label: 'Alerts and Reminders', roles: ['SCHOOL_ADMIN', 'TEACHER', 'PARENT'], path: '/communication/alerts' },
+      { label: 'Notifications', roles: ['ALL'], path: '/communication/notifications' }
+    ]
+  },
+  {
+    label: 'Timetable',
+    icon: <FaCalendarAlt size={16} />,
+    roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
+    children: [
+      { label: 'Class Timetable', roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'], path: '/timetable/classes' },
+      { label: 'Teacher Timetable', roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN', 'TEACHER'], path: '/timetable/teachers' }
+    ]
+  },
   {
     label: 'Account Management',
     icon: <FaCreditCard size={16} />,
-    roles: ['SCHOOL_ADMIN', 'SUPER_ADMIN'],
+    roles: ['SCHOOL_ADMIN', 'SUPER_ADMIN', 'PARENT'],
     children: [
       { label: 'Fees Management', roles: ['SCHOOL_ADMIN', 'SUPER_ADMIN'], path: '/account-management/fees' },
+      { label: 'Payments', roles: ['SCHOOL_ADMIN', 'SUPER_ADMIN', 'PARENT'], path: '/account-management/payments' },
+      { label: 'Receipts', roles: ['SCHOOL_ADMIN', 'SUPER_ADMIN', 'PARENT'], path: '/account-management/receipts' },
       { label: 'Transaction Management', roles: ['SCHOOL_ADMIN', 'SUPER_ADMIN'], path: '/account-management/transactions' }
     ]
   },
-  { label: 'Notifications', icon: <FaBell size={16} />, roles: ['ALL'], path: '/notifications' },
+  {
+    label: 'Learning',
+    icon: <FaBrain size={16} />,
+    roles: ['SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
+    children: [
+      { label: 'Recommendations', roles: ['SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'], path: '/learning/recommendations' },
+      { label: 'Videos and Materials', roles: ['TEACHER', 'STUDENT', 'PARENT'], path: '/learning/videos' },
+      { label: 'Quizzes', roles: ['TEACHER', 'STUDENT'], path: '/learning/quizzes' },
+      { label: 'Practice Questions', roles: ['STUDENT', 'PARENT'], path: '/learning/practice' }
+    ]
+  },
+  {
+    label: 'AI Learning',
+    icon: <FaRobot size={16} />,
+    roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
+    children: [
+      { label: 'Weakness Detection', roles: ['SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'], path: '/ai-learning/weakness-detection' },
+      { label: 'AI Assistant', roles: ['TEACHER', 'STUDENT', 'PARENT'], path: '/ai-learning/assistant' },
+      { label: 'OCR Evaluation', roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN', 'TEACHER'], path: '/ai-learning/ocr-evaluation' },
+      { label: 'Simulation Labs', roles: ['SCHOOL_ADMIN', 'TEACHER', 'STUDENT'], path: '/ai-learning/simulations' },
+      { label: 'Smart Classroom', roles: ['SCHOOL_ADMIN', 'TEACHER'], path: '/ai-learning/smart-classroom' }
+    ]
+  },
+  {
+    label: 'Languages',
+    icon: <FaLanguage size={16} />,
+    roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN'],
+    children: [
+      { label: 'Regional Languages', roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN'], path: '/settings/languages' }
+    ]
+  },
+  { label: 'Support', icon: <FaHeadset size={16} />, roles: ['SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'], path: '/support' },
 ];
 
 export function ProfileSection({ collapsed }: { collapsed: boolean }) {
