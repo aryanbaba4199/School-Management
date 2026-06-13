@@ -36,12 +36,14 @@ export interface ISchoolUser {
 
 export const usersApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getUsers: builder.query<{ success: boolean; data: ISchoolUser[]; pagination: { totalPages: number; totalCount: number; currentPage: number; limit: number } }, { role?: string; page?: number; limit?: number } | void>({
+    getUsers: builder.query<{ success: boolean; data: ISchoolUser[]; pagination: { totalPages: number; totalCount: number; currentPage: number; limit: number } }, { role?: string; page?: number; limit?: number; classId?: string; sectionId?: string } | void>({
       query: (params) => {
         const queryParams = new URLSearchParams();
         if (params?.role) queryParams.append('role', params.role);
         if (params?.page) queryParams.append('page', String(params.page));
         if (params?.limit) queryParams.append('limit', String(params.limit));
+        if (params?.classId) queryParams.append('classId', params.classId);
+        if (params?.sectionId) queryParams.append('sectionId', params.sectionId);
         const queryString = queryParams.toString();
         return `/users${queryString ? `?${queryString}` : ''}`;
       },

@@ -12,6 +12,9 @@ import { ParentsPage } from '../features/users/parents';
 import { FeesPage } from '../features/account-management/fees';
 import { FeeDetailsPage } from '../features/account-management/fees/pages/FeeDetailsPage';
 import { TransactionsPage } from '../features/account-management/transactions';
+import { ExamMasterPage } from '../features/exams';
+import { ExamDetailsPage } from '../features/exams/pages/ExamDetailsPage';
+import { PrintReportCardPage } from '../features/exams/pages/PrintReportCardPage';
 import { MainLayout } from '@common/navbar';
 
 export function AppRoutes() {
@@ -24,9 +27,12 @@ export function AppRoutes() {
 
   // If authenticated, display the main School OS dashboard page within MainLayout
   return (
-    <MainLayout>
-      <Routes>
-        <Route path="/" element={<DashboardPage />} />
+    <Routes>
+      <Route path="/print/report-card" element={<PrintReportCardPage />} />
+      <Route path="*" element={
+        <MainLayout>
+          <Routes>
+            <Route path="/" element={<DashboardPage />} />
         <Route
           path="/school-management/manage-schools"
           element={user.role.name === 'SUPER_ADMIN' ? <SchoolsPage /> : <Navigate to="/" replace />}
@@ -69,8 +75,23 @@ export function AppRoutes() {
             ? <TransactionsPage /> 
             : <Navigate to="/" replace />
         } />
+        <Route path="/exams" element={
+          ['SUPER_ADMIN', 'SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'].includes(user.role.name)
+            ? <ExamMasterPage /> 
+            : <Navigate to="/" replace />
+        } />
+        <Route path="/exams/:id" element={
+          ['SUPER_ADMIN', 'SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'].includes(user.role.name)
+            ? <ExamDetailsPage /> 
+            : <Navigate to="/" replace />
+        } />
+        <Route path="/attendance" element={<Navigate to="/" replace />} />
+        
+        {/* Catch-all */}
         <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </MainLayout>
+          </Routes>
+        </MainLayout>
+      } />
+    </Routes>
   );
 }

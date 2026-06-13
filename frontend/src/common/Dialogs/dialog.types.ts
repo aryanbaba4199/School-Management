@@ -21,6 +21,9 @@ export type DialogType =
   | 'USER_DETAILS' 
   | 'SCHOOL_DETAILS' 
   | 'STUDENT_DETAILS'
+  | 'EXAM_FORM'
+  | 'SCHEDULE_SUBJECT_FORM'
+  | 'REPORT_CARD_VIEW'
   | null;
 
 export interface DialogPropsMap {
@@ -75,6 +78,20 @@ export interface DialogPropsMap {
   SUBJECT_FORM: {
     subjectId?: string;
     onSubmit: (data: { name: string; code: string; teacherIds?: string[]; schoolId?: string }) => void | Promise<void>;
+  };
+  EXAM_FORM: {
+    examId?: string;
+    exam?: any;
+    onSubmit?: (data: any) => void | Promise<void>;
+  };
+  SCHEDULE_SUBJECT_FORM: {
+    examId: string;
+    classId: string;
+    sectionId: string;
+    schedule?: any;
+  };
+  REPORT_CARD_VIEW: {
+    reportCard: any;
   };
 }
 

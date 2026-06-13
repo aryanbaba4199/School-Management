@@ -122,10 +122,12 @@ export class UserService {
   /**
    * Fetches users list with optional school and role filters.
    */
-  async findUsers(schoolId?: string, role?: string, page = 1, limit = 25): Promise<{ users: IUser[]; totalCount: number }> {
+  async findUsers(schoolId?: string, role?: string, page = 1, limit = 25, classId?: string, sectionId?: string): Promise<{ users: IUser[]; totalCount: number }> {
     const filter: Record<string, unknown> = {};
     if (schoolId) filter.schoolId = new Types.ObjectId(schoolId);
     if (role) filter['role.name'] = role;
+    if (classId) filter.classId = new Types.ObjectId(classId);
+    if (sectionId) filter.sectionId = new Types.ObjectId(sectionId);
 
     const skip = (page - 1) * limit;
     const [users, totalCount] = await Promise.all([

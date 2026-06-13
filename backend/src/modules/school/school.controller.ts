@@ -27,6 +27,21 @@ export class SchoolController {
    */
   async list(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
+      if (req.user?.role !== 'SUPER_ADMIN') {
+        if (!req.user?.schoolId) {
+          sendSuccess(res, 200, [], { totalPages: 0, totalCount: 0, currentPage: 1, limit: 25 });
+          return;
+        }
+        const school = await schoolService.getSchoolById(req.user.schoolId as string);
+        sendSuccess(res, 200, school ? [school] : [], {
+          totalPages: 1,
+          totalCount: school ? 1 : 0,
+          currentPage: 1,
+          limit: 25,
+        });
+        return;
+      }
+
       const page = Math.max(1, parseInt(req.query.page as string) || 1);
       const limit = Math.max(1, parseInt(req.query.limit as string) || 25);
 

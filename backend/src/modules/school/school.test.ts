@@ -25,12 +25,21 @@ describe('School Module API Endpoints', () => {
       expect(response.status).toBe(401);
     });
 
-    it('should return 403 if user is not SUPER_ADMIN', async () => {
-      const teacherToken = generateToken({ userId: 't1', role: 'TEACHER' });
+    it('should return 200 for non-SUPER_ADMIN on GET /api/schools', async () => {
+      const teacherToken = generateToken({ userId: 't1', role: 'TEACHER', schoolId: 'school123' });
+      
+      // Mock the service call
+      const mockPopulate = jest.fn().mockReturnThis();
+      (SchoolModel.findById as jest.Mock).mockReturnValue({
+        populate: mockPopulate,
+        then: jest.fn((resolve) => resolve({ _id: 'school123', name: 'My School' }))
+      });
+
       const response = await request(app)
         .get('/api/schools')
         .set('Authorization', `Bearer ${teacherToken}`);
-      expect(response.status).toBe(403);
+        
+      expect(response.status).toBe(200);
     });
   });
 
@@ -69,6 +78,33 @@ describe('School Module API Endpoints', () => {
       expect(response.status).toBe(201);
       expect(response.body.success).toBe(true);
       expect(response.body.data.name).toBe('Orchard Academy');
+    });
+  });
+  describe('GET /api/schools/:id', () => {
+    it('should return 403 if non-SUPER_ADMIN tries to fetch a different school ID', async () => {
+      const teacherToken = generateToken({ userId: 't1', role: 'TEACHER', schoolId: 'school123' });
+      const response = await request(app)
+        .get('/api/schools/school999')
+        .set('Authorization', `Bearer ${teacherToken}`);
+
+      expect(response.status).toBe(403);
+      expect(response.body.message).toContain('Access denied');
+    });
+
+    it('should return 200 if non-SUPER_ADMIN fetches their own school ID', async () => {
+      const teacherToken = generateToken({ userId: 't1', role: 'TEACHER', schoolId: 'school123' });
+      const mockPopulate = jest.fn().mockReturnThis();
+      (SchoolModel.findById as jest.Mock).mockReturnValue({
+        populate: mockPopulate,
+        then: jest.fn((resolve) => resolve({ _id: 'school123', name: 'My School' }))
+      });
+
+      const response = await request(app)
+        .get('/api/schools/school123')
+        .set('Authorization', `Bearer ${teacherToken}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body.data.name).toBe('My School');
     });
   });
 
