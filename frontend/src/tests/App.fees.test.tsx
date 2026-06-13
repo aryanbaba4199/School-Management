@@ -135,8 +135,8 @@ describe('App Fees Management', () => {
     });
 
     // Test filter Due
-    const filterBtns = screen.queryAllByRole('button');
-    // For simplicity, we just verify the route responds to mock fetch and page loads.
+    
+    // Simulate API resolving with datahe route responds to mock fetch and page loads.
     expect(screen.getByPlaceholderText('Search all transactions...')).toBeInTheDocument();
 
   }, 20000);

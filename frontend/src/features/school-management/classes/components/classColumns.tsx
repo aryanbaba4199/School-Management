@@ -138,6 +138,7 @@ export const getClassColumns = ({ onView, onEdit, onDelete, onTeacherClick, isSu
       <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
         <ClassAction 
           classObj={row}
+          onView={onView}
           onEdit={onEdit}
           onDelete={onDelete}
         />

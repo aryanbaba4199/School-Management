@@ -4,6 +4,7 @@ import { DialogTitle, DialogContent, DialogActions, Button, Grid } from '@mui/ma
 import { FormTextField, FormAutocompleteField } from '@common/Forms';
 import { useNotifier } from '@common/Notifier/NotifierProvider';
 import { useCreateExamScheduleMutation, useUpdateExamScheduleMutation } from '@api/examApi';
+import type { IExamSchedule } from '@api/examApi';
 import { useGetSubjectsQuery } from '@api/subjectsApi';
 import dayjs from 'dayjs';
 
@@ -12,7 +13,7 @@ interface ScheduleSubjectDialogProps {
   examId: string;
   classId: string;
   sectionId: string;
-  schedule?: any;
+  schedule?: IExamSchedule;
 }
 
 interface ScheduleFormData {
@@ -79,21 +80,21 @@ export function ScheduleSubjectDialog({ onClose, examId, classId, sectionId, sch
       if (schedule) {
         await updateSchedule({
           id: schedule._id,
-          body: { ...data },
+          body: { ...data } as unknown as Partial<IExamSchedule>,
         }).unwrap();
         showSuccess('Subject schedule updated successfully');
       } else {
         await createSchedule({
           examId,
-          classId,
-          sectionId,
+          classId: classId,
+          sectionId: sectionId,
           ...data,
-        }).unwrap();
+        } as unknown as Record<string, unknown>).unwrap();
         showSuccess('Subject scheduled successfully');
       }
       onClose();
-    } catch (err: any) {
-      showError(err?.data?.error || 'Failed to save subject schedule');
+    } catch (err: unknown) {
+      showError((err as { data?: { error?: string } })?.data?.error || 'Failed to save subject schedule');
     }
   };
 

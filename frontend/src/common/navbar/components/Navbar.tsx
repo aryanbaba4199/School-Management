@@ -35,7 +35,7 @@ export function Navbar({ onToggleSidebar }: NavbarProps) {
     if (user?.role?.name === 'SUPER_ADMIN') {
       openDialog('USER_DETAILS', { userId: user._id });
     } else if (user?.role?.name === 'SCHOOL_ADMIN' && user.schoolId) {
-      const schoolId = typeof user.schoolId === 'object' ? user.schoolId._id : user.schoolId;
+      const schoolId = typeof user.schoolId === 'object' ? (user.schoolId as unknown as { _id: string })._id : user.schoolId;
       openDialog('SCHOOL_FORM', {
         schoolId,
         onSubmit: async (data) => {

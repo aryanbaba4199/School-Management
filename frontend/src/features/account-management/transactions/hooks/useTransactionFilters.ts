@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
 export function useTransactionFilters() {
-  const [filterValues, setFilterValues] = useState<Record<string, any>>({});
+  const [filterValues, setFilterValues] = useState<Record<string, unknown>>({});
   const [sortColumn, setSortColumn] = useState<string | undefined>(undefined);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
-  const handleFilterChange = (columnId: string, value: any) => {
+  const handleFilterChange = (columnId: string, value: unknown) => {
     setFilterValues((prev) => {
       const newFilters = { ...prev };
       if (value === '' || value === undefined || value === null) {

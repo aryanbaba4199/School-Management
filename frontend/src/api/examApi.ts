@@ -130,7 +130,7 @@ export const examApi = baseApi.injectEndpoints({
       }),
       providesTags: ['StudentExamMark'],
     }),
-    saveStudentMarks: builder.mutation<{ success: boolean }, { examId: string; examScheduleId: string; classId: string; sectionId: string; subjectId: string; maxMarks: number; marksData: any[] }>({
+    saveStudentMarks: builder.mutation<{ success: boolean }, { examId: string; examScheduleId: string; classId: string; sectionId: string; subjectId: string; maxMarks: number; marksData: unknown[] }>({
       query: (data) => ({
         url: '/exams/marks',
         method: 'POST',

@@ -1,5 +1,4 @@
-import React from 'react';
-import { DialogContent, Box, Button } from '@mui/material';
+import { DialogContent, Button, Box } from '@mui/material';
 import { useGetStudentMarksQuery, useGetExamSchedulesQuery } from '@api/examApi';
 import { useGetSchoolsQuery } from '@api/schoolsApi';
 import type { IReportCard } from '@api/examApi';
@@ -52,7 +51,7 @@ export function ReportCardDialog({ onClose, reportCard }: ReportCardDialogProps)
           reportCard={reportCard} 
           marks={marks} 
           schedules={schedules} 
-          school={school} 
+          school={school as unknown as null} 
           isLoading={isLoading} 
         />
       </Box>

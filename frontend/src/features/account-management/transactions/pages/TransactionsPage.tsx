@@ -10,7 +10,7 @@ export function TransactionsPage() {
   const { filterValues, handleFilterChange, sortColumn, sortDirection, handleSort } = useTransactionFilters();
   const statusFilter = filterValues['status'];
 
-  const { data: res, isLoading, error } = useGetAllTransactionsQuery({ status: statusFilter });
+  const { data: res, isLoading, error } = useGetAllTransactionsQuery({ status: statusFilter as string | undefined });
   const transactions = res?.data || [];
 
   const [search, setSearch] = useState('');
@@ -20,7 +20,7 @@ export function TransactionsPage() {
   const filteredTransactions = transactions.filter((t) => {
     if (!search) return true;
     const searchLower = search.toLowerCase();
-    const student = t.studentId as any;
+    const student = t.studentId as unknown as { name?: string; userCode?: string };
     const studentName = student?.name?.toLowerCase() || '';
     const userCode = student?.userCode?.toLowerCase() || '';
     const paymentMsg = t.paymentMessage?.toLowerCase() || '';
@@ -34,19 +34,19 @@ export function TransactionsPage() {
   const sortedTransactions = [...filteredTransactions].sort((a, b) => {
     if (!sortColumn) return 0;
     
-    let aVal: any = a[sortColumn as keyof IFeeInvoice];
-    let bVal: any = b[sortColumn as keyof IFeeInvoice];
+    let aVal: unknown = a[sortColumn as keyof IFeeInvoice];
+    let bVal: unknown = b[sortColumn as keyof IFeeInvoice];
 
     if (sortColumn === 'studentName') {
-      aVal = (a.studentId as any)?.name || '';
-      bVal = (b.studentId as any)?.name || '';
+      aVal = (a.studentId as unknown as { name?: string })?.name || '';
+      bVal = (b.studentId as unknown as { name?: string })?.name || '';
     } else if (sortColumn === 'classId') {
-      aVal = (a.classId as any)?.name || '';
-      bVal = (b.classId as any)?.name || '';
+      aVal = (a.classId as unknown as { name?: string })?.name || '';
+      bVal = (b.classId as unknown as { name?: string })?.name || '';
     }
 
-    if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
-    if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
+    if ((aVal as string | number) < (bVal as string | number)) return sortDirection === 'asc' ? -1 : 1;
+    if ((aVal as string | number) > (bVal as string | number)) return sortDirection === 'asc' ? 1 : -1;
     return 0;
   });
 

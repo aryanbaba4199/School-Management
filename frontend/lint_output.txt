@@ -3,32 +3,144 @@
 > eslint .
 
 
+/Users/aryandubey/project/personal-/School Management/frontend/src/api/examApi.ts
+  133:188  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/aryandubey/project/personal-/School Management/frontend/src/api/feesApi.ts
+  19:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  20:17  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  88:82  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
 /Users/aryandubey/project/personal-/School Management/frontend/src/common/Datatable/components/Datatable.tsx
-  1:20  error  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+  52:33  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  53:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
-/Users/aryandubey/project/personal-/School Management/frontend/src/common/navbar/components/Sidebar.tsx
-  25:7  warning  Unused eslint-disable directive (no problems were reported from 'react-hooks/set-state-in-effect')
+/Users/aryandubey/project/personal-/School Management/frontend/src/common/Datatable/types/datatable.types.ts
+  10:43  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
-/Users/aryandubey/project/personal-/School Management/frontend/src/features/parents/components/ParentFormDialog.tsx
-  41:25  warning  Compilation Skipped: Use of incompatible library
+/Users/aryandubey/project/personal-/School Management/frontend/src/common/Dialogs/dialog.types.ts
+  84:12  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  85:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  91:16  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  94:17  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/aryandubey/project/personal-/School Management/frontend/src/common/Forms/FormAutocompleteField.tsx
+  36:13  error  The value assigned to 'selectedOption' is not used in subsequent statements  no-useless-assignment
+
+/Users/aryandubey/project/personal-/School Management/frontend/src/common/navbar/components/Navbar.tsx
+  38:78  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/account-management/fees/components/MoneyReceiptDialog.tsx
+   50:7   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/account-management/fees/components/MoneyReceiptDialog.tsx:50:7
+  48 |       const pending = feesData.data.filter(fee => fee.status === 'PENDING' || fee.status === 'OVERDUE');
+  49 |       const pendingIds = pending.map(fee => fee._id);
+> 50 |       setSelectedInvoices(pendingIds);
+     |       ^^^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  51 |       const total = pending.reduce((sum, inv) => sum + inv.amount, 0);
+  52 |       setPayableAmount(Math.max(total - walletBal, 0));
+  53 |     }  react-hooks/set-state-in-effect
+  114:21  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-explicit-any
+
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/account-management/fees/pages/FeeDetailsPage.tsx
+  42:58  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/account-management/fees/pages/FeesPage.tsx
+  25:9   warning  The 'transactions' logical expression could make the dependencies of useMemo Hook (at line 73) change on every render. Move it inside the useMemo callback. Alternatively, wrap the initialization of 'transactions' in its own useMemo() Hook  react-hooks/exhaustive-deps
+  31:11  error    The value assigned to 'key' is not used in subsequent statements                                                                                                                                                                                no-useless-assignment
+  32:11  error    The value assigned to 'monthName' is not used in subsequent statements                                                                                                                                                                          no-useless-assignment
+
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/account-management/transactions/components/transactionColumns.tsx
+  11:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  29:39  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/account-management/transactions/hooks/useTransactionFilters.ts
+  4:67  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  8:56  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/account-management/transactions/pages/TransactionsPage.tsx
+  23:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  37:15  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  38:15  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  41:30  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  42:30  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  44:28  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  45:28  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/exams/components/CreateExamDialog.tsx
+  16:10  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  17:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  85:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/exams/components/ReportCardContent.tsx
+  7:10  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  8:14  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  9:11  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/exams/components/ScheduleSubjectDialog.tsx
+  15:14  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  82:32  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  91:14  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  95:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/exams/pages/ExamDetailsPage.tsx
+  128:9    warning  The 'students' logical expression could make the dependencies of useEffect Hook (at line 152) change on every render. To fix this, wrap the initialization of 'students' in its own useMemo() Hook                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                react-hooks/exhaustive-deps
+  134:9    warning  The 'existingMarks' logical expression could make the dependencies of useEffect Hook (at line 152) change on every render. Move it inside the useEffect callback. Alternatively, wrap the initialization of 'existingMarks' in its own useMemo() Hook                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             react-hooks/exhaustive-deps
+  150:7    error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/exams/pages/ExamDetailsPage.tsx:150:7
+  148 |         };
+  149 |       });
+> 150 |       setMarksState(newState);
+      |       ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  151 |     }
+  152 |   }, [students, existingMarks, selectedSchedule]);
+  153 |  react-hooks/set-state-in-effect
+  175:19   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-explicit-any
+  181:50   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-explicit-any
+  182:56   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-explicit-any
+  183:60   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-explicit-any
+  199:103  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-explicit-any
+  212:54   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-explicit-any
+  267:20   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-explicit-any
+  303:19   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-explicit-any
+
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/school-management/classes/components/ClassFormDialog.tsx
+  135:67  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @typescript-eslint/no-explicit-any
+  138:47  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @typescript-eslint/no-explicit-any
+  141:47  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @typescript-eslint/no-explicit-any
+  318:49  warning  Compilation Skipped: Use of incompatible library
 
 This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
 
-/Users/aryandubey/project/personal-/School Management/frontend/src/features/parents/components/ParentFormDialog.tsx:41:25
-  39 |   });
-  40 |
-> 41 |   const selectedState = watch('address.state');
-     |                         ^^^^^ React Hook Form's `useForm()` API returns a `watch()` function which cannot be memoized safely.
-  42 |
-  43 |   const { data: statesRes } = useGetStatesQuery('');
-  44 |   const states = statesRes?.success ? statesRes.data : [];  react-hooks/incompatible-library
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/school-management/classes/components/ClassFormDialog.tsx:318:49
+  316 |                     <TableBody>
+  317 |                       {fields.map((field, index) => {
+> 318 |                         const periodSubjectId = watch(`schedule.${index}.subjectId`);
+      |                                                 ^^^^^ React Hook Form's `useForm()` API returns a `watch()` function which cannot be memoized safely.
+  319 |
+  320 |                         const rowTeacherOptions = (teachersRes?.success ? teachersRes.data : [])
+  321 |                           .filter((t) => {  react-hooks/incompatible-library
 
-/Users/aryandubey/project/personal-/School Management/frontend/src/features/schools/components/MasterDialogs/MasterDataAddDialog.tsx
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/school-management/manage-schools/components/MasterDialogs/MasterDataAddDialog.tsx
   44:29  warning  Compilation Skipped: Use of incompatible library
 
 This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
 
-/Users/aryandubey/project/personal-/School Management/frontend/src/features/schools/components/MasterDialogs/MasterDataAddDialog.tsx:44:29
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/school-management/manage-schools/components/MasterDialogs/MasterDataAddDialog.tsx:44:29
   42 |   });
   43 |
 > 44 |   const selectedCountryId = watch('countryId');
@@ -37,49 +149,69 @@ This API returns functions which cannot be memoized without leading to stale UI.
   46 |   const { data: countriesRes } = useGetCountriesQuery(undefined, { skip: (type !== 'STATE' && type !== 'DISTRICT' && type !== 'BOARD') });
   47 |   const countries = countriesRes?.success ? countriesRes.data : [];  react-hooks/incompatible-library
 
-/Users/aryandubey/project/personal-/School Management/frontend/src/features/schools/components/SchoolForm.tsx
-    3:15  error    'FieldValues' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
-  100:27  warning  Compilation Skipped: Use of incompatible library
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/school-management/manage-schools/components/SchoolForm.tsx
+  117:27  warning  Compilation Skipped: Use of incompatible library
 
 This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
 
-/Users/aryandubey/project/personal-/School Management/frontend/src/features/schools/components/SchoolForm.tsx:100:27
-   98 |   });
-   99 |
-> 100 |   const selectedCountry = watch('country');
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/school-management/manage-schools/components/SchoolForm.tsx:117:27
+  115 |   }, [school, reset]);
+  116 |
+> 117 |   const selectedCountry = watch('country');
       |                           ^^^^^ React Hook Form's `useForm()` API returns a `watch()` function which cannot be memoized safely.
-  101 |   const selectedState = watch('state');
-  102 |
-  103 |   const { data: plansRes } = useGetSubscriptionPlansQuery();  react-hooks/incompatible-library
+  118 |   const selectedState = watch('state');
+  119 |
+  120 |   const { data: plansRes } = useGetSubscriptionPlansQuery();  react-hooks/incompatible-library
+  173:45  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           @typescript-eslint/no-explicit-any
 
-/Users/aryandubey/project/personal-/School Management/frontend/src/features/students/components/StudentFormDialog.tsx
-  51:25  warning  Compilation Skipped: Use of incompatible library
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/users/parents/components/ParentFormDialog.tsx
+  43:25  warning  Compilation Skipped: Use of incompatible library
 
 This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
 
-/Users/aryandubey/project/personal-/School Management/frontend/src/features/students/components/StudentFormDialog.tsx:51:25
-  49 |   });
-  50 |
-> 51 |   const selectedState = watch('address.state');
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/users/parents/components/ParentFormDialog.tsx:43:25
+  41 |   });
+  42 |
+> 43 |   const selectedState = watch('address.state');
      |                         ^^^^^ React Hook Form's `useForm()` API returns a `watch()` function which cannot be memoized safely.
+  44 |
+  45 |   const { data: statesRes } = useGetStatesQuery('');
+  46 |   const states = statesRes?.success ? statesRes.data : [];  react-hooks/incompatible-library
+
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/users/students/components/StudentFormDialog.tsx
+   37:68  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-explicit-any
+   61:25  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/users/students/components/StudentFormDialog.tsx:61:25
+  59 |   });
+  60 |
+> 61 |   const selectedState = watch('address.state');
+     |                         ^^^^^ React Hook Form's `useForm()` API returns a `watch()` function which cannot be memoized safely.
+  62 |   const selectedClassId = watch('classId');
+  63 |   const selectedFeeCycle = watch('feeCycle');
+  64 |  react-hooks/incompatible-library
+   81:89  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-explicit-any
+  126:31  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-explicit-any
+
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/users/teachers/components/TeacherFormDialog.tsx
+  53:25  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+/Users/aryandubey/project/personal-/School Management/frontend/src/features/users/teachers/components/TeacherFormDialog.tsx:53:25
+  51 |   });
   52 |
-  53 |   const { data: statesRes } = useGetStatesQuery('');
-  54 |   const states = statesRes?.success ? statesRes.data : [];  react-hooks/incompatible-library
-
-/Users/aryandubey/project/personal-/School Management/frontend/src/features/teachers/components/TeacherFormDialog.tsx
-  40:25  warning  Compilation Skipped: Use of incompatible library
-
-This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
-
-/Users/aryandubey/project/personal-/School Management/frontend/src/features/teachers/components/TeacherFormDialog.tsx:40:25
-  38 |   });
-  39 |
-> 40 |   const selectedState = watch('address.state');
+> 53 |   const selectedState = watch('address.state');
      |                         ^^^^^ React Hook Form's `useForm()` API returns a `watch()` function which cannot be memoized safely.
-  41 |
-  42 |   const { data: statesRes } = useGetStatesQuery('');
-  43 |   const states = statesRes?.success ? statesRes.data : [];  react-hooks/incompatible-library
+  54 |
+  55 |   const { data: statesRes } = useGetStatesQuery('');
+  56 |   const states = statesRes?.success ? statesRes.data : [];  react-hooks/incompatible-library
 
-✖ 8 problems (2 errors, 6 warnings)
-  0 errors and 1 warning potentially fixable with the `--fix` option.
+/Users/aryandubey/project/personal-/School Management/frontend/src/tests/mockFetch.ts
+  110:12  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  303:77  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+✖ 66 problems (57 errors, 9 warnings)
 

@@ -16,8 +16,8 @@ export interface IFeeInvoice {
   paymentMessage?: string;
   createdAt: string;
   updatedAt: string;
-  studentId_ref?: any; // populated student object
-  classId_ref?: any;   // populated class object
+  studentId_ref?: unknown; // populated student object
+  classId_ref?: unknown;   // populated class object
 }
 
 interface FeesResponse {
@@ -58,14 +58,14 @@ export const feesApi = baseApi.injectEndpoints({
         url: `/fees/${id}/pay`,
         method: 'PUT',
       }),
-      invalidatesTags: (result, error, id) => [{ type: 'Fee', id }],
+      invalidatesTags: (_result, _error, id) => [{ type: 'Fee', id }],
     }),
     markFeeDue: builder.mutation<{ success: boolean; data: IFeeInvoice }, string>({
       query: (id) => ({
         url: `/fees/${id}/mark-due`,
         method: 'PUT',
       }),
-      invalidatesTags: (result, error, id) => [{ type: 'Fee', id }, { type: 'Fee', id: 'LIST' }],
+      invalidatesTags: (_result, _error, id) => [{ type: 'Fee', id }, { type: 'Fee', id: 'LIST' }],
     }),
     generateGlobalFees: builder.mutation<{ success: boolean; count: number; message: string }, { classId?: string; type: 'MONTHLY' | 'ADMISSION'; month?: number; year: number }>({
       query: (body) => ({
@@ -85,7 +85,7 @@ export const feesApi = baseApi.injectEndpoints({
             ]
           : [{ type: 'Fee', id: 'LIST' }],
     }),
-    payMoneyReceipt: builder.mutation<{ success: boolean; message: string; data: any }, { studentId: string; invoiceIds: string[]; paidAmount: number; paymentMode?: string; paymentMessage?: string }>({
+    payMoneyReceipt: builder.mutation<{ success: boolean; message: string; data: unknown }, { studentId: string; invoiceIds: string[]; paidAmount: number; paymentMode?: string; paymentMessage?: string }>({
       query: (body) => ({
         url: '/fees/pay-receipt',
         method: 'POST',

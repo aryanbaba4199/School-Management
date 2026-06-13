@@ -170,7 +170,7 @@ export function SchoolForm({ schoolId, onSubmit, onCancel }: SchoolFormProps) {
       subscriptionPlan: draft.subscriptionDetails?.subscriptionPlan || '60f7c223405c102c98d6c810',
       billingCycle: draft.subscriptionDetails?.billingCycle || 'MONTHLY',
       maxStudents: draft.subscriptionDetails?.maxStudents || 500,
-      admissionFee: draft.schoolDetails?.admissionFee,
+      admissionFee: (draft.schoolDetails as unknown as { admissionFee?: number })?.admissionFee,
       shift: 'Morning Shift',
       startTime: '08:00',
       endTime: '13:00',

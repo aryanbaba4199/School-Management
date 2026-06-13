@@ -1,6 +1,7 @@
 import type { SchoolFormData } from '../../features/school-management/manage-schools/schema/school.schema';
 import type { PlanFormData } from '../../features/app-management/plan-management/schema/plan.schema';
 import type { ISubscriptionPlan } from '../../features/app-management/plan-management/types/plans.types';
+import type { IReportCard, IExam, IExamSchedule } from '@api/examApi';
 
 import type { ISchoolUser } from '@api/usersApi';
 
@@ -81,17 +82,17 @@ export interface DialogPropsMap {
   };
   EXAM_FORM: {
     examId?: string;
-    exam?: any;
-    onSubmit?: (data: any) => void | Promise<void>;
+    exam?: IExam;
+    onSubmit?: (data: unknown) => void | Promise<void>;
   };
   SCHEDULE_SUBJECT_FORM: {
     examId: string;
     classId: string;
     sectionId: string;
-    schedule?: any;
+    schedule?: IExamSchedule;
   };
   REPORT_CARD_VIEW: {
-    reportCard: any;
+    reportCard: IReportCard;
   };
 }
 

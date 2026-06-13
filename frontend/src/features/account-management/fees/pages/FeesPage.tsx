@@ -22,14 +22,14 @@ export function FeesPage() {
   const deactiveStudents = students.filter(s => !s.isActive).length;
   const totalStudents = students.length;
 
-  const transactions = res?.data || [];
+  const transactions = useMemo(() => res?.data || [], [res?.data]);
 
   const summaries = useMemo(() => {
     const map = new Map<string, IFeeSummary>();
     
     transactions.forEach(fee => {
-      let key = '';
-      let monthName = '';
+      let key;
+      let monthName;
       
       if (fee.type === 'MONTHLY') {
         key = `MONTHLY-${fee.year}-${fee.month}`;

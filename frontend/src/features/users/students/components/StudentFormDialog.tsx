@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import type { Resolver } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { DialogTitle, DialogContent, DialogActions, Button, Grid, Box, CircularProgress, Stepper, Step, StepLabel, Typography, Divider } from '@mui/material';
 import { FormTextField, FormSelectField, FormAutocompleteField } from '@common/Forms';
@@ -35,6 +34,7 @@ export function StudentFormDialog({ onClose, onSubmit, userId, isLoading = false
   const { data: parentsRes } = useGetUsersQuery({ role: 'PARENT' });
   const parents = parentsRes?.success ? parentsRes.data : [];
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { handleSubmit, control, watch, reset, trigger } = useForm<any>({
     resolver: yupResolver(studentSchema),
     defaultValues: {
@@ -79,7 +79,7 @@ export function StudentFormDialog({ onClose, onSubmit, userId, isLoading = false
   const districts = districtsRes?.success ? districtsRes.data : [];
 
   // Get active school ID (from populated object or string)
-  const activeSchoolId = typeof authUser?.schoolId === 'object' ? authUser.schoolId._id : authUser?.schoolId;
+  const activeSchoolId = typeof authUser?.schoolId === 'object' ? (authUser.schoolId as unknown as { _id: string })._id : authUser?.schoolId;
   const { data: schoolRes } = useGetSchoolByIdQuery(activeSchoolId || '', { skip: !activeSchoolId });
   const activeSchool = schoolRes?.data;
 
@@ -124,7 +124,7 @@ export function StudentFormDialog({ onClose, onSubmit, userId, isLoading = false
       } : undefined,
       regDate: formData.regDate,
       startDate: formData.startDate,
-      leaveDate: formData.leaveDate,
+      leaveDate: (formData as unknown as { leaveDate?: string }).leaveDate,
       feeCycle: formData.feeCycle,
       role: {
         name: 'STUDENT',

@@ -33,7 +33,7 @@ export function FormAutocompleteField<TFieldValues extends FieldValues>({
       name={name}
       control={control}
       render={({ field: { onChange, value }, fieldState: { error } }) => {
-        let selectedOption: SelectOption | SelectOption[] | null = null;
+        let selectedOption: SelectOption | SelectOption[] | null;
         if (multiple) {
           const valArray = Array.isArray(value) ? value : [];
           selectedOption = valArray

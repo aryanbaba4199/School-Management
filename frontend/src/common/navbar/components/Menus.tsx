@@ -176,7 +176,7 @@ export function MenuItemsList({ collapsed, openSubmenu, toggleSubmenu, onItemCli
                 )
               }
               placement="right-start"
-              interactive={hasChildren}
+              disableInteractive={!hasChildren}
               disableHoverListener={!collapsed}
               slotProps={{
                 popper: {

@@ -8,7 +8,7 @@ export const transactionColumns: Column<IFeeInvoice>[] = [
     label: 'Student Name',
     sortable: false,
     render: (row) => {
-      const student = row.studentId as any;
+      const student = row.studentId as unknown as { name?: string; userCode?: string };
       return (
         <div>
           <Typography variant="body2" sx={{ fontWeight: 600 }}>
@@ -26,7 +26,7 @@ export const transactionColumns: Column<IFeeInvoice>[] = [
     label: 'Class',
     sortable: false,
     render: (row) => {
-      const classObj = row.classId as any;
+      const classObj = row.classId as unknown as { name?: string };
       return <Typography variant="body2">{classObj?.name || 'N/A'}</Typography>;
     },
   },

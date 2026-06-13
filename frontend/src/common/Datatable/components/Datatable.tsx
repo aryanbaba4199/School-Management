@@ -49,8 +49,8 @@ interface DatatableProps<T> {
   sortDirection?: 'asc' | 'desc';
   onSort?: (columnId: string) => void;
   tableName?: string;
-  filterValues?: Record<string, any>;
-  onFilterChange?: (columnId: string, value: any) => void;
+  filterValues?: Record<string, unknown>;
+  onFilterChange?: (columnId: string, value: unknown) => void;
 }
 
 export default function Datatable<T extends { _id: string }>({
@@ -268,7 +268,7 @@ export default function Datatable<T extends { _id: string }>({
       >
         {activeFilterCol?.filterOptions?.map(option => (
           <MenuItem 
-            key={option.value} 
+            key={String(option.value)} 
             selected={filterValues[activeFilterCol.id] === option.value}
             onClick={() => {
               if (onFilterChange) {

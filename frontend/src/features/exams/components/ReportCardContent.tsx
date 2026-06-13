@@ -4,9 +4,9 @@ import dayjs from 'dayjs';
 
 interface ReportCardContentProps {
   reportCard: IReportCard;
-  marks: any[];
-  schedules: any[];
-  school: any;
+  marks: { subjectId: { _id: string }; attendanceStatus: string; obtainedMarks?: number; remarks?: string }[];
+  schedules: { _id: string; subjectId: { _id: string; name: string }; maxMarks: number; passMarks: number }[];
+  school: { name?: string; address?: { street?: string; city?: { name: string } | string; pincode?: string }; contactEmail?: string; contactPhone?: string } | null;
   isLoading: boolean;
 }
 

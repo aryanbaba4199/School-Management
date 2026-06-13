@@ -107,7 +107,7 @@ export const fetchStub = vi.fn(async (url: string | Request, options?: RequestIn
     subdomain?: string;
     phone?: string;
     subscriptionPlan?: string;
-    role?: any;
+    role?: unknown;
   } | null = null;
   try {
     if (options?.body) {
@@ -300,7 +300,7 @@ export const fetchStub = vi.fn(async (url: string | Request, options?: RequestIn
         const newUser = {
           _id: `user-mock-new-${Date.now()}`,
           ...parsedBody,
-          role: parsedBody && 'role' in parsedBody ? (parsedBody as { role: any }).role : { name: 'STUDENT' },
+          role: parsedBody && 'role' in parsedBody ? (parsedBody as { role: unknown }).role : { name: 'STUDENT' },
           createdAt: new Date().toISOString()
         };
         // @ts-expect-error Mock data type mismatch

@@ -132,13 +132,13 @@ export function ClassFormDialog({ onClose, onSubmit, classId, isLoading = false 
     if (classItem) {
       reset({
         name: classItem.name,
-        sections: classItem.sections ? classItem.sections.map((s: any) => s.name).join(', ') : 'A',
+        sections: classItem.sections ? classItem.sections.map((s: { name: string }) => s.name).join(', ') : 'A',
         schoolId: typeof classItem.schoolId === 'object' ? (classItem.schoolId as { _id: string })._id : classItem.schoolId || '',
         classTeacherId: typeof classItem.classTeacherId === 'object' ? (classItem.classTeacherId as { _id: string })._id : classItem.classTeacherId || '',
-        subjects: classItem.subjects?.map((s: any) => typeof s === 'object' ? s._id : s) || [],
+        subjects: classItem.subjects?.map((s: { _id?: string } | string) => typeof s === 'object' ? s._id : s) || [],
         monthlyFee: classItem.monthlyFee || 0,
         yearlyFee: classItem.yearlyFee || 0,
-        schedule: classItem.schedule?.map((s: any) => ({
+        schedule: classItem.schedule?.map((s: { startTime: string; endTime: string; subjectId: { _id?: string } | string; teacherId: { _id?: string } | string; }) => ({
           startTime: s.startTime,
           endTime: s.endTime,
           subjectId: typeof s.subjectId === 'object' ? s.subjectId._id : s.subjectId,
@@ -263,7 +263,7 @@ export function ClassFormDialog({ onClose, onSubmit, classId, isLoading = false 
                   <Typography variant="body2" sx={{ fontWeight: 600 }}>
                     School Shift: {schoolShift} ({schoolStart} - {schoolEnd})
                   </Typography>
-                  <Typography variant="caption" display="block">
+                  <Typography variant="caption" sx={{ display: 'block' }}>
                     Operational Duration: <strong>{formatMinutesToHours(schoolDurationMin)}</strong> | Scheduled: <strong>{formatMinutesToHours(totalScheduledMinutes)}</strong>
                   </Typography>
                 </Alert>

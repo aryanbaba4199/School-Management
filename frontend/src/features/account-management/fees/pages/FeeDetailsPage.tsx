@@ -39,7 +39,7 @@ export function FeeDetailsPage() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [receiptDialogOpen, setReceiptDialogOpen] = useState(false);
-  const [selectedStudent, setSelectedStudent] = useState<any>(null);
+  const [selectedStudent, setSelectedStudent] = useState<{ _id: string; name: string; userCode: string; className: string; } | null>(null);
 
   const studentsFees: IStudentFeeRow[] = useMemo(() => {
     if (!res?.data) return [];

@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import {
-  Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
@@ -9,13 +8,14 @@ import {
 } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { useCreateExamMutation, useUpdateExamMutation } from '@api/examApi';
+import type { IExam } from '@api/examApi';
 import { useNotifier } from '@common/Notifier/NotifierProvider';
 import { FormTextField, FormSelectField } from '@common/Forms';
 
 interface CreateExamDialogProps {
   onClose: () => void;
-  exam?: any;
-  onSubmit?: (data: any) => void;
+  exam?: IExam;
+  onSubmit?: (data: unknown) => void;
 }
 
 interface ExamFormData {
@@ -24,7 +24,7 @@ interface ExamFormData {
   term: 'MONTHLY' | 'QUARTERLY' | 'MID_TERM' | 'FINAL';
   startDate: string;
   endDate: string;
-  status: 'DRAFT' | 'SCHEDULED';
+  status: 'DRAFT' | 'SCHEDULED' | 'ONGOING' | 'COMPLETED';
 }
 
 import dayjs from 'dayjs';
@@ -83,8 +83,8 @@ export function CreateExamDialog({ onClose, exam }: CreateExamDialogProps) {
         showSuccess('Examination created successfully');
       }
       onClose();
-    } catch (err: any) {
-      showError(err?.data?.error || 'Failed to create examination');
+    } catch (err: unknown) {
+      showError((err as { data?: { error?: string } })?.data?.error || 'Failed to create examination');
     }
   };
 

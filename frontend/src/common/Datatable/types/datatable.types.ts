@@ -7,7 +7,7 @@ export interface Column<T> {
   label: string;
   sortable?: boolean;
   filterable?: boolean;
-  filterOptions?: { label: string; value: any }[];
+  filterOptions?: { label: string; value: unknown }[];
   align?: 'left' | 'center' | 'right';
   render?: (row: T) => ReactNode;
 }

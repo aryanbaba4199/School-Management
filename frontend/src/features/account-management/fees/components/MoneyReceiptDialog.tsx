@@ -3,7 +3,7 @@ import {
   Dialog, DialogContent, 
   Button, Typography, Box, Grid, TextField, Chip,
   CircularProgress, IconButton, Avatar, Divider,
-  Fade, Paper, Alert, Select, MenuItem, FormControl, InputLabel
+  Paper, Alert, Select, MenuItem, FormControl, InputLabel
 } from '@mui/material';
 import { 
   useGetStudentFeesQuery, 
@@ -47,6 +47,7 @@ export function MoneyReceiptDialog({ open, onClose, student }: MoneyReceiptDialo
     if (feesData?.data && studentRes?.data !== undefined) {
       const pending = feesData.data.filter(fee => fee.status === 'PENDING' || fee.status === 'OVERDUE');
       const pendingIds = pending.map(fee => fee._id);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedInvoices(pendingIds);
       const total = pending.reduce((sum, inv) => sum + inv.amount, 0);
       setPayableAmount(Math.max(total - walletBal, 0));
@@ -104,15 +105,16 @@ export function MoneyReceiptDialog({ open, onClose, student }: MoneyReceiptDialo
 
       showSuccess(res.message || 'Payment processed successfully');
       
-      if (res.data?.walletAdded > 0) {
-        showInfo(`₹${res.data.walletAdded} added to student wallet`);
-      } else if (res.data?.walletUsed > 0) {
-        showInfo(`₹${res.data.walletUsed} used from student wallet`);
+      const walletData = res.data as { walletAdded?: number; walletUsed?: number };
+      if (walletData?.walletAdded && walletData.walletAdded > 0) {
+        showInfo(`₹${walletData.walletAdded} added to student wallet`);
+      } else if (walletData?.walletUsed && walletData.walletUsed > 0) {
+        showInfo(`₹${walletData.walletUsed} used from student wallet`);
       }
 
       onClose();
-    } catch (error: any) {
-      showError(error?.data?.error || 'Failed to process payment');
+    } catch (error: unknown) {
+      showError((error as { data?: { error?: string } })?.data?.error || 'Failed to process payment');
     }
   };
 

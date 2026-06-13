@@ -1,5 +1,5 @@
-import { useState, MouseEvent } from 'react';
-import type { ReactNode } from 'react';
+import { useState } from 'react';
+import type { MouseEvent, ReactNode } from 'react';
 import { Box, Typography, IconButton, Tooltip, Button, Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
 import { FaPlus, FaChevronDown } from 'react-icons/fa';
 import styled from 'styled-components';
@@ -135,13 +135,8 @@ export default function PageWrapper({
                     </ListItemIcon>
                   )}
                   <ListItemText 
-                    primaryTypographyProps={{ 
-                      fontWeight: 600,
-                      color: action.color ? `var(--color-${action.color}-main)` : 'inherit'
-                    }}
-                  >
-                    {action.label}
-                  </ListItemText>
+                    primary={<Typography sx={{ fontWeight: 600, color: action.color ? `var(--color-${action.color}-main)` : 'inherit' }}>{action.label}</Typography>}
+                  />
                 </MenuItem>
               ))}
             </Menu>

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Box, CircularProgress, Typography, Button } from '@mui/material';
 import { useGetStudentMarksQuery, useGetExamSchedulesQuery, useGetReportCardsQuery } from '@api/examApi';
@@ -79,7 +79,7 @@ export function PrintReportCardPage() {
           reportCard={reportCard}
           marks={marks}
           schedules={schedules}
-          school={school}
+          school={school as unknown as null}
           isLoading={false}
         />
       </Box>

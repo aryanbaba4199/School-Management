@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Box, Typography, Button, Tabs, Tab, CircularProgress, Chip } from '@mui/material';
 import { FaArrowLeft } from 'react-icons/fa';
@@ -7,7 +7,7 @@ import { useGetExamsQuery, useGetExamSchedulesQuery } from '@api/examApi';
 import type { IExamSchedule } from '@api/examApi';
 import { useGetClassesQuery, useGetSectionsQuery } from '@api/classesApi';
 import dayjs from 'dayjs';
-import { Datatable, DatatableHeader, ActionMenu } from '@common/Datatable';
+import { Datatable, ActionMenu } from '@common/Datatable';
 import { useDialog } from '@common/Dialogs/dialog.provider';
 import { useNotifier } from '@common/Notifier/NotifierProvider';
 import { MenuItem, Select, FormControl, InputLabel } from '@mui/material';
@@ -36,7 +36,7 @@ const TimetableTab = ({ examId }: { examId: string }) => {
     { id: 'room', label: 'Room', render: (row: IExamSchedule) => row.room || '-' },
     { id: 'marks', label: 'Marks (Max/Pass)', render: (row: IExamSchedule) => `${row.maxMarks} / ${row.passMarks}` },
     { id: 'classSection', label: 'Class/Section', render: (row: IExamSchedule) => `${row.classId?.name} - ${row.sectionId?.name}` },
-    { id: 'actions', label: 'Actions', align: 'center', render: (row: IExamSchedule) => (
+    { id: 'actions', label: 'Actions', align: 'center' as const, render: (row: IExamSchedule) => (
       <ActionMenu 
         items={[
           { 
@@ -125,13 +125,13 @@ const MarksEntryTab = ({ examId }: { examId: string }) => {
     { role: 'STUDENT', classId: classId || undefined, sectionId: sectionId || undefined, limit: 100 },
     { skip: !classId || !sectionId }
   );
-  const students = usersRes?.data || [];
+  const students = useMemo(() => usersRes?.data || [], [usersRes?.data]);
 
   const { data: marksRes, isLoading: loadingMarks } = useGetStudentMarksQuery(
     { examScheduleId },
     { skip: !examScheduleId }
   );
-  const existingMarks = marksRes?.data || [];
+  const existingMarks = useMemo(() => marksRes?.data || [], [marksRes?.data]);
 
   const [saveMarks, { isLoading: isSaving }] = useSaveStudentMarksMutation();
 
@@ -139,14 +139,15 @@ const MarksEntryTab = ({ examId }: { examId: string }) => {
   useEffect(() => {
     if (students.length > 0 && selectedSchedule) {
       const newState: typeof marksState = {};
-      students.forEach(student => {
-        const existing = existingMarks.find(m => m.studentId._id === student._id);
+      students.forEach((student: { _id: string }) => {
+        const existing = existingMarks.find((m: { studentId: { _id: string }; obtainedMarks?: number; remarks?: string; attendanceStatus?: string }) => m.studentId._id === student._id);
         newState[student._id] = {
           obtainedMarks: existing?.obtainedMarks ?? '',
           remarks: existing?.remarks || '',
           attendanceStatus: existing?.attendanceStatus || 'PRESENT'
         };
       });
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setMarksState(newState);
     }
   }, [students, existingMarks, selectedSchedule]);
@@ -172,15 +173,15 @@ const MarksEntryTab = ({ examId }: { examId: string }) => {
         marksData,
       }).unwrap();
       showSuccess('Marks saved successfully');
-    } catch (err: any) {
-      showError(err?.data?.error || 'Failed to save marks');
+    } catch (err: unknown) {
+      showError((err as { data?: { error?: string } })?.data?.error || 'Failed to save marks');
     }
   };
 
   const columns = [
-    { id: 'rollNo', label: 'Code', render: (row: any) => row.userCode },
-    { id: 'name', label: 'Student Name', render: (row: any) => row.name },
-    { id: 'attendance', label: 'Attendance', render: (row: any) => (
+    { id: 'rollNo', label: 'Code', render: (row: { userCode?: string }) => row.userCode },
+    { id: 'name', label: 'Student Name', render: (row: { name?: string }) => row.name },
+    { id: 'attendance', label: 'Attendance', render: (row: { _id: string }) => (
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <Switch 
           checked={marksState[row._id]?.attendanceStatus === 'PRESENT'}
@@ -196,7 +197,7 @@ const MarksEntryTab = ({ examId }: { examId: string }) => {
         </Typography>
       </Box>
     )},
-    { id: 'obtainedMarks', label: `Obtained (Max: ${selectedSchedule?.maxMarks || 0})`, render: (row: any) => (
+    { id: 'obtainedMarks', label: `Obtained (Max: ${selectedSchedule?.maxMarks || 0})`, render: (row: { _id: string }) => (
       <TextField 
         size="small"
         type="number"
@@ -209,7 +210,7 @@ const MarksEntryTab = ({ examId }: { examId: string }) => {
         sx={{ width: 100 }}
       />
     )},
-    { id: 'remarks', label: 'Remarks', render: (row: any) => (
+    { id: 'remarks', label: 'Remarks', render: (row: { _id: string }) => (
       <TextField 
         size="small"
         value={marksState[row._id]?.remarks}
@@ -264,7 +265,7 @@ const MarksEntryTab = ({ examId }: { examId: string }) => {
           Select a class, section, and subject to begin entering marks.
         </Typography>
       ) : (
-        <Datatable<any>
+        <Datatable<{ _id: string; userCode?: string; name?: string }>
           columns={columns}
           data={students}
           loading={loadingUsers || loadingMarks}
@@ -300,8 +301,8 @@ const ResultsTab = ({ examId }: { examId: string }) => {
     try {
       await generateResults({ examId, classId, sectionId }).unwrap();
       showSuccess('Results generated successfully');
-    } catch (err: any) {
-      showError(err?.data?.error || 'Failed to generate results. Make sure marks are entered for all subjects.');
+    } catch (err: unknown) {
+      showError((err as { data?: { error?: string } })?.data?.error || 'Failed to generate results. Make sure marks are entered for all subjects.');
     }
   };
 
@@ -342,7 +343,7 @@ const ResultsTab = ({ examId }: { examId: string }) => {
   return (
     <Box>
       <Box sx={{ display: 'flex', gap: 2, mb: 4, alignItems: 'center' }}>
-        <DatatableHeader title="Results & Reports" />
+        <Typography variant="h6" sx={{ fontWeight: 800 }}>Results & Reports</Typography>
         <FormControl size="small" sx={{ minWidth: 200 }}>
           <InputLabel>Select Class</InputLabel>
           <Select value={classId} label="Select Class" onChange={(e) => { setClassId(e.target.value); setSectionId(''); }}>
