@@ -7,6 +7,7 @@ import { ClassModule } from './modules/class/class.module';
 import { SubjectModule } from './modules/subject/subject.module';
 import { FeeModule } from './modules/fee/fee.module';
 import { ExamModule } from './modules/exam/exam.module';
+import { AttendanceModule } from './modules/attendance/attendance.module';
 
 /*------------- Express Application Configuration -------------*/
 
@@ -25,6 +26,7 @@ ClassModule.init(app);
 SubjectModule.init(app);
 FeeModule.init(app);
 ExamModule.init(app);
+AttendanceModule.init(app);
 
 // Health check endpoint
 app.get('/health', (req: Request, res: Response) => {

@@ -41,7 +41,7 @@ export class ClassController {
   async list(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const search = req.query.search as string | undefined;
-      const result = await classService.findClasses(req.schoolId, search);
+      const result = await classService.findClasses(req.schoolId || (req.query.schoolId as string), search);
       sendSuccess(res, 200, result);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to fetch classes';
@@ -109,7 +109,7 @@ export class ClassController {
   async listSections(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const classId = req.query.classId as string | undefined;
-      const result = await classService.findSections(req.schoolId, classId);
+      const result = await classService.findSections(req.schoolId || (req.query.schoolId as string), classId);
       sendSuccess(res, 200, result);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to fetch sections';

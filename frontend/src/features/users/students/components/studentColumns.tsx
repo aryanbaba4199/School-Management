@@ -106,7 +106,11 @@ export const getStudentColumns = ({ onView, onEdit, onToggleDeactivate, onDelete
     sortable: true,
     render: (row) => {
       if (!row.classId) return '-';
-      return CLASS_MAPPING[row.classId] || 'Class ' + row.classId.substring(row.classId.length - 4);
+      const classObj = row.classId as unknown as { _id: string; name?: string };
+      const classIdStr = typeof row.classId === 'object' && row.classId ? classObj._id : String(row.classId);
+      const classNameStr = typeof row.classId === 'object' && row.classId ? (classObj.name || '') : '';
+      if (classNameStr) return classNameStr;
+      return CLASS_MAPPING[classIdStr] || 'Class ' + classIdStr.substring(Math.max(0, classIdStr.length - 4));
     }
   },
   { 

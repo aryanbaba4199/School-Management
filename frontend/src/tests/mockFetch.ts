@@ -60,9 +60,10 @@ export let mockFeesList = [
     studentId: { _id: 'user-stu-1', name: 'Aryan Student', userCode: 'STU-001' },
     classId: { _id: 'class-1', name: 'Class 10' },
     amount: 5000,
-    type: 'ADMISSION',
+    type: 'MONTHLY',
     status: 'PENDING',
     year: 2024,
+    month: 6,
     createdAt: new Date().toISOString(),
   }
 ];
@@ -87,9 +88,10 @@ export const resetMockSchools = () => {
       studentId: { _id: 'user-stu-1', name: 'Aryan Student', userCode: 'STU-001' },
       classId: { _id: 'class-1', name: 'Class 10' },
       amount: 5000,
-      type: 'ADMISSION',
+      type: 'MONTHLY',
       status: 'PENDING',
       year: 2024,
+      month: 6,
       createdAt: new Date().toISOString(),
     }
   ];
@@ -99,6 +101,7 @@ export const fetchStub = vi.fn(async (url: string | Request, options?: RequestIn
   const urlString = typeof url === 'string' ? url : url.url;
   const method = (options?.method || (typeof url === 'object' ? url.method : 'GET')).toUpperCase();
 
+  console.log('--- FETCH:', method, urlString);
   let parsedBody: {
     email?: string;
     passcode?: string;
@@ -281,6 +284,22 @@ export const fetchStub = vi.fn(async (url: string | Request, options?: RequestIn
           data: newSchool
         }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
       } else {
+        const match = urlString.match(/\/schools\/([^/?#]+)$/);
+        const id = match ? match[1] : null;
+        if (id && id !== 'drafts') {
+          const school = mockSchoolsList.find(s => s._id === id);
+          if (school) {
+            return Promise.resolve(new Response(JSON.stringify({
+              success: true,
+              data: school
+            }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+          }
+          return Promise.resolve(new Response(JSON.stringify({
+            success: false,
+            message: 'School not found'
+          }), { status: 404, headers: { 'Content-Type': 'application/json' } }));
+        }
+
         return Promise.resolve(new Response(JSON.stringify({
           success: true,
           data: mockSchoolsList
@@ -390,6 +409,83 @@ export const fetchStub = vi.fn(async (url: string | Request, options?: RequestIn
       return Promise.resolve(new Response(JSON.stringify({
         success: true,
         data: [{ _id: '60f7c223405c102c98d6c840', name: 'India', dialCode: '+91', mobileDigits: 10 }]
+      }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+    }
+
+    if (urlString.includes('/api/attendance/settings')) {
+      if (method === 'PUT') {
+        return Promise.resolve(new Response(JSON.stringify({
+          success: true,
+          data: parsedBody || {}
+        }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+      }
+      return Promise.resolve(new Response(JSON.stringify({
+        success: true,
+        data: {
+          studentAttendanceMode: 'MANUAL',
+          teacherAttendanceMode: 'MANUAL',
+          lateAfterTime: '08:30',
+          halfDayAfterTime: '12:00',
+          autoAbsentAfterTime: '14:00',
+          allowTeacherCorrection: true,
+          requireAdminApprovalForCorrection: false,
+          notifyParentsOnAbsent: false,
+          notifyParentsOnLate: false
+        }
+      }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+    }
+
+    if (urlString.includes('/api/attendance/students/bulk') || urlString.includes('/api/attendance/teachers/bulk')) {
+      return Promise.resolve(new Response(JSON.stringify({
+        success: true,
+        data: { modifiedCount: 1, upsertedCount: 0 }
+      }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+    }
+
+    if (urlString.includes('/api/attendance/students') || urlString.includes('/api/attendance/teachers')) {
+      return Promise.resolve(new Response(JSON.stringify({
+        success: true,
+        data: []
+      }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+    }
+
+    if (urlString.includes('/api/attendance/reports/daily')) {
+      return Promise.resolve(new Response(JSON.stringify({
+        success: true,
+        data: {
+          date: '2026-06-14',
+          personType: 'STUDENT',
+          counts: { total: 1, PRESENT: 1, ABSENT: 0, LATE: 0, HALF_DAY: 0, EXCUSED: 0, ON_LEAVE: 0 },
+          records: [{
+            _id: 'rec-1',
+            personId: { name: 'Aryan Student', userCode: 'STU-001' },
+            status: 'PRESENT',
+            checkInTime: '2026-06-14T08:30:00.000Z',
+            checkOutTime: '2026-06-14T15:30:00.000Z',
+            source: 'MANUAL'
+          }]
+        }
+      }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+    }
+
+    if (urlString.includes('/api/attendance/reports/monthly')) {
+      return Promise.resolve(new Response(JSON.stringify({
+        success: true,
+        data: {
+          stats: [{
+            userId: 'user-stu-1',
+            name: 'Aryan Student',
+            userCode: 'STU-001',
+            present: 1,
+            absent: 0,
+            late: 0,
+            halfDay: 0,
+            leave: 0,
+            totalLogged: 1,
+            attendancePct: 100
+          }],
+          records: []
+        }
       }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
     }
 

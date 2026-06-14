@@ -113,7 +113,7 @@ export function FeeDetailsPage() {
       sortable: false,
       render: (row) => (
         <Tooltip title="Money Receipt">
-          <IconButton size="small" onClick={() => handleOpenReceipt(row)} color="secondary">
+          <IconButton data-testid="money-receipt-btn" size="small" onClick={() => handleOpenReceipt(row)} color="secondary">
             <FaReceipt />
           </IconButton>
         </Tooltip>

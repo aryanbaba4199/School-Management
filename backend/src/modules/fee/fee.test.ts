@@ -2,8 +2,6 @@ import request from 'supertest';
 import app from '../../app';
 import { FeeInvoice } from './fee.model';
 import { UserModel } from '../user/user.model';
-import { SchoolModel } from '../school/school.model';
-import { ClassModel } from '../class/class.model';
 import { generateToken } from '../../common/utils/jwt';
 
 /*------------- Jest Mongoose Mocks -------------*/

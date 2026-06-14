@@ -23,8 +23,8 @@ const getErrorMessage = (err: unknown, fallback: string): string => {
   return fallback;
 };
 
-export function useClasses() {
-  const { data: classesRes, isLoading, error } = useGetClassesQuery();
+export function useClasses(schoolId?: string) {
+  const { data: classesRes, isLoading, error } = useGetClassesQuery(schoolId ? { schoolId } : undefined);
   const [createClass] = useCreateClassMutation();
   const [updateClass] = useUpdateClassMutation();
   const [deleteClass] = useDeleteClassMutation();

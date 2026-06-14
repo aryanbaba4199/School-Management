@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { FeeInvoice } from './fee.model';
 import { UserModel } from '../user/user.model';
-import { ClassModel } from '../class/class.model';
 import { Types } from 'mongoose';
 
 export const getStudentFees = async (req: Request, res: Response) => {

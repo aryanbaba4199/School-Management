@@ -70,7 +70,7 @@ export default function StudentDetailsDialog({ userId, onClose }: StudentDetails
   return (
     <>
       <DialogTitle sx={{ m: 0, p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--color-border-default)' }}>
-        <Typography variant="h6" sx={{ fontWeight: 800 }}>Student Profile</Typography>
+        <Typography component="span" variant="h6" sx={{ fontWeight: 800 }}>Student Profile</Typography>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <Chip 
             label={studentData.isActive ? 'Active' : 'Inactive'} 

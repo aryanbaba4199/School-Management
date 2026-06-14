@@ -10,8 +10,10 @@ import {
 import { useGetUsersQuery } from '@api/usersApi';
 import { Box, Typography, Button, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, Select, MenuItem, FormControl, InputLabel, Tooltip, IconButton, Divider } from '@mui/material';
 import { FaPlusCircle, FaInfoCircle } from 'react-icons/fa';
+import { useNotifier } from '@common/Notifier/NotifierProvider';
 
 export function FeesPage() {
+  const notifier = useNotifier();
   const { data: res, isLoading, error } = useGetAllTransactionsQuery();
   const [generateFees, { isLoading: isGenerating }] = useGenerateGlobalFeesMutation();
   const { data: studentsData } = useGetUsersQuery({ role: 'STUDENT', limit: 10000 });
@@ -97,14 +99,16 @@ export function FeesPage() {
 
   const handleGenerateFees = async () => {
     try {
-      await generateFees({
+      const res = await generateFees({
         type: generateType,
         month: generateType === 'MONTHLY' ? generateMonth : undefined,
         year: new Date().getFullYear(),
       }).unwrap();
+      notifier.showSuccess(res.message || 'Fees generated successfully');
       setGenerateDialogOpen(false);
     } catch (err) {
       console.error('Failed to generate fees:', err);
+      notifier.showError('Failed to generate fees');
     }
   };
 

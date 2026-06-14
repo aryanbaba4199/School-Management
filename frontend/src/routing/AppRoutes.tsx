@@ -18,7 +18,7 @@ import { ExamMasterPage, ExamResultsPage, WeeklyTestsPage, QuestionPapersPage } 
 import { ExamDetailsPage } from '../features/exams/pages/ExamDetailsPage';
 import { PrintReportCardPage } from '../features/exams/pages/PrintReportCardPage';
 import { MainLayout } from '@common/navbar';
-import { StudentAttendancePage, TeacherAttendancePage, RfidAttendancePage, AttendanceReportsPage } from '../features/attendance';
+import { StudentAttendancePage, TeacherAttendancePage, RfidAttendancePage, AttendanceReportsPage, AttendanceSettingsPage } from '../features/attendance';
 import { HomeworkPage, AssignmentsPage } from '../features/homework-management';
 import { AnnouncementsPage, AlertsPage, NotificationsPage } from '../features/communication';
 import { ClassTimetablePage, TeacherTimetablePage } from '../features/timetable';
@@ -103,6 +103,10 @@ export function AppRoutes() {
         <Route
           path="/attendance/reports"
           element={isSuperAdmin || isSchoolAdmin || isTeacher || isParent ? <AttendanceReportsPage /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/attendance/settings"
+          element={isSchoolStaff ? <AttendanceSettingsPage /> : <Navigate to="/" replace />}
         />
         <Route path="/attendance" element={<Navigate to="/attendance/students" replace />} />
         <Route

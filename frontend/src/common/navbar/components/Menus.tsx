@@ -54,7 +54,8 @@ const MENU_ITEMS: MenuItemType[] = [
       { label: 'Student Attendance', roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'], path: '/attendance/students' },
       { label: 'Teacher Attendance', roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN', 'TEACHER'], path: '/attendance/teachers' },
       { label: 'RFID Attendance', roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN'], path: '/attendance/rfid' },
-      { label: 'Attendance Reports', roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN', 'TEACHER', 'PARENT'], path: '/attendance/reports' }
+      { label: 'Attendance Reports', roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN', 'TEACHER', 'PARENT'], path: '/attendance/reports' },
+      { label: 'Attendance Settings', roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN'], path: '/attendance/settings' }
     ]
   },
   {

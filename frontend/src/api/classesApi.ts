@@ -34,7 +34,7 @@ export interface IClass {
 
 export const classesApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getClasses: builder.query<{ success: boolean; data: IClass[] }, { search?: string } | void>({
+    getClasses: builder.query<{ success: boolean; data: IClass[] }, { search?: string; schoolId?: string } | void>({
       query: (params) => ({
         url: '/classes',
         params: params || undefined,

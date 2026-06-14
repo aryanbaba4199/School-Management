@@ -34,7 +34,7 @@ export function authenticate(req: Request, res: Response, next: NextFunction): v
     const payload = verifyToken(token);
     req.user = payload;
     next();
-  } catch (error) {
+  } catch {
     sendError(res, 401, 'Invalid or expired authentication token.');
     return;
   }

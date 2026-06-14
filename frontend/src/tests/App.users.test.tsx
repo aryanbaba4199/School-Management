@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { describe, it, expect, beforeEach } from 'vitest';
 import App from '../App';
 import { AppThemeProvider } from '../features/themes/components/AppThemeProvider';
@@ -57,15 +57,18 @@ describe('App Users - Students Management', () => {
     });
 
     // 4. Fill in Add Student Form
-    fireEvent.change(screen.getByLabelText('Full Name *'), { target: { value: 'Jane Doe' } });
+    fireEvent.change(screen.getByLabelText('Student Name *'), { target: { value: 'Jane Doe' } });
     fireEvent.change(screen.getByLabelText('Email Address *'), { target: { value: 'jane@student.com' } });
-    fireEvent.change(screen.getByLabelText('Admission Number (User Code) *'), { target: { value: 'STU-002' } });
-    fireEvent.change(screen.getByLabelText('Password *'), { target: { value: 'student123' } });
+    fireEvent.change(screen.getByLabelText('Admission Number *'), { target: { value: 'STU-002' } });
 
-    // Assuming there's a Class autocomplete that we might just skip or fill if required. 
-    // If it's required we can mock the material ui autocomplete click or just submit if optional in mocks
-    const saveBtn = screen.getByRole('button', { name: 'Save Student' });
-    fireEvent.click(saveBtn);
+    // Click Next to go to Step 2
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+
+    // Click Add Student to submit the form
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Add Student' })).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Add Student' }));
 
     // Verify new student is added to list
     await waitFor(() => {
@@ -73,14 +76,15 @@ describe('App Users - Students Management', () => {
     });
 
     // 5. Open Student Details
-    // The datatable has an ActionMenu with 'View Details'
-    const actionMenus = screen.getAllByTitle('Actions');
-    fireEvent.click(actionMenus[1]); // The newly created student
+    // Locate the row for Jane Doe and click its specific Actions button
+    const janeRow = screen.getByText('Jane Doe').closest('tr')!;
+    const janeActionBtn = within(janeRow).getByTitle('Actions');
+    fireEvent.click(janeActionBtn);
 
     await waitFor(() => {
-      expect(screen.getByText('View Details')).toBeInTheDocument();
+      expect(screen.getByText('View')).toBeInTheDocument();
     });
-    fireEvent.click(screen.getByText('View Details'));
+    fireEvent.click(screen.getByText('View'));
 
     // Verify Student Details dialog opens and displays Fee/Admission info
     await waitFor(() => {

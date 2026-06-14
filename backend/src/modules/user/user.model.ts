@@ -1,4 +1,4 @@
-import { Schema, model, Document, Types, CallbackError } from 'mongoose';
+import { Schema, model, Document, Types } from 'mongoose';
 
 /*------------- User Role Interface -------------*/
 

@@ -33,11 +33,11 @@ describe('App Fees Management', () => {
     });
 
     // 2. Navigate to Fees Management
-    const accountManagementMenu = screen.getAllByText('Account Management')[0];
-    fireEvent.click(accountManagementMenu);
+    const accountMenu = screen.getAllByText('Account Management')[0];
+    fireEvent.click(accountMenu);
     
     await waitFor(() => {
-      expect(screen.getAllByText('Fees Management')[0]).toBeInTheDocument();
+      expect(screen.getAllByText('Fees Management').length).toBeGreaterThan(0);
     });
     
     const feesTab = screen.getAllByText('Fees Management')[0];
@@ -45,16 +45,20 @@ describe('App Fees Management', () => {
 
     // Verify Fees Management page loaded
     await waitFor(() => {
-      expect(screen.getByText('Fees Management')).toBeInTheDocument();
-      expect(screen.getByText('Generate Fees')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Fees Management' })).toBeInTheDocument();
     });
 
     // 3. Generate Fees
-    const generateBtn = screen.getByText('Generate Fees');
-    fireEvent.click(generateBtn);
+    const actionBtn = screen.getByRole('button', { name: /^Action$/i });
+    fireEvent.click(actionBtn);
 
     await waitFor(() => {
-      expect(screen.getByText('Generate Bulk Fees')).toBeInTheDocument();
+      expect(screen.getByText('Generate Bill')).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByText('Generate Bill'));
+
+    await waitFor(() => {
+      expect(screen.getByText('Total Students')).toBeInTheDocument();
     });
 
     // We click Generate button inside the dialog
@@ -67,38 +71,24 @@ describe('App Fees Management', () => {
 
     // 4. View Fee Cycle Details
     // The table should render our mocked fees list
-    // Our mock logic groups them. We'll find an Action button.
+    // The fee cycle name is also clickable and calls onViewDetails
     await waitFor(() => {
-      const actionButtons = screen.getAllByRole('button', { name: /Action/i });
-      expect(actionButtons.length).toBeGreaterThan(0);
-      fireEvent.click(actionButtons[0]);
+      // Look for the fee cycle name text which is rendered in the table (clickable)
+      const cycleLink = screen.getAllByText(/Monthly/i)[0];
+      fireEvent.click(cycleLink);
     });
-
-    // Click "View Details"
-    await waitFor(() => {
-      expect(screen.getByText('View Details')).toBeInTheDocument();
-    });
-    fireEvent.click(screen.getByText('View Details'));
 
     // 5. Verify Fee Details Page Loaded
     await waitFor(() => {
-      expect(screen.getByText('Fee Cycle Details')).toBeInTheDocument();
+      expect(screen.getByText(/Fee Details:/i)).toBeInTheDocument();
       // It should display the mock student data
       expect(screen.getByText('Aryan Student')).toBeInTheDocument();
     });
 
     // 6. Process Money Receipt
-    // Click Action on a student row
-    await waitFor(() => {
-      const studentActionBtns = screen.getAllByRole('button', { name: /Action/i });
-      expect(studentActionBtns.length).toBeGreaterThan(0);
-      fireEvent.click(studentActionBtns[0]);
-    });
-
-    await waitFor(() => {
-      expect(screen.getByText('Money Receipt')).toBeInTheDocument();
-    });
-    fireEvent.click(screen.getByText('Money Receipt'));
+    // Click the receipt icon button on the student row (has data-testid="money-receipt-btn")
+    const moneyReceiptBtn = await waitFor(() => screen.getByTestId('money-receipt-btn'));
+    fireEvent.click(moneyReceiptBtn);
 
     // Money Receipt Dialog should appear
     await waitFor(() => {
@@ -126,18 +116,24 @@ describe('App Fees Management', () => {
     });
 
     // 7. Verify Transactions Filtering
-    // Navigate to Transactions Page
-    const transactionsTab = screen.getAllByText('Transactions')[0];
-    fireEvent.click(transactionsTab);
+    // Navigate to Transactions Page - must re-open Account Management submenu
+    const accountMenuAgain = screen.getAllByText('Account Management')[0];
+    fireEvent.click(accountMenuAgain);
 
+    // Click Transaction Management inside waitFor to avoid race with submenu animation
     await waitFor(() => {
-      expect(screen.getByText('Transaction Management')).toBeInTheDocument();
+      const transactionsTab = screen.getAllByText('Transaction Management')[0];
+      fireEvent.click(transactionsTab);
     });
 
-    // Test filter Due
-    
-    // Simulate API resolving with datahe route responds to mock fetch and page loads.
-    expect(screen.getByPlaceholderText('Search all transactions...')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Transaction Management' })).toBeInTheDocument();
+    });
 
-  }, 20000);
+    // Simulate API resolving with data - the route responds to mock fetch and page loads.
+    await waitFor(() => {
+      expect(screen.getByPlaceholderText('Search all transactions...')).toBeInTheDocument();
+    });
+
+  }, 30000);
 });

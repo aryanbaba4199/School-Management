@@ -92,7 +92,10 @@ export class UserController {
       const classId = req.query.classId as string | undefined;
       const sectionId = req.query.sectionId as string | undefined;
 
-      const { users, totalCount } = await userService.findUsers(req.schoolId, role, page, limit, classId, sectionId);
+      const querySchoolId = req.user?.role === 'SUPER_ADMIN' ? (req.query.schoolId as string) : undefined;
+      const effectiveSchoolId = req.schoolId || querySchoolId;
+
+      const { users, totalCount } = await userService.findUsers(effectiveSchoolId, role, page, limit, classId, sectionId);
       const totalPages = Math.ceil(totalCount / limit);
 
       sendSuccess(res, 200, users, { totalPages, totalCount, currentPage: page, limit });

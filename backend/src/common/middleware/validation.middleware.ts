@@ -27,8 +27,18 @@ export function validate(schema: ZodSchema) {
 
       // Update request properties with type-safe parsed values
       if (parsed.body !== undefined) req.body = parsed.body;
-      if (parsed.query !== undefined) req.query = parsed.query;
-      if (parsed.params !== undefined) req.params = parsed.params;
+      if (parsed.query !== undefined) {
+        for (const key in req.query) {
+          delete req.query[key];
+        }
+        Object.assign(req.query, parsed.query);
+      }
+      if (parsed.params !== undefined) {
+        for (const key in req.params) {
+          delete req.params[key];
+        }
+        Object.assign(req.params, parsed.params);
+      }
 
       next();
     } catch (error) {

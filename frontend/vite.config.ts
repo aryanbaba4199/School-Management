@@ -11,17 +11,33 @@ export default defineConfig({
       '@common': path.resolve(__dirname, './src/common'),
       '@constants': path.resolve(__dirname, './src/common/constants'),
       '@api': path.resolve(__dirname, './src/api'),
-      'react-transition-group/TransitionGroupContext': 'react-transition-group/cjs/TransitionGroupContext.js',
-      'react-transition-group/Transition': 'react-transition-group/cjs/Transition.js',
+      'react-transition-group/TransitionGroupContext': path.resolve(__dirname, './node_modules/react-transition-group/esm/TransitionGroupContext.js'),
+      'react-transition-group/Transition': path.resolve(__dirname, './node_modules/react-transition-group/esm/Transition.js'),
     },
   },
   test: {
     globals: true,
     environment: 'jsdom',
     setupFiles: './src/setupTests.ts',
+    alias: {
+      '@common': path.resolve(__dirname, './src/common'),
+      '@constants': path.resolve(__dirname, './src/common/constants'),
+      '@api': path.resolve(__dirname, './src/api'),
+      'react-transition-group/TransitionGroupContext': path.resolve(__dirname, './node_modules/react-transition-group/esm/TransitionGroupContext.js'),
+      'react-transition-group/Transition': path.resolve(__dirname, './node_modules/react-transition-group/esm/Transition.js'),
+    },
     server: {
       deps: {
-        inline: [/@mui\/material/, /@emotion/, /react-transition-group/],
+        inline: [
+          'react',
+          'react-dom',
+          '@mui/material',
+          '@emotion/react',
+          '@emotion/styled',
+          'react-transition-group',
+          '@mui/x-date-pickers',
+          'react-hook-form'
+        ],
       },
     },
   },
