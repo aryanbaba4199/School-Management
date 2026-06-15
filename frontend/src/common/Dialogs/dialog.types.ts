@@ -22,6 +22,7 @@ export type DialogType =
   | 'USER_DETAILS' 
   | 'SCHOOL_DETAILS' 
   | 'STUDENT_DETAILS'
+  | 'PARENT_DETAILS'
   | 'EXAM_FORM'
   | 'SCHEDULE_SUBJECT_FORM'
   | 'REPORT_CARD_VIEW'
@@ -33,6 +34,7 @@ export interface DialogPropsMap {
   CLASS_DETAILS: { classId: string };
   TEACHER_DETAILS: { userId: string };
   STUDENT_DETAILS: { userId: string };
+  PARENT_DETAILS: { userId: string };
   CONFIRMATION: {
     title: string;
     message: string;

@@ -22,6 +22,7 @@ import { SubjectFormDialog } from '../../features/school-management/subjects/com
 import ClassDetailsDialog from '../../features/school-management/classes/components/ClassDetailsDialog';
 import TeacherDetailsDialog from '../../features/users/teachers/components/TeacherDetailsDialog';
 import StudentDetailsDialog from '../../features/users/students/components/StudentDetailsDialog';
+import ParentDetailsDialog from '../../features/users/parents/components/ParentDetailsDialog';
 import { CreateExamDialog } from '../../features/exams/components/CreateExamDialog';
 import { ScheduleSubjectDialog } from '../../features/exams/components/ScheduleSubjectDialog';
 import { ReportCardDialog } from '../../features/exams/components/ReportCardDialog';
@@ -85,6 +86,8 @@ export function DialogProvider({ children }: { children: ReactNode }) {
         return <TeacherDetailsDialog {...(props as DialogPropsMap['TEACHER_DETAILS'])} onClose={closeDialog} />;
       case 'STUDENT_DETAILS':
         return <StudentDetailsDialog {...(props as DialogPropsMap['STUDENT_DETAILS'])} onClose={closeDialog} />;
+      case 'PARENT_DETAILS':
+        return <ParentDetailsDialog {...(props as DialogPropsMap['PARENT_DETAILS'])} onClose={closeDialog} />;
       case 'EXAM_FORM':
         return <CreateExamDialog {...(props as DialogPropsMap['EXAM_FORM'])} onClose={closeDialog} />;
       case 'SCHEDULE_SUBJECT_FORM':

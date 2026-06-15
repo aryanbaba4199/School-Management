@@ -10,22 +10,11 @@ import {
 } from '@api/usersApi';
 import type { ISchoolUser } from '@api/usersApi';
 
-interface ApiError {
-  data?: { message?: string };
-  message?: string;
-}
-
-const getErrorMessage = (err: unknown, fallback: string): string => {
-  if (err && typeof err === 'object') {
-    const apiErr = err as ApiError;
-    if (apiErr.data && apiErr.data.message) return apiErr.data.message;
-    if (apiErr.message) return apiErr.message;
-  }
-  return fallback;
-};
+import { getErrorMessage } from '@common/utils/apiError.util';
 
 export function useStudents() {
-  const { data: usersRes, isLoading, error } = useGetUsersQuery({ role: 'STUDENT' });
+  const [schoolId, setSchoolId] = useState<string>('');
+  const { data: usersRes, isLoading, error } = useGetUsersQuery({ role: 'STUDENT', schoolId: schoolId || undefined });
   const [createUser] = useCreateUserMutation();
   const [updateUser] = useUpdateUserMutation();
   const [toggleStatus] = useToggleUserStatusMutation();
@@ -139,6 +128,8 @@ export function useStudents() {
     isLoading,
     search,
     setSearch,
+    schoolId,
+    setSchoolId,
     page,
     setPage,
     rowsPerPage,

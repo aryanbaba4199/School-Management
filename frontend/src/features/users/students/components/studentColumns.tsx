@@ -58,14 +58,7 @@ export function StudentAction({
   return <ActionMenu items={actions} />;
 }
 
-// Mock mappings for Class/Section
-const CLASS_MAPPING: Record<string, string> = {
-  '60f7c223405c102c98d6c820': 'Class 10-A',
-  '60f7c223405c102c98d6c821': 'Class 9-B',
-  '60f7c223405c102c98d6c822': 'Class 8-C',
-  '60f7c223405c102c98d6c823': 'Class 11-A',
-  '60f7c223405c102c98d6c824': 'Class 12-B'
-};
+
 
 export const getStudentColumns = ({ onView, onEdit, onToggleDeactivate, onDelete, isSuperAdmin = false }: GetStudentColumnsProps): Column<ISchoolUser>[] => [
   {
@@ -107,10 +100,14 @@ export const getStudentColumns = ({ onView, onEdit, onToggleDeactivate, onDelete
     render: (row) => {
       if (!row.classId) return '-';
       const classObj = row.classId as unknown as { _id: string; name?: string };
-      const classIdStr = typeof row.classId === 'object' && row.classId ? classObj._id : String(row.classId);
-      const classNameStr = typeof row.classId === 'object' && row.classId ? (classObj.name || '') : '';
-      if (classNameStr) return classNameStr;
-      return CLASS_MAPPING[classIdStr] || 'Class ' + classIdStr.substring(Math.max(0, classIdStr.length - 4));
+      const sectionObj = row.sectionId as unknown as { _id: string; name?: string };
+      const className = typeof row.classId === 'object' && row.classId ? (classObj.name || '') : '';
+      const sectionName = typeof row.sectionId === 'object' && row.sectionId ? (sectionObj.name || '') : '';
+      
+      if (className) {
+        return sectionName ? `${className} - ${sectionName}` : className;
+      }
+      return '-';
     }
   },
   { 

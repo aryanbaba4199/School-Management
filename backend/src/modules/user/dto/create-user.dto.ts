@@ -81,6 +81,13 @@ export const UpdateUserSchema = z.object({
 
     phone: z.string().max(15, 'Phone number cannot exceed 15 characters').optional(),
 
+    role: z.object({
+      name: z.enum(['SUPER_ADMIN', 'SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'], {
+        message: 'Role name must be one of SUPER_ADMIN, SCHOOL_ADMIN, TEACHER, STUDENT, or PARENT',
+      }),
+      access: z.array(z.string()).default([]),
+    }).optional(),
+
     address: z.object({
       street: z.string().max(150).optional(),
       city: ObjectIdSchema.optional(),

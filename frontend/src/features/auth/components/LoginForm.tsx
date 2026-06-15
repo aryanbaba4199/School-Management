@@ -8,14 +8,16 @@ import {
 import { FaEye, FaEyeSlash, FaSchool } from 'react-icons/fa';
 import { loginSchema, type LoginFormData } from '../forms/login.schema';
 import { useAuth } from '@common/hooks/useAuth';
-import { API_BASE_URL } from '@constants';
+import { useLoginUserMutation } from '@api/usersApi';
+import { getErrorMessage } from '@common/utils/apiError.util';
 
 
 export function LoginForm() {
   const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  
+  const [loginUser, { isLoading }] = useLoginUserMutation();
 
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
     resolver: yupResolver(loginSchema),
@@ -24,25 +26,11 @@ export function LoginForm() {
 
   const onSubmit = async (data: LoginFormData) => {
     setErrorMsg(null);
-    setIsLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/users/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-      
-      const resData = await response.json();
-      if (!response.ok || !resData.success) {
-        throw new Error(resData.message || 'Authentication failed');
-      }
-
-      login(resData.data.token, resData.data.user);
+      const res = await loginUser(data).unwrap();
+      login(res.data.token, res.data.user);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Authentication failed';
-      setErrorMsg(message);
-    } finally {
-      setIsLoading(false);
+      setErrorMsg(getErrorMessage(err, 'Authentication failed'));
     }
   };
 

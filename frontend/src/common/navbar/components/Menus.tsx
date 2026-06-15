@@ -41,6 +41,7 @@ const MENU_ITEMS: MenuItemType[] = [
     icon: <FaUsers size={16} />,
     roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN'],
     children: [
+      { label: 'School Admins', roles: ['SUPER_ADMIN'], path: '/user-management/school-admins' },
       { label: 'Students', roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN'], path: '/user-management/students' },
       { label: 'Teachers', roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN'], path: '/user-management/teachers' },
       { label: 'Parents', roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN'], path: '/user-management/parents' }

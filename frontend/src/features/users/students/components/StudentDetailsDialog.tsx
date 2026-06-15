@@ -6,6 +6,9 @@ import { FaTimes, FaCalendarAlt } from 'react-icons/fa';
 import { useGetUserByIdQuery } from '@api/usersApi';
 import { useGetClassByIdQuery } from '@api/classesApi';
 import { useGetStudentFeesQuery, usePayFeeMutation, useMarkFeeDueMutation } from '@api/feesApi';
+import { UserAuditLogTable } from '../../common/components/UserAuditLogTable';
+import { useNotifier } from '@common/Notifier/NotifierProvider';
+import { FaHistory } from 'react-icons/fa';
 
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button
@@ -18,11 +21,15 @@ interface StudentDetailsDialogProps {
 
 export default function StudentDetailsDialog({ userId, onClose }: StudentDetailsDialogProps) {
   const { data: res, isLoading, error } = useGetUserByIdQuery(userId, { skip: !userId });
+  const { showSuccess, showError } = useNotifier();
 
   const studentData = res?.data;
 
   // Fetch class to show class/section details nicely
-  const { data: classRes } = useGetClassByIdQuery(studentData?.classId || '', { skip: !studentData?.classId });
+  const classIdToFetch = studentData?.classId 
+    ? (typeof studentData.classId === 'object' ? studentData.classId._id : studentData.classId)
+    : '';
+  const { data: classRes } = useGetClassByIdQuery(classIdToFetch, { skip: !classIdToFetch });
   const classData = classRes?.data;
   
   const { data: feesRes, isLoading: isFeesLoading } = useGetStudentFeesQuery(userId, { skip: !userId });
@@ -34,16 +41,18 @@ export default function StudentDetailsDialog({ userId, onClose }: StudentDetails
   const handlePayFee = async (feeId: string) => {
     try {
       await payFee(feeId).unwrap();
-    } catch (err) {
-      console.error('Failed to pay fee:', err);
+      showSuccess('Fee marked as paid successfully');
+    } catch {
+      showError('Failed to pay fee. Please try again.');
     }
   };
 
   const handleMarkDue = async (feeId: string) => {
     try {
       await markFeeDue(feeId).unwrap();
-    } catch (err) {
-      console.error('Failed to mark fee as due:', err);
+      showSuccess('Fee marked as due successfully');
+    } catch {
+      showError('Failed to mark fee as due. Please try again.');
     }
   };
   
@@ -63,7 +72,10 @@ export default function StudentDetailsDialog({ userId, onClose }: StudentDetails
     );
   }
 
-  const sectionObj = classData?.sections?.find(s => s._id === studentData.sectionId);
+  const sectionIdToFind = studentData.sectionId 
+    ? (typeof studentData.sectionId === 'object' ? studentData.sectionId._id : studentData.sectionId)
+    : '';
+  const sectionObj = classData?.sections?.find(s => s._id === sectionIdToFind);
   const admissionFee = feesData.find(f => f.type === 'ADMISSION');
   const totalDue = feesData.filter(f => f.status !== 'PAID').reduce((sum, f) => sum + f.amount, 0);
 
@@ -266,6 +278,14 @@ export default function StudentDetailsDialog({ userId, onClose }: StudentDetails
                   </TableBody>
                 </Table>
               </TableContainer>
+            </Box>
+
+            <Box sx={{ mt: 4 }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <FaHistory /> Audit History
+              </Typography>
+              <Divider sx={{ mb: 2 }} />
+              <UserAuditLogTable userId={userId} />
             </Box>
 
           </Grid>

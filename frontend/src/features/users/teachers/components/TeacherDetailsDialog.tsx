@@ -4,6 +4,8 @@ import {
 } from '@mui/material';
 import { FaTimes } from 'react-icons/fa';
 import { useGetUserByIdQuery } from '@api/usersApi';
+import { UserAuditLogTable } from '../../common/components/UserAuditLogTable';
+import { FaHistory } from 'react-icons/fa';
 
 interface TeacherDetailsDialogProps {
   userId: string;
@@ -24,7 +26,7 @@ export default function TeacherDetailsDialog({ userId, onClose }: TeacherDetails
   if (error || !res?.success || !res.data) {
     return (
       <Box sx={{ p: 4, textAlign: 'center' }}>
-        <Typography color="error">Failed to load tutor details.</Typography>
+        <Typography color="error">Failed to load teacher details.</Typography>
       </Box>
     );
   }
@@ -34,7 +36,7 @@ export default function TeacherDetailsDialog({ userId, onClose }: TeacherDetails
   return (
     <>
       <DialogTitle sx={{ m: 0, p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--color-border-default)' }}>
-        <Typography variant="h6" sx={{ fontWeight: 800 }}>Tutor Details</Typography>
+        <Typography variant="h6" sx={{ fontWeight: 800 }}>Teacher Details</Typography>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <Chip 
             label={teacherData.isActive ? 'Active' : 'Inactive'} 
@@ -107,6 +109,23 @@ export default function TeacherDetailsDialog({ userId, onClose }: TeacherDetails
           <Grid size={{ xs: 12 }}>
             <Box>
               <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>
+                Address Information
+              </Typography>
+              <Divider sx={{ mb: 2 }} />
+              <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                {teacherData.address?.street ? `${teacherData.address.street}, ` : ''}
+                {teacherData.address?.city && typeof teacherData.address.city === 'object' ? `${(teacherData.address.city as { name: string }).name}, ` : ''}
+                {teacherData.address?.district && typeof teacherData.address.district === 'object' ? `${(teacherData.address.district as { name: string }).name}, ` : ''}
+                {teacherData.address?.state && typeof teacherData.address.state === 'object' ? `${(teacherData.address.state as { name: string }).name} ` : ''}
+                {teacherData.address?.pincode ? `- ${teacherData.address.pincode}` : ''}
+                {!teacherData.address?.street && !teacherData.address?.city && !teacherData.address?.state ? 'No address provided' : ''}
+              </Typography>
+            </Box>
+          </Grid>
+
+          <Grid size={{ xs: 12 }}>
+            <Box>
+              <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>
                 Subjects Taught
               </Typography>
               <Divider sx={{ mb: 2 }} />
@@ -124,6 +143,16 @@ export default function TeacherDetailsDialog({ userId, onClose }: TeacherDetails
                   <Typography variant="body2" sx={{ color: 'text.secondary' }}>No subjects assigned</Typography>
                 )}
               </Box>
+            </Box>
+          </Grid>
+
+          <Grid size={{ xs: 12 }}>
+            <Box sx={{ mt: 2 }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <FaHistory /> Audit History
+              </Typography>
+              <Divider sx={{ mb: 2 }} />
+              <UserAuditLogTable userId={userId} />
             </Box>
           </Grid>
         </Grid>

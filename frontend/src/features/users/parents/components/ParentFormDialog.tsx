@@ -87,9 +87,7 @@ export function ParentFormDialog({ onClose, onSubmit, userId, isLoading = false 
         access: [],
       },
     };
-    if (!userId) {
-      submitPayload.password = 'Parent@123';
-    } else if (formData.password) {
+    if (formData.password) {
       submitPayload.password = formData.password;
     }
     onSubmit(submitPayload);
@@ -118,6 +116,9 @@ export function ParentFormDialog({ onClose, onSubmit, userId, isLoading = false 
               <FormTextField name="email" control={control} label="Email Address" required disabled={isLoading} />
             </Grid>
 
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <FormTextField name="password" control={control} label={userId ? 'Password (Leave blank)' : 'Password'} type="password" disabled={isLoading} />
+            </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
               <FormTextField name="userCode" control={control} label="Guardian ID" required disabled={isLoading} />
             </Grid>

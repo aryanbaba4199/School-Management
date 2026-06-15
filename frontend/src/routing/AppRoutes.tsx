@@ -9,6 +9,8 @@ import { PlansPage } from '../features/app-management/plan-management/pages/Plan
 import { StudentsPage } from '../features/users/students';
 import { TeachersPage } from '../features/users/teachers';
 import { ParentsPage } from '../features/users/parents';
+import { SchoolAdminsPage } from '../features/users/school-admins/pages/SchoolAdminsPage';
+import { ProfilePage } from '../features/users/profile/pages/ProfilePage';
 import { FeesPage } from '../features/account-management/fees';
 import { FeeDetailsPage } from '../features/account-management/fees/pages/FeeDetailsPage';
 import { TransactionsPage } from '../features/account-management/transactions';
@@ -88,9 +90,11 @@ export function AppRoutes() {
           path="/app-management/settings"
           element={isSuperAdmin ? <GlobalSettingsPage /> : <Navigate to="/" replace />}
         />
-        <Route path="/user-management/students" element={<StudentsPage />} />
-        <Route path="/user-management/teachers" element={<TeachersPage />} />
-        <Route path="/user-management/parents" element={<ParentsPage />} />
+        <Route path="/user-management/school-admins" element={isSuperAdmin ? <SchoolAdminsPage /> : <Navigate to="/" replace />} />
+        <Route path="/user-management/students" element={isSchoolStaff ? <StudentsPage /> : <Navigate to="/" replace />} />
+        <Route path="/user-management/teachers" element={isSchoolStaff ? <TeachersPage /> : <Navigate to="/" replace />} />
+        <Route path="/user-management/parents" element={isSchoolStaff ? <ParentsPage /> : <Navigate to="/" replace />} />
+        <Route path="/profile" element={<ProfilePage />} />
         <Route path="/attendance/students" element={<StudentAttendancePage />} />
         <Route
           path="/attendance/teachers"

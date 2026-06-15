@@ -6,6 +6,7 @@ import { CreateUserInput, LoginInput, UpdateUserInput } from './dto/create-user.
 import { hashPassword, verifyPassword } from '../../common/utils/crypto';
 import { generateToken } from '../../common/utils/jwt';
 import { Types } from 'mongoose';
+import { UserAuditService } from './user-audit.service';
 
 /*------------- User Service Database Actions -------------*/
 
@@ -13,7 +14,7 @@ export class UserService {
   /**
    * Registers a new user with secure password hashing and tenancy checks.
    */
-  async createUser(input: CreateUserInput, schoolIdOverride?: string): Promise<IUser> {
+  async createUser(input: CreateUserInput, schoolIdOverride?: string, changedBy?: string): Promise<IUser> {
     const { email, password, role, userCode } = input;
     if (await UserModel.findOne({ email: email.toLowerCase() })) {
       throw new Error(`Email '${email}' is already registered.`);
@@ -48,6 +49,7 @@ export class UserService {
       classId: input.classId ? new Types.ObjectId(input.classId) : undefined,
       joinedClassId: (input.role.name === 'STUDENT' && input.classId) ? new Types.ObjectId(input.classId) : undefined,
       sectionId: input.sectionId ? new Types.ObjectId(input.sectionId) : undefined,
+      classIds: (input as unknown as { classIds?: string[] }).classIds?.map(c => new Types.ObjectId(c)),
       subjects: input.subjects?.map(s => new Types.ObjectId(s)),
     });
 
@@ -57,6 +59,19 @@ export class UserService {
       await SubjectModel.updateMany(
         { _id: { $in: input.subjects.map(s => new Types.ObjectId(s)) } },
         { $addToSet: { teacherIds: savedUser._id } }
+      );
+    }
+
+    if (input.role.name === 'STUDENT' && input.parentId) {
+      await UserModel.findByIdAndUpdate(input.parentId, {
+        $addToSet: { childrenIds: savedUser._id },
+      });
+    }
+
+    if (input.role.name === 'PARENT' && input.childrenIds && input.childrenIds.length > 0) {
+      await UserModel.updateMany(
+        { _id: { $in: input.childrenIds.map(c => new Types.ObjectId(c)) } },
+        { $set: { parentId: savedUser._id } }
       );
     }
 
@@ -77,6 +92,17 @@ export class UserService {
 
     const userObj = savedUser.toObject() as IUser;
     delete userObj.password;
+
+    if (changedBy) {
+      await UserAuditService.logAction({
+        schoolId: savedUser.schoolId?.toString(),
+        userId: savedUser._id,
+        changedBy,
+        action: 'CREATE',
+        newData: userObj as unknown as Record<string, unknown>,
+      });
+    }
+
     return userObj;
   }
 
@@ -99,6 +125,9 @@ export class UserService {
       schoolId: user.schoolId?.toString(),
     });
 
+    user.lastLoginAt = new Date();
+    await user.save();
+
     const userObj = user.toObject() as IUser;
     delete userObj.password;
     return { user: userObj, token };
@@ -116,7 +145,9 @@ export class UserService {
       .populate('address.city', 'name code')
       .populate('address.state', 'name code')
       .populate('address.district', 'name code')
-      .populate('subjects', 'name code');
+      .populate('subjects', 'name code')
+      .populate('classId', 'name')
+      .populate('sectionId', 'name');
   }
 
   /**
@@ -141,7 +172,9 @@ export class UserService {
         .populate('address.city', 'name code')
         .populate('address.state', 'name code')
         .populate('address.district', 'name code')
-        .populate('subjects', 'name code'),
+        .populate('subjects', 'name code')
+        .populate('classId', 'name')
+        .populate('sectionId', 'name'),
       UserModel.countDocuments(filter),
     ]);
 
@@ -151,11 +184,18 @@ export class UserService {
   /**
    * Updates an existing user record.
    */
-  async updateUser(id: string, input: UpdateUserInput, schoolIdOverride?: string): Promise<IUser> {
+  async updateUser(id: string, input: UpdateUserInput, schoolIdOverride?: string, changedBy?: string): Promise<IUser> {
     const user = await UserModel.findById(id);
     if (!user) throw new Error('User not found.');
     if (schoolIdOverride && user.schoolId?.toString() !== schoolIdOverride) {
       throw new Error('Unauthorized access.');
+    }
+
+    if (input.role) {
+      if (changedBy && user._id.toString() === changedBy) {
+        throw new Error('You cannot change your own role.');
+      }
+      user.role = input.role;
     }
 
     if (input.email && input.email.toLowerCase() !== user.email.toLowerCase()) {
@@ -179,10 +219,42 @@ export class UserService {
       };
     }
 
-    if (input.parentId !== undefined) user.parentId = input.parentId ? new Types.ObjectId(input.parentId) : undefined;
-    if (input.childrenIds !== undefined) user.childrenIds = input.childrenIds.map(c => new Types.ObjectId(c));
+    if (input.parentId !== undefined) {
+      if (user.parentId && user.parentId.toString() !== input.parentId) {
+        await UserModel.findByIdAndUpdate(user.parentId, { $pull: { childrenIds: user._id } });
+      }
+      user.parentId = input.parentId ? new Types.ObjectId(input.parentId) : undefined;
+      if (user.parentId) {
+        await UserModel.findByIdAndUpdate(user.parentId, { $addToSet: { childrenIds: user._id } });
+      }
+    }
+
+    if (input.childrenIds !== undefined) {
+      const oldChildren = user.childrenIds?.map((c) => c.toString()) || [];
+      const newChildren = input.childrenIds || [];
+      const added = newChildren.filter((c) => !oldChildren.includes(c));
+      const removed = oldChildren.filter((c) => !newChildren.includes(c));
+
+      user.childrenIds = newChildren.map(c => new Types.ObjectId(c));
+
+      if (removed.length > 0) {
+        await UserModel.updateMany(
+          { _id: { $in: removed.map(c => new Types.ObjectId(c)) } },
+          { $unset: { parentId: 1 } }
+        );
+      }
+      if (added.length > 0) {
+        await UserModel.updateMany(
+          { _id: { $in: added.map(c => new Types.ObjectId(c)) } },
+          { $set: { parentId: user._id } }
+        );
+      }
+    }
     if (input.classId !== undefined) user.classId = input.classId ? new Types.ObjectId(input.classId) : undefined;
     if (input.sectionId !== undefined) user.sectionId = input.sectionId ? new Types.ObjectId(input.sectionId) : undefined;
+    if ((input as unknown as { classIds?: string[] }).classIds !== undefined) {
+      user.classIds = ((input as unknown as { classIds?: string[] }).classIds || []).map(c => new Types.ObjectId(c));
+    }
     if (input.regDate !== undefined) user.regDate = input.regDate;
     if (input.startDate !== undefined) user.startDate = input.startDate;
     if (input.leaveDate !== undefined) user.leaveDate = input.leaveDate;
@@ -216,13 +288,24 @@ export class UserService {
     const savedUser = await user.save();
     const userObj = savedUser.toObject() as IUser;
     delete userObj.password;
+
+    if (changedBy) {
+      await UserAuditService.logAction({
+        schoolId: savedUser.schoolId?.toString(),
+        userId: savedUser._id,
+        changedBy,
+        action: 'UPDATE',
+        newData: userObj as unknown as Record<string, unknown>,
+      });
+    }
+
     return userObj;
   }
 
   /**
    * Toggles active state of a user.
    */
-  async toggleUserStatus(id: string, schoolIdOverride?: string): Promise<IUser> {
+  async toggleUserStatus(id: string, schoolIdOverride?: string, changedBy?: string): Promise<IUser> {
     const user = await UserModel.findById(id);
     if (!user) throw new Error('User not found.');
     if (schoolIdOverride && user.schoolId?.toString() !== schoolIdOverride) {
@@ -233,13 +316,25 @@ export class UserService {
     const savedUser = await user.save();
     const userObj = savedUser.toObject() as IUser;
     delete userObj.password;
+
+    if (changedBy) {
+      await UserAuditService.logAction({
+        schoolId: savedUser.schoolId?.toString(),
+        userId: savedUser._id,
+        changedBy,
+        action: 'STATUS_TOGGLE',
+        newData: { isActive: savedUser.isActive },
+        reason: `Status changed to ${savedUser.isActive ? 'Active' : 'Inactive'}`,
+      });
+    }
+
     return userObj;
   }
 
   /**
    * Deletes a user record.
    */
-  async deleteUser(id: string, schoolIdOverride?: string): Promise<void> {
+  async deleteUser(id: string, schoolIdOverride?: string, changedBy?: string): Promise<void> {
     const user = await UserModel.findById(id);
     if (!user) throw new Error('User not found.');
     if (schoolIdOverride && user.schoolId?.toString() !== schoolIdOverride) {
@@ -253,6 +348,32 @@ export class UserService {
       );
     }
 
+    if (user.role.name === 'STUDENT' && user.parentId) {
+      // Unlink from parent
+      await UserModel.updateOne(
+        { _id: user.parentId },
+        { $pull: { childrenIds: user._id } }
+      );
+    }
+
+    if (user.role.name === 'PARENT') {
+      // Unlink from children
+      await UserModel.updateMany(
+        { parentId: user._id },
+        { $unset: { parentId: 1 } }
+      );
+    }
+
     await UserModel.findByIdAndDelete(id);
+
+    if (changedBy) {
+      await UserAuditService.logAction({
+        schoolId: user.schoolId?.toString(),
+        userId: user._id,
+        changedBy,
+        action: 'DELETE',
+        previousData: { email: user.email, role: user.role, name: user.name },
+      });
+    }
   }
 }

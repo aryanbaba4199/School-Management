@@ -21,9 +21,9 @@ export interface ISchoolUser {
   };
   parentId?: { _id: string; name: string; userCode: string; email: string } | string;
   childrenIds?: ({ _id: string; name: string; userCode: string; email: string } | string)[];
-  classId?: string;
+  classId?: { _id: string; name: string } | string;
   joinedClassId?: string;
-  sectionId?: string;
+  sectionId?: { _id: string; name: string } | string;
   subjects?: ({ _id: string; name: string; code: string } | string)[];
   regDate?: string;
   startDate?: string;
@@ -32,6 +32,18 @@ export interface ISchoolUser {
   walletBal?: number;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface IUserAuditLog {
+  _id: string;
+  schoolId?: string;
+  userId: string;
+  changedBy: { _id: string; name: string; email: string; role: { name: string } } | string;
+  action: 'CREATE' | 'UPDATE' | 'DELETE' | 'STATUS_TOGGLE' | 'PASSWORD_CHANGE';
+  previousData?: Record<string, unknown>;
+  newData?: Record<string, unknown>;
+  reason?: string;
+  createdAt: string;
 }
 
 export const usersApi = baseApi.injectEndpoints({
@@ -84,6 +96,54 @@ export const usersApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['User'],
     }),
+    updateProfile: builder.mutation<{ success: boolean; data: ISchoolUser }, Partial<ISchoolUser>>({
+      query: (body) => ({
+        url: '/users/profile',
+        method: 'PUT',
+        body,
+      }),
+      invalidatesTags: ['User'],
+    }),
+    changePassword: builder.mutation<{ success: boolean; data: null }, { currentPassword: string; newPassword: string }>({
+      query: (body) => ({
+        url: '/users/profile/password',
+        method: 'PUT',
+        body,
+      }),
+    }),
+    getUserAuditLog: builder.query<{ success: boolean; data: IUserAuditLog[] }, string>({
+      query: (id) => `/users/${id}/audit-log`,
+      providesTags: (_result, _error, id) => [{ type: 'UserAuditLog', id }],
+    }),
+    bulkImportUsers: builder.mutation<{ success: boolean; data: { successCount: number; failedCount: number; errors: { row: number; email: string; reason: string }[] } }, { csvData: string; role: string; schoolId?: string }>({
+      query: (body) => ({
+        url: '/users/bulk-import',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['User'],
+    }),
+    exportUsers: builder.query<string, { role?: string; classId?: string; sectionId?: string; schoolId?: string }>({
+      query: (params) => {
+        const queryParams = new URLSearchParams();
+        if (params?.role) queryParams.append('role', params.role);
+        if (params?.classId) queryParams.append('classId', params.classId);
+        if (params?.sectionId) queryParams.append('sectionId', params.sectionId);
+        if (params?.schoolId) queryParams.append('schoolId', params.schoolId);
+        const queryString = queryParams.toString();
+        return {
+          url: `/users/export${queryString ? `?${queryString}` : ''}`,
+          responseHandler: (response: Response) => response.text(),
+        };
+      },
+    }),
+    loginUser: builder.mutation<{ success: boolean; message: string; data: { token: string; user: ISchoolUser } }, { email?: string; password?: string; userCode?: string }>({
+      query: (body) => ({
+        url: '/users/login',
+        method: 'POST',
+        body,
+      }),
+    }),
   }),
 });
 
@@ -94,4 +154,10 @@ export const {
   useUpdateUserMutation,
   useToggleUserStatusMutation,
   useDeleteUserMutation,
+  useUpdateProfileMutation,
+  useChangePasswordMutation,
+  useGetUserAuditLogQuery,
+  useBulkImportUsersMutation,
+  useLazyExportUsersQuery,
+  useLoginUserMutation,
 } = usersApi;

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Box, Typography, IconButton, Badge, Menu, MenuItem, ListItemIcon, Avatar } from '@mui/material';
-import { FaBars, FaBell, FaSun, FaMoon, FaSignOutAlt, FaUser } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { FaBars, FaBell, FaSun, FaMoon, FaSignOutAlt, FaUser, FaSchool } from 'react-icons/fa';
 import { useAppTheme } from '../../../features/themes/components/AppThemeProvider';
 import { useAuth } from '@common/hooks/useAuth';
 import { useDialog } from '@common/Dialogs/dialog.provider';
@@ -30,7 +31,14 @@ export function Navbar({ onToggleSidebar }: NavbarProps) {
     logout();
   };
 
-  const handleProfileClick = () => {
+  const navigate = useNavigate();
+
+  const handleProfileNav = () => {
+    handleMenuClose();
+    navigate('/profile');
+  };
+
+  const handleSchoolEditClick = () => {
     handleMenuClose();
     if (user?.role?.name === 'SUPER_ADMIN') {
       openDialog('USER_DETAILS', { userId: user._id });
@@ -133,12 +141,19 @@ export function Navbar({ onToggleSidebar }: NavbarProps) {
                 </Typography>
               </Box>
 
+              <MenuItem onClick={handleProfileNav} sx={{ color: 'var(--color-text-primary)' }}>
+                <ListItemIcon sx={{ color: 'var(--color-text-secondary)', minWidth: 36 }}>
+                  <FaUser size={14} />
+                </ListItemIcon>
+                My Profile
+              </MenuItem>
+
               {(user.role.name === 'SUPER_ADMIN' || user.role.name === 'SCHOOL_ADMIN') && (
-                <MenuItem onClick={handleProfileClick} sx={{ color: 'var(--color-text-primary)' }}>
+                <MenuItem onClick={handleSchoolEditClick} sx={{ color: 'var(--color-text-primary)' }}>
                   <ListItemIcon sx={{ color: 'var(--color-text-secondary)', minWidth: 36 }}>
-                    <FaUser size={14} />
+                    <FaSchool size={14} />
                   </ListItemIcon>
-                  Profile
+                  {user.role.name === 'SUPER_ADMIN' ? 'Admin Details' : 'School Settings'}
                 </MenuItem>
               )}
 

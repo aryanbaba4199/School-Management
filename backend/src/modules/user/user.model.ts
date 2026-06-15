@@ -31,12 +31,15 @@ export interface IUser extends Document {
   classId?: Types.ObjectId;
   joinedClassId?: Types.ObjectId;
   sectionId?: Types.ObjectId;
+  classIds?: Types.ObjectId[];
   subjects?: Types.ObjectId[];
   regDate?: Date;
   startDate?: Date;
   leaveDate?: Date;
   feeCycle?: 'MONTHLY' | 'YEARLY';
   walletBal?: number;
+  lastLoginAt?: Date;
+  passwordChangedAt?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -126,6 +129,13 @@ const UserSchema = new Schema<IUser>(
       ref: 'Section',
       index: true,
     },
+    classIds: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Class',
+        index: true,
+      },
+    ],
     subjects: [
       {
         type: Schema.Types.ObjectId,
@@ -144,6 +154,12 @@ const UserSchema = new Schema<IUser>(
     walletBal: {
       type: Number,
       default: 0,
+    },
+    lastLoginAt: {
+      type: Date,
+    },
+    passwordChangedAt: {
+      type: Date,
     },
   },
   {

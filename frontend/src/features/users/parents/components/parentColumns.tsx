@@ -1,11 +1,12 @@
 /* eslint-disable react-refresh/only-export-components */
 import { Chip, Box, Typography } from '@mui/material';
 import { ActionMenu, type ActionMenuItem } from '@common/Datatable';
-import { FaEdit, FaCheckCircle, FaBan, FaTrash } from 'react-icons/fa';
+import { FaEdit, FaCheckCircle, FaBan, FaTrash, FaEye } from 'react-icons/fa';
 import type { Column } from '@common/Datatable';
 import type { ISchoolUser } from '@api/usersApi';
 
 interface GetParentColumnsProps {
+  onView: (parent: ISchoolUser) => void;
   onEdit: (parent: ISchoolUser) => void;
   onToggleDeactivate: (parent: ISchoolUser) => void;
   onDelete: (parent: ISchoolUser) => void;
@@ -14,16 +15,24 @@ interface GetParentColumnsProps {
 
 export function ParentAction({
   parent,
+  onView,
   onEdit,
   onToggleDeactivate,
   onDelete
 }: {
   parent: ISchoolUser;
+  onView: (parent: ISchoolUser) => void;
   onEdit: (parent: ISchoolUser) => void;
   onToggleDeactivate: (parent: ISchoolUser) => void;
   onDelete: (parent: ISchoolUser) => void;
 }) {
   const actions: ActionMenuItem[] = [
+    {
+      label: 'View',
+      icon: <FaEye />,
+      onClick: () => onView(parent),
+      color: 'info'
+    },
     {
       label: 'Edit',
       icon: <FaEdit />,
@@ -49,7 +58,7 @@ export function ParentAction({
   return <ActionMenu items={actions} />;
 }
 
-export const getParentColumns = ({ onEdit, onToggleDeactivate, onDelete, isSuperAdmin = false }: GetParentColumnsProps): Column<ISchoolUser>[] => [
+export const getParentColumns = ({ onView, onEdit, onToggleDeactivate, onDelete, isSuperAdmin = false }: GetParentColumnsProps): Column<ISchoolUser>[] => [
   {
     id: 'name',
     label: 'Parent/Guardian Name',
@@ -116,6 +125,7 @@ export const getParentColumns = ({ onEdit, onToggleDeactivate, onDelete, isSuper
       <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
         <ParentAction 
           parent={row}
+          onView={onView}
           onEdit={onEdit}
           onToggleDeactivate={onToggleDeactivate}
           onDelete={onDelete}

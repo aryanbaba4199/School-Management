@@ -124,7 +124,7 @@ export function TeacherFormDialog({ onClose, onSubmit, userId, isLoading = false
   return (
     <>
       <DialogTitle sx={{ fontWeight: 800, borderBottom: '1px solid var(--color-border-default)', pb: 2 }}>
-        {userId ? 'Edit Tutors Details' : 'Add New Teacher'}
+        {userId ? 'Edit Teacher Details' : 'Add New Teacher'}
       </DialogTitle>
       <DialogContent sx={{ pt: 3, pb: 2 }}>
         <Box component="form" noValidate sx={{ mt: 1 }}>

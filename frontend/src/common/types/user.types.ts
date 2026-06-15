@@ -39,21 +39,6 @@ export interface IUserRole {
   access: string[];
 }
 
-export interface IUser {
-  _id: string;
-  name: string;
-  email: string;
-  userCode: string;
-  role: IUserRole;
-  schoolId?: string;
-  phone?: string;
-  isActive: boolean;
-  address?: IAddress;
-  parentId?: string | IUser;
-  childrenIds?: (string | IUser)[];
-  classId?: string;
-  sectionId?: string;
-  subjects?: string[];
-  createdAt: string;
-  updatedAt: string;
-}
+import type { ISchoolUser } from '@api/usersApi';
+
+export type IUser = ISchoolUser;

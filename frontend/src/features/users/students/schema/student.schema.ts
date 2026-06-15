@@ -30,6 +30,11 @@ export const studentSchema = yup.object({
     .string()
     .required('Email is required')
     .email('Invalid email address format'),
+  password: yup
+    .string()
+    .optional()
+    .test('min', 'Password must be at least 6 characters', (val) => !val || val.length >= 6)
+    .test('max', 'Password cannot exceed 50 characters', (val) => !val || val.length <= 50),
 
   userCode: yup
     .string()

@@ -296,3 +296,18 @@ This file tracks chronological updates, architectural decisions, and setups perf
 4. **Testing & Verification**:
    - Refactored mock schema tests in `attendance.test.ts` providing full metadata context mimicking DB schema validations.
    - Achieved successful test passes for `POST /api/attendance/students/bulk` and `GET /api/attendance/students`.
+
+---
+
+## [2026-06-15] School Management Module Planning Overhaul
+
+### What Was Done
+1. **Codebase Audit**:
+   - Inspected backend `school` module (`school.model.ts`, `draft.model.ts`, `school.routes.ts`, `school.controller.ts`, `school.service.ts`, `school.test.ts`) and verified the current state of CRUD, drafts, and status/deletion logic.
+   - Inspected frontend `manage-schools` feature (`SchoolsPage.tsx`, `useSchools.ts`, `schoolColumns.tsx`, `SchoolAction.tsx`, `SchoolForm.tsx`, `school.schema.ts`, `schools.types.ts`) and dialog configurations (`dialog.provider.tsx`, `SchoolDetailsDialog.tsx`).
+2. **Identification of Gaps & Bugs**:
+   - Identified a critical server-side pagination bug where the frontend `useSchools` hook fetches all schools without pagination queries but filters/paginates locally, potentially hiding schools beyond the first 25.
+   - Identified code complexity violations where backend `school.service.ts` (230 LOC) and frontend `SchoolForm.tsx` (321 LOC) exceed the strict 200 lines limit constraint.
+   - Identified that `SCHOOL_ADMIN` has no UI page or route to view/edit their own school profile and settings, even though the backend permits it.
+3. **Comprehensive Planning Rewrite**:
+   - Completely rewrote `/Users/aryandubey/project/personal-/School Management/Plans/Schools/SchoolPlan.md` (expanding it from ~100 lines to a comprehensive 350+ lines document) matching the structure, depth, and checklists of `UserPlan.md` and `AttendancePlan.md`.

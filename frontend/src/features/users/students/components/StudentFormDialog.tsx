@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, type Resolver } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { DialogTitle, DialogContent, DialogActions, Button, Grid, Box, CircularProgress, Stepper, Step, StepLabel, Typography, Divider } from '@mui/material';
 import { FormTextField, FormSelectField, FormAutocompleteField } from '@common/Forms';
@@ -34,9 +34,8 @@ export function StudentFormDialog({ onClose, onSubmit, userId, isLoading = false
   const { data: parentsRes } = useGetUsersQuery({ role: 'PARENT' });
   const parents = parentsRes?.success ? parentsRes.data : [];
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { handleSubmit, control, watch, reset, trigger } = useForm<any>({
-    resolver: yupResolver(studentSchema),
+  const { handleSubmit, control, watch, reset, trigger } = useForm<StudentFormData>({
+    resolver: yupResolver(studentSchema) as unknown as Resolver<StudentFormData>,
     defaultValues: {
       name: '',
       email: '',
@@ -91,8 +90,8 @@ export function StudentFormDialog({ onClose, onSubmit, userId, isLoading = false
         password: '',
         userCode: user.userCode,
         phone: user.phone || '',
-        classId: user.classId || '',
-        sectionId: user.sectionId || '',
+        classId: typeof user.classId === 'object' && user.classId ? user.classId._id : user.classId || '',
+        sectionId: typeof user.sectionId === 'object' && user.sectionId ? user.sectionId._id : user.sectionId || '',
         parentId: typeof user.parentId === 'object' ? user.parentId._id : user.parentId || '',
         address: {
           street: user.address?.street || '',
@@ -131,9 +130,7 @@ export function StudentFormDialog({ onClose, onSubmit, userId, isLoading = false
         access: [],
       },
     };
-    if (!userId) {
-      submitPayload.password = 'Student@123';
-    } else if (formData.password) {
+    if (formData.password) {
       submitPayload.password = formData.password;
     }
     onSubmit(submitPayload);
@@ -180,6 +177,9 @@ export function StudentFormDialog({ onClose, onSubmit, userId, isLoading = false
                 <FormTextField name="email" control={control} label="Email Address" required disabled={isLoading} />
               </Grid>
 
+              <Grid size={{ xs: 12, md: 4 }}>
+                <FormTextField name="password" control={control} label={userId ? 'Password (Leave blank)' : 'Password'} type="password" disabled={isLoading} />
+              </Grid>
               <Grid size={{ xs: 12, md: 4 }}>
                 <FormTextField name="userCode" control={control} label="Admission Number" required disabled={isLoading} />
               </Grid>
