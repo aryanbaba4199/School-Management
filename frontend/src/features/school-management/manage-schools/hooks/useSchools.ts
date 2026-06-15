@@ -11,22 +11,15 @@ import {
 import { type ISchool, MOCK_SCHOOLS } from '../types/schools.types';
 import type { SchoolFormData } from '../schema/school.schema';
 
-interface ApiError {
-  data?: { message?: string };
-  message?: string;
-}
-
-const getErrorMessage = (err: unknown, fallback: string): string => {
-  if (err && typeof err === 'object') {
-    const apiErr = err as ApiError;
-    if (apiErr.data && apiErr.data.message) return apiErr.data.message;
-    if (apiErr.message) return apiErr.message;
-  }
-  return fallback;
-};
-
+import { getErrorMessage } from '@common/utils/apiError.util';
 export function useSchools() {
-  const { data: schoolsRes, isLoading, error } = useGetSchoolsQuery();
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [sortColumn, setSortColumn] = useState<string>('name');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+
+  const { data: schoolsRes, isLoading, error } = useGetSchoolsQuery({ page: page + 1, limit: rowsPerPage, search: search || undefined });
   const [createSchool] = useCreateSchoolMutation();
   const [updateSchool] = useUpdateSchoolMutation();
   const [deactivateSchool] = useDeactivateSchoolMutation();
@@ -34,11 +27,6 @@ export function useSchools() {
   const notifier = useNotifier();
   const { openDialog, closeDialog } = useDialog();
 
-  const [search, setSearch] = useState('');
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [sortColumn, setSortColumn] = useState<string>('name');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
   useEffect(() => {
     if (error) {
@@ -127,14 +115,9 @@ export function useSchools() {
   };
 
   const schools = schoolsRes?.success ? schoolsRes.data : MOCK_SCHOOLS;
+  const totalCount = schoolsRes?.success && schoolsRes.pagination ? schoolsRes.pagination.totalCount : schools.length;
 
-  const filtered = schools.filter(s =>
-    s.name.toLowerCase().includes(search.toLowerCase()) ||
-    s.code.toLowerCase().includes(search.toLowerCase()) ||
-    s.subdomain.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const sorted = [...filtered].sort((a, b) => {
+  const sorted = [...schools].sort((a, b) => {
     let valA = a[sortColumn as keyof ISchool];
     let valB = b[sortColumn as keyof ISchool];
 
@@ -151,11 +134,9 @@ export function useSchools() {
     return sortDirection === 'asc' ? strA.localeCompare(strB) : strB.localeCompare(strA);
   });
 
-  const paginated = sorted.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
-
   return {
-    schools: paginated,
-    totalCount: filtered.length,
+    schools: sorted,
+    totalCount,
     isLoading,
     search,
     setSearch,

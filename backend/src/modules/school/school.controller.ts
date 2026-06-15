@@ -1,10 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
 import { SchoolService } from './school.service';
+import { SchoolDraftService } from './school-draft.service';
+import { SchoolRegistrationService } from './school-registration.service';
 import { sendSuccess, sendError } from '../../common/utils/response.handler';
 
 /*------------- School Controller Definition -------------*/
 
 const schoolService = new SchoolService();
+const schoolDraftService = new SchoolDraftService();
+const schoolRegistrationService = new SchoolRegistrationService();
 
 export class SchoolController {
   /**
@@ -13,7 +17,7 @@ export class SchoolController {
    */
   async register(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const school = await schoolService.registerSchool(req.body);
+      const school = await schoolRegistrationService.registerSchool(req.body);
       sendSuccess(res, 201, school);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'An error occurred during registration';
@@ -44,8 +48,9 @@ export class SchoolController {
 
       const page = Math.max(1, parseInt(req.query.page as string) || 1);
       const limit = Math.max(1, parseInt(req.query.limit as string) || 25);
+      const search = (req.query.search as string) || undefined;
 
-      const { schools, totalCount } = await schoolService.findAllSchools(page, limit);
+      const { schools, totalCount } = await schoolService.findAllSchools(page, limit, search);
       const totalPages = Math.ceil(totalCount / limit);
 
       sendSuccess(res, 200, schools, {
@@ -86,7 +91,7 @@ export class SchoolController {
   async getDraft(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const email = req.params.email as string;
-      const draft = await schoolService.findDraftByEmail(email);
+      const draft = await schoolDraftService.findDraftByEmail(email);
       sendSuccess(res, 200, draft);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'An error occurred while fetching draft';
@@ -100,7 +105,7 @@ export class SchoolController {
    */
   async saveDraft(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const draft = await schoolService.saveDraft(req.body);
+      const draft = await schoolDraftService.saveDraft(req.body);
       sendSuccess(res, 200, draft);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'An error occurred while saving draft';

@@ -3,6 +3,7 @@ import { useAuth } from '../common/hooks/useAuth';
 import { LoginPage } from '../features/auth/pages/LoginPage';
 import { DashboardPage } from '../features/dashboard/pages/DashboardPage';
 import { SchoolsPage } from '../features/school-management/manage-schools';
+import { SchoolSettingsPage } from '../features/school-management/manage-schools/pages/SchoolSettingsPage';
 import { ClassesPage } from '../features/school-management/classes';
 import { SubjectsPage } from '../features/school-management/subjects';
 import { PlansPage } from '../features/app-management/plan-management/pages/PlansPage';
@@ -57,6 +58,10 @@ export function AppRoutes() {
         <Route
           path="/school-management/manage-schools"
           element={user.role.name === 'SUPER_ADMIN' ? <SchoolsPage /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/settings/school-profile"
+          element={user.role.name === 'SCHOOL_ADMIN' ? <SchoolSettingsPage /> : <Navigate to="/" replace />}
         />
         <Route
           path="/school-management/classes"

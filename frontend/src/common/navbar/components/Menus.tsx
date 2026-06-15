@@ -32,6 +32,7 @@ const MENU_ITEMS: MenuItemType[] = [
     roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN'],
     children: [
       { label: 'Manage Schools', roles: ['SUPER_ADMIN'], path: '/school-management/manage-schools' },
+      { label: 'School Profile', roles: ['SCHOOL_ADMIN'], path: '/settings/school-profile' },
       { label: 'Classes', roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN'], path: '/school-management/classes' },
       { label: 'Subjects', roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN'], path: '/school-management/subjects' }
     ]

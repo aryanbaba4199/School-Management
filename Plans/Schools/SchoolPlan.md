@@ -434,15 +434,15 @@ Missing tests:
 
 ## 19. Implementation Checklist & Status
 
-Summary completion rate: **80%**
+Summary completion rate: **100%**
 
 ### Backend
 - `[x]` Define Mongoose models for School (`SchoolModel`) and Draft (`RegistrationDraftModel`).
 - `[x]` Register router routes in `app.ts` under `/api/schools`.
 - `[x]` Implement CRUD and status toggle/passcode deletion.
 - `[x]` Implement draft retrieval and creation endpoints.
-- `[ ]` Split `school.service.ts` to reduce line complexity below 200 LOC.
-- `[ ]` Add missing unit tests for the draft saving/loading endpoint.
+- `[x]` Split `school.service.ts` to reduce line complexity below 200 LOC.
+- `[x]` Add missing unit tests for the draft saving/loading endpoint.
 
 ### Frontend
 - `[x]` Setup `manage-schools` module.
@@ -450,11 +450,11 @@ Summary completion rate: **80%**
 - `[x]` Build multi-step `SchoolForm` with step sub-components.
 - `[x]` Implement draft auto-save and auto-retrieve on email blur.
 - `[x]` Build inline `MasterDataAddDialog` for Countries, States, Districts, and Boards.
-- `[ ]` Split `SchoolForm.tsx` to reduce line complexity below 200 LOC.
-- `[ ]` Extract the `getErrorMessage` duplication in `useSchools.ts` to a global common helper.
-- `[ ]` Fix API hook query pagination: the frontend calls `/schools` (fetching 25 by default) and applies client-side filtering/pagination. It must pass `page`, `limit`, and `search` query parameters to the backend.
-- `[ ]` Create `SchoolSettingsPage` for `SCHOOL_ADMIN` to manage their own school profile.
-- `[ ]` Add logo file upload component (logo currently is just a string URL or text).
+- `[x]` Split `SchoolForm.tsx` to reduce line complexity below 200 LOC (extracted form logic).
+- `[x]` Extract the `getErrorMessage` utility duplication in `useSchools.ts` to a global common helper.
+- `[x]` Fix API hook query pagination: the frontend calls `/schools` (fetching 25 by default) and applies client-side filtering/pagination. It must pass `page`, `limit`, and `search` query parameters to the backend.
+- `[x]` Create `SchoolSettingsPage` for `SCHOOL_ADMIN` to manage their own school profile.
+- `[x]` Add logo file upload component (logo currently is just a string URL or text).
 
 ---
 

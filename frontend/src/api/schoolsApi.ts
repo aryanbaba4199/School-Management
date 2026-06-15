@@ -4,8 +4,16 @@ import type { SchoolFormData } from '../features/school-management/manage-school
 
 export const schoolsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getSchools: builder.query<{ success: boolean; data: ISchool[]; pagination: { totalPages: number; totalCount: number; currentPage: number; limit: number } }, void>({
-      query: () => '/schools',
+    getSchools: builder.query<{ success: boolean; data: ISchool[]; pagination: { totalPages: number; totalCount: number; currentPage: number; limit: number } }, { page?: number; limit?: number; search?: string } | void>({
+      query: (params) => {
+        if (!params) return '/schools';
+        const query = new URLSearchParams();
+        if (params.page) query.append('page', params.page.toString());
+        if (params.limit) query.append('limit', params.limit.toString());
+        if (params.search) query.append('search', params.search);
+        const qString = query.toString();
+        return `/schools${qString ? `?${qString}` : ''}`;
+      },
       providesTags: ['School'],
     }),
     getSchoolById: builder.query<{ success: boolean; data: ISchool }, string>({

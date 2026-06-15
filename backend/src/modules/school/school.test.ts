@@ -7,6 +7,8 @@ import { generateToken } from '../../common/utils/jwt';
 
 jest.mock('./school.model');
 jest.mock('../user/user.service');
+import { RegistrationDraftModel } from './draft.model';
+
 jest.mock('./draft.model');
 
 describe('School Module API Endpoints', () => {
@@ -181,4 +183,32 @@ describe('School Module API Endpoints', () => {
       expect(response.body.success).toBe(true);
     });
   });
+
+  describe('Draft Endpoints', () => {
+    it('should retrieve a draft by email', async () => {
+      const mockDraft = { adminEmail: 'admin@test.com', schoolDetails: { name: 'Draft School' } };
+      (RegistrationDraftModel.findOne as jest.Mock).mockResolvedValue(mockDraft);
+
+      const response = await request(app)
+        .get('/api/schools/drafts/admin@test.com')
+        .set('Authorization', `Bearer ${superAdminToken}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body.data.schoolDetails.name).toBe('Draft School');
+    });
+
+    it('should save a draft', async () => {
+      const mockDraftData = { adminEmail: 'admin@test.com', currentStep: 2 };
+      (RegistrationDraftModel.findOneAndUpdate as jest.Mock).mockResolvedValue(mockDraftData);
+
+      const response = await request(app)
+        .post('/api/schools/drafts')
+        .set('Authorization', `Bearer ${superAdminToken}`)
+        .send(mockDraftData);
+
+      expect(response.status).toBe(200);
+      expect(response.body.data.currentStep).toBe(2);
+    });
+  });
 });
+

@@ -311,3 +311,19 @@ This file tracks chronological updates, architectural decisions, and setups perf
    - Identified that `SCHOOL_ADMIN` has no UI page or route to view/edit their own school profile and settings, even though the backend permits it.
 3. **Comprehensive Planning Rewrite**:
    - Completely rewrote `/Users/aryandubey/project/personal-/School Management/Plans/Schools/SchoolPlan.md` (expanding it from ~100 lines to a comprehensive 350+ lines document) matching the structure, depth, and checklists of `UserPlan.md` and `AttendancePlan.md`.
+4. **Code Review & Verification**:
+   - Reviewed the user's complete implementation of the plan, verifying new files (`school-draft.service.ts`, `school-registration.service.ts`, `SchoolSettingsPage.tsx`, `LogoUpload.tsx`, `useSchoolForm.ts`, `SchoolSettingsPage.test.tsx`).
+   - Verified that the server-side pagination query parameters are now properly sent in `useSchools.ts` and decoded in `schoolsApi.ts`.
+   - Confirmed that the `getErrorMessage` helper is successfully extracted into a shared utility file.
+   - Confirmed file complexity limits are resolved by splitting logic into services and hooks.
+
+---
+
+## [2026-06-15] Homework Management Module Planning
+
+### What Was Done
+1. **Module Architecture Design**:
+   - Mapped out the requirements for a multi-tenant Homework Management system, including role capabilities (Teachers, Students, Parents), database schemas (`HomeworkModel`, `HomeworkSubmissionModel`), and API routes.
+2. **Comprehensive Planning Creation**:
+   - Created the detailed plan document: `/Users/aryandubey/project/personal-/School Management/Plans/Homework/HomeworkPlan.md`.
+   - Outlined backend DTO validations, access matrices, S3/R2 upload pipelines, and frontend layouts.
