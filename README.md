@@ -14,21 +14,21 @@ A modern School Operating System (SaaS ERP) designed for the Indian education ec
 
 ## 🔑 Database Seed Credentials
 
-Run the database seed script inside the `backend/` directory to initialize these accounts:
+Run the database seed script inside the `fastapi-backend/` directory to initialize these accounts:
 ```bash
-cd backend
-npx ts-node src/seed.ts
+cd fastapi-backend
+venv/bin/python seed.py
 ```
 
-Once seeded, you can log in using these credentials:
+Once seeded, you can log in using these test credentials (all passwords are `123456`):
 
-| Role | Name | Email Address | Password | User Code | Scope / Permissions |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **SUPER_ADMIN** | Aryan Dubey | `aryan@schoolos.com` | `admin123` | `SA-01` | Global system control (`ALL` access) |
-| **SCHOOL_ADMIN** | Demo School Admin | `admin@schoolos.com` | `admin123` | `AD-01` | School tenant operations management |
-| **TEACHER** | Demo Teacher | `teacher@schoolos.com` | `teacher123` | `T-01` | Attendance, examinations, and homeworks |
-| **STUDENT** | Demo Student | `student@schoolos.com` | `student123` | `ST-01` | Quizzes, reports, and simulated STEM labs |
-| **PARENT** | Demo Parent | `parent@schoolos.com` | `parent123` | `PT-01` | Performance tracking, announcements, and fees |
+| Role | Name | Email Address | Password | User Code |
+| :--- | :--- | :--- | :--- | :--- |
+| **SUPER_ADMIN** | Test Super Admin | `testsuperadmin@gmail.com` | `123456` | `SEED-000` |
+| **SCHOOL_ADMIN** | Test School Admin | `testadmin@gmail.com` | `123456` | `SEED-001` |
+| **TEACHER** | Test Teacher | `testteacher@gmail.com` | `123456` | `SEED-002` |
+| **PARENT** | Test Parent | `testparent@gmail.com` | `123456` | `SEED-003` |
+| **STUDENT** | Test Student | `teststudent@gmail.com` | `123456` | `SEED-004` |
 
 ---
 

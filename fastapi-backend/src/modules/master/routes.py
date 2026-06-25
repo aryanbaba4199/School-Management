@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any, List, Optional
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from uuid import UUID
@@ -22,7 +22,8 @@ def create_country(
 def read_countries(
     skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
 ) -> Any:
-    return repository.country.get_multi(db, skip=skip, limit=limit)
+    items, _ = repository.country.get_multi(db, skip=skip, limit=limit)
+    return items
 
 # --- States ---
 @router.post("/states", response_model=schemas.StateResponse)
@@ -35,9 +36,13 @@ def create_state(
 
 @router.get("/states", response_model=List[schemas.StateResponse])
 def read_states(
-    skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
+    countryId: Optional[UUID] = None, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
 ) -> Any:
-    return repository.state.get_multi(db, skip=skip, limit=limit)
+    query = db.query(repository.state.model)
+    if countryId:
+        query = query.filter(repository.state.model.country_id == countryId)
+    items = query.offset(skip).limit(limit).all()
+    return items
 
 # --- Districts ---
 @router.post("/districts", response_model=schemas.DistrictResponse)
@@ -50,9 +55,13 @@ def create_district(
 
 @router.get("/districts", response_model=List[schemas.DistrictResponse])
 def read_districts(
-    skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
+    stateId: Optional[UUID] = None, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
 ) -> Any:
-    return repository.district.get_multi(db, skip=skip, limit=limit)
+    query = db.query(repository.district.model)
+    if stateId:
+        query = query.filter(repository.district.model.state_id == stateId)
+    items = query.offset(skip).limit(limit).all()
+    return items
 
 # --- Cities ---
 @router.post("/cities", response_model=schemas.CityResponse)
@@ -65,9 +74,13 @@ def create_city(
 
 @router.get("/cities", response_model=List[schemas.CityResponse])
 def read_cities(
-    skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
+    stateId: Optional[UUID] = None, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
 ) -> Any:
-    return repository.city.get_multi(db, skip=skip, limit=limit)
+    query = db.query(repository.city.model)
+    if stateId:
+        query = query.filter(repository.city.model.state_id == stateId)
+    items = query.offset(skip).limit(limit).all()
+    return items
 
 # --- Board Types ---
 @router.post("/board-types", response_model=schemas.BoardTypeResponse)
@@ -82,7 +95,8 @@ def create_board_type(
 def read_board_types(
     skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
 ) -> Any:
-    return repository.board_type.get_multi(db, skip=skip, limit=limit)
+    items, _ = repository.board_type.get_multi(db, skip=skip, limit=limit)
+    return items
 
 # --- Subscription Plans ---
 @router.post("/subscription-plans", response_model=schemas.SubscriptionPlanResponse)
@@ -97,7 +111,8 @@ def create_subscription_plan(
 def read_subscription_plans(
     skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
 ) -> Any:
-    return repository.subscription_plan.get_multi(db, skip=skip, limit=limit)
+    items, _ = repository.subscription_plan.get_multi(db, skip=skip, limit=limit)
+    return items
 
 @router.put("/subscription-plans/{id}", response_model=schemas.SubscriptionPlanResponse)
 def update_subscription_plan(

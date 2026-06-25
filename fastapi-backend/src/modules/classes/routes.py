@@ -149,4 +149,5 @@ def read_schedules(
     skip: int = 0, limit: int = 100, db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ) -> Any:
-    return repository.class_schedule.get_multi(db, skip=skip, limit=limit)
+    items, _ = repository.class_schedule.get_multi(db, skip=skip, limit=limit)
+    return items

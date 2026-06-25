@@ -46,6 +46,7 @@ class HomeworkResponse(CoreSchema):
     @classmethod
     def format_response(cls, data: Any) -> Any:
         if isinstance(data, dict): return data
+        if isinstance(data, list): return data
         result = {
             "id": data.id, "created_at": data.created_at, "updated_at": data.updated_at,
             "school_id": data.school_id, "title": data.title, "description": data.description,
@@ -109,6 +110,7 @@ class HomeworkSubmissionResponse(CoreSchema):
     @classmethod
     def format_response(cls, data: Any) -> Any:
         if isinstance(data, dict): return data
+        if isinstance(data, list): return data
         result = {
             "id": data.id, "created_at": data.created_at, "updated_at": data.updated_at,
             "homework_id": data.homework_id, "submission_text": data.submission_text,

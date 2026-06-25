@@ -18,6 +18,7 @@ class SubjectUpdate(BaseModel):
 
 class SubjectResponse(CoreSchema):
     name: str
+    code: Optional[str] = None
     school_id: Optional[Any] = None
     is_active: bool = True
     teacher_ids: Optional[list[Any]] = []
@@ -26,12 +27,14 @@ class SubjectResponse(CoreSchema):
     @classmethod
     def format_response(cls, data: Any) -> Any:
         if isinstance(data, dict): return data
+        if isinstance(data, list): return data
         
         result = {
             "id": data.id,
             "created_at": data.created_at,
             "updated_at": data.updated_at,
             "name": data.name,
+            "code": getattr(data, "code", data.name[:3].upper()),
             "is_active": data.is_active,
         }
         

@@ -11,34 +11,39 @@ from src.config.database import SessionLocal
 from src.modules.user.models import User, UserRoleEnum
 from src.common.utils.security import get_password_hash
 
-def create_superadmin():
+def seed_users():
     db: Session = SessionLocal()
     try:
-        email = "aryanbaba4199@gmail.com"
-        password = "727798"
+        users_to_seed = [
+            {"email": "testsuperadmin@gmail.com", "name": "Test Super Admin", "role": UserRoleEnum.SUPER_ADMIN},
+            {"email": "testadmin@gmail.com", "name": "Test School Admin", "role": UserRoleEnum.SCHOOL_ADMIN},
+            {"email": "testteacher@gmail.com", "name": "Test Teacher", "role": UserRoleEnum.TEACHER},
+            {"email": "testparent@gmail.com", "name": "Test Parent", "role": UserRoleEnum.PARENT},
+            {"email": "teststudent@gmail.com", "name": "Test Student", "role": UserRoleEnum.STUDENT},
+        ]
         
-        # Check if user already exists
-        existing_user = db.query(User).filter(User.email == email).first()
-        if existing_user:
-            print(f"User {email} already exists!")
-            return
-            
+        password = "123456"
         hashed_password = get_password_hash(password)
-        
-        new_user = User(
-            name="Aryan Dubey",
-            email=email,
-            password=hashed_password,
-            user_code="SA-0001",
-            role=UserRoleEnum.SUPER_ADMIN,
-            is_active=True
-        )
-        
-        db.add(new_user)
+
+        for i, u in enumerate(users_to_seed):
+            existing = db.query(User).filter(User.email == u["email"]).first()
+            if not existing:
+                new_user = User(
+                    name=u["name"],
+                    email=u["email"],
+                    password=hashed_password,
+                    user_code=f"SEED-00{i}",
+                    role=u["role"],
+                    is_active=True
+                )
+                db.add(new_user)
+                print(f"Created {u['role'].value}: {u['email']}")
+            else:
+                # Update password just in case
+                existing.password = hashed_password
+                print(f"Updated {u['role'].value}: {u['email']}")
+                
         db.commit()
-        db.refresh(new_user)
-        print(f"Super Admin user created successfully with ID: {new_user.id}")
-        
     except Exception as e:
         db.rollback()
         print(f"An error occurred: {e}")
@@ -46,4 +51,4 @@ def create_superadmin():
         db.close()
 
 if __name__ == "__main__":
-    create_superadmin()
+    seed_users()

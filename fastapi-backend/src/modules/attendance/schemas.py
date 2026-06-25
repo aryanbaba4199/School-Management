@@ -32,6 +32,7 @@ class AttendanceRecordResponse(CoreSchema):
     @classmethod
     def format_response(cls, data: Any) -> Any:
         if isinstance(data, dict): return data
+        if isinstance(data, list): return data
         result = {
             "id": data.id, "created_at": data.created_at, "updated_at": data.updated_at,
             "school_id": data.school_id, "date": data.date, "status": data.status,
@@ -140,6 +141,7 @@ class AttendanceCorrectionRequestResponse(CoreSchema, AttendanceCorrectionReques
     @classmethod
     def format_response(cls, data: Any) -> Any:
         if isinstance(data, dict): return data
+        if isinstance(data, list): return data
         result = {
             "id": data.id, "created_at": data.created_at, "updated_at": data.updated_at,
             "school_id": data.school_id, "user_id": data.user_id, "attendance_record_id": data.attendance_record_id,

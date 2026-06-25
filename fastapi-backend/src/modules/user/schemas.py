@@ -141,6 +141,7 @@ class UserResponse(CoreSchema):
     @classmethod
     def format_response(cls, data: Any) -> Any:
         if isinstance(data, dict): return data
+        if isinstance(data, list): return data
         
         result = {
             "id": data.id,

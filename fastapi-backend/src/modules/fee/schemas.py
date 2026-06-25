@@ -41,6 +41,7 @@ class FeeRecordResponse(CoreSchema):
     @classmethod
     def format_response(cls, data: Any) -> Any:
         if isinstance(data, dict): return data
+        if isinstance(data, list): return data
         result = {
             "id": data.id, "created_at": data.created_at, "updated_at": data.updated_at,
             "school_id": data.school_id, "amount": data.amount, "due_date": data.due_date,
@@ -79,6 +80,7 @@ class FeeTransactionResponse(CoreSchema):
     @classmethod
     def format_response(cls, data: Any) -> Any:
         if isinstance(data, dict): return data
+        if isinstance(data, list): return data
         result = {
             "id": data.id, "created_at": data.created_at, "updated_at": data.updated_at,
             "fee_record_id": data.fee_record_id, "amount_paid": data.amount_paid,

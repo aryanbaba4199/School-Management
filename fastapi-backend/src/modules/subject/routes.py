@@ -25,7 +25,8 @@ def read_subjects(
     current_user: User = Depends(get_current_user)
 ) -> Any:
     school_id = current_user.school_id if current_user.role.value != "SUPER_ADMIN" else None
-    return repository.subject.get_multi(db, skip=skip, limit=limit, school_id=school_id)
+    items, _ = repository.subject.get_multi(db, skip=skip, limit=limit, school_id=school_id)
+    return items
 
 @router.get("/{id}", response_model=schemas.SubjectResponse)
 def read_subject_by_id(

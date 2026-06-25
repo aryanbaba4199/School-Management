@@ -121,7 +121,11 @@ export const baseApi = createApi({
             }
           };
         } else {
-          result.data = { success: true, data: mappedData };
+          if ('data' in mappedData && Array.isArray(mappedData.data)) {
+            result.data = { success: true, ...mappedData };
+          } else {
+            result.data = { success: true, data: mappedData };
+          }
         }
       } else if (Array.isArray(mappedData)) {
         result.data = {

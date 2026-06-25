@@ -1,0 +1,23 @@
+{
+  "data": [
+    {
+      "id": "class_1",
+      "name": "Class 10",
+      "monthlyFee": 1500,
+      "yearlyFee": 18000,
+      "sections": [
+        { "id": "sec_A", "name": "A" },
+        { "id": "sec_B", "name": "B" }
+      ],
+      "classTeacherId": null,
+      "schoolId": "school_1",
+      "createdAt": "2024-01-01T00:00:00Z"
+    }
+  ],
+  "pagination": {
+    "total_pages": 1,
+    "total_count": 1,
+    "current_page": 1,
+    "limit": 100
+  }
+}

@@ -40,6 +40,7 @@ class ExamResponse(CoreSchema):
     @classmethod
     def format_response(cls, data: Any) -> Any:
         if isinstance(data, dict): return data
+        if isinstance(data, list): return data
         result = {
             "id": data.id, "created_at": data.created_at, "updated_at": data.updated_at,
             "school_id": data.school_id, "name": data.name, "academic_year": data.academic_year,
@@ -93,6 +94,7 @@ class ExamScheduleResponse(CoreSchema):
     @classmethod
     def format_response(cls, data: Any) -> Any:
         if isinstance(data, dict): return data
+        if isinstance(data, list): return data
         result = {
             "id": data.id, "created_at": data.created_at, "updated_at": data.updated_at,
             "school_id": data.school_id, "exam_id": data.exam_id,
@@ -156,6 +158,7 @@ class StudentExamMarkResponse(CoreSchema):
     @classmethod
     def format_response(cls, data: Any) -> Any:
         if isinstance(data, dict): return data
+        if isinstance(data, list): return data
         result = {
             "id": data.id, "created_at": data.created_at, "updated_at": data.updated_at,
             "school_id": data.school_id, "exam_id": data.exam_id, "exam_schedule_id": data.exam_schedule_id,
@@ -246,6 +249,7 @@ class ReportCardResponse(CoreSchema):
     @classmethod
     def format_response(cls, data: Any) -> Any:
         if isinstance(data, dict): return data
+        if isinstance(data, list): return data
         res = {
             "id": data.id, "created_at": data.created_at, "updated_at": data.updated_at,
             "school_id": data.school_id, "total_marks": data.total_marks, "obtained_marks": data.obtained_marks,

@@ -79,12 +79,19 @@ class SchoolResponse(CoreSchema, SchoolBase):
     state_id: Optional[Any] = None
     country_id: Optional[Any] = None
     board_type_id: Optional[Any] = None
+    subscription_plan_id: Optional[Any] = None
+    
+    district: Optional[Any] = None
+    state: Optional[Any] = None
+    country: Optional[Any] = None
+    board_type: Optional[Any] = None
     subscription_plan: Optional[Any] = None
     
     @model_validator(mode='before')
     @classmethod
     def format_response(cls, data: Any) -> Any:
         if isinstance(data, dict): return data
+        if isinstance(data, list): return data
         
         result = {
             "id": data.id,
@@ -115,23 +122,31 @@ class SchoolResponse(CoreSchema, SchoolBase):
         }
         
         if hasattr(data, 'country') and data.country:
-            result["country_id"] = {"id": str(data.country.id), "name": data.country.name, "code": data.country.code}
+            result["country"] = {"id": str(data.country.id), "name": data.country.name, "code": data.country.code}
+            result["country_id"] = str(data.country.id)
         else:
+            result["country"] = str(data.country_id) if data.country_id else None
             result["country_id"] = str(data.country_id) if data.country_id else None
             
         if hasattr(data, 'state') and data.state:
-            result["state_id"] = {"id": str(data.state.id), "name": data.state.name, "code": data.state.code}
+            result["state"] = {"id": str(data.state.id), "name": data.state.name}
+            result["state_id"] = str(data.state.id)
         else:
+            result["state"] = str(data.state_id) if data.state_id else None
             result["state_id"] = str(data.state_id) if data.state_id else None
             
         if hasattr(data, 'district') and data.district:
-            result["district_id"] = {"id": str(data.district.id), "name": data.district.name, "code": data.district.code}
+            result["district"] = {"id": str(data.district.id), "name": data.district.name}
+            result["district_id"] = str(data.district.id)
         else:
+            result["district"] = str(data.district_id) if data.district_id else None
             result["district_id"] = str(data.district_id) if data.district_id else None
             
         if hasattr(data, 'board_type') and data.board_type:
-            result["board_type_id"] = {"id": str(data.board_type.id), "name": data.board_type.name, "acronym": getattr(data.board_type, 'acronym', '')}
+            result["board_type"] = {"id": str(data.board_type.id), "name": data.board_type.name, "acronym": getattr(data.board_type, 'acronym', '')}
+            result["board_type_id"] = str(data.board_type.id)
         else:
+            result["board_type"] = str(data.board_type_id) if data.board_type_id else None
             result["board_type_id"] = str(data.board_type_id) if data.board_type_id else None
             
         if hasattr(data, 'subscription_plan') and data.subscription_plan:
@@ -140,8 +155,10 @@ class SchoolResponse(CoreSchema, SchoolBase):
                 "name": data.subscription_plan.name,
                 "code": getattr(data.subscription_plan, 'code', '')
             }
+            result["subscription_plan_id"] = str(data.subscription_plan.id)
         else:
             result["subscription_plan"] = str(data.subscription_plan_id)
+            result["subscription_plan_id"] = str(data.subscription_plan_id)
             
         if hasattr(data, 'settings') and data.settings:
             result["settings"] = data.settings if isinstance(data.settings, dict) else data.settings.model_dump()

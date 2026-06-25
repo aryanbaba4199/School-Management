@@ -1,0 +1,18 @@
+{
+  "data": [
+    {
+      "id": "subject_1",
+      "name": "Mathematics",
+      "code": "MATH101",
+      "schoolId": "school_1",
+      "teacherIds": [],
+      "createdAt": "2024-01-01T00:00:00Z"
+    }
+  ],
+  "pagination": {
+    "total_pages": 1,
+    "total_count": 1,
+    "current_page": 1,
+    "limit": 100
+  }
+}
