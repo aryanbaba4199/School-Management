@@ -48,8 +48,11 @@ export function StepDetails({
         <Grid size={{ xs: 12, sm: 3 }}>
           <FormTextField name="subdomain" control={control} label="Subdomain" required />
         </Grid>
-        <Grid size={12}>
+        <Grid size={{ xs: 12, sm: 9 }}>
           <FormTextField name="address" control={control} label="Street Address" />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 3 }}>
+          <FormTextField name="pincode" control={control} label="Pincode / ZIP" type="number" />
         </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
           <FormSelectField 

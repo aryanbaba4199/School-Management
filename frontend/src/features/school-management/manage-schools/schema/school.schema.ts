@@ -65,6 +65,8 @@ export const schoolSchema = yup.object({
     .optional(),
   pincode: yup
     .number()
+    .transform((value, originalValue) => (String(originalValue).trim() === '' ? null : value))
+    .nullable()
     .typeError('Pincode must be a number')
     .integer('Pincode must be an integer')
     .optional(),
@@ -91,7 +93,8 @@ export const schoolSchema = yup.object({
   endTime: yup.string().optional(),
   admissionFee: yup
     .number()
-    .transform((value, originalValue) => (String(originalValue).trim() === '' ? undefined : value))
+    .transform((value, originalValue) => (String(originalValue).trim() === '' ? null : value))
+    .nullable()
     .typeError('Admission fee must be a number')
     .min(0, 'Admission fee cannot be negative')
     .optional(),

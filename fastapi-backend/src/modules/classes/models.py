@@ -38,6 +38,8 @@ class ClassSchedule(CoreModel):
     end_time = Column(String, nullable=False)
     
     cls = relationship("Class", back_populates="schedules")
+    subject = relationship("Subject")
+    teacher = relationship("User")
 
 class Section(CoreModel):
     __tablename__ = "sections"

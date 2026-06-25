@@ -11,11 +11,12 @@ export function useSchoolForm(school: ISchool | null, countries: { _id: string; 
       const selectedCountryId = data.country;
       const selectedCountryObj = countries.find(c => c._id === selectedCountryId);
       const mobileDigits = selectedCountryObj?.mobileDigits || 10;
-      const configuredResolver = yupResolver(schoolSchema, { context: { mobileDigits } });
-      return configuredResolver(
-        data as unknown as Parameters<typeof configuredResolver>[0],
-        context,
-        options as unknown as Parameters<typeof configuredResolver>[2]
+      
+      const resolver = yupResolver(schoolSchema);
+      return resolver(
+        data,
+        { ...context, mobileDigits },
+        options
       );
     },
     defaultValues: {

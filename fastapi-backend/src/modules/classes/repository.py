@@ -12,6 +12,7 @@ class CRUDClass(CRUDBase[Class, ClassCreate, ClassUpdate]):
         obj_in_data = obj_in.model_dump()
         sections = obj_in_data.pop("sections", [])
         schedule = obj_in_data.pop("schedule", [])
+        subjects = obj_in_data.pop("subjects", [])
         
         db_obj = Class(**obj_in_data)
         db.add(db_obj)
@@ -22,6 +23,11 @@ class CRUDClass(CRUDBase[Class, ClassCreate, ClassUpdate]):
                 sec = Section(name=sec_name, class_id=db_obj.id, school_id=db_obj.school_id)
                 db.add(sec)
                 
+        if subjects:
+            from src.modules.subject.models import Subject
+            subject_models = db.query(Subject).filter(Subject.id.in_(subjects)).all()
+            db_obj.subjects.extend(subject_models)
+            
         if schedule:
             for sch in schedule:
                 # sch is a dict if model_dump was called on obj_in
@@ -46,6 +52,7 @@ class CRUDClass(CRUDBase[Class, ClassCreate, ClassUpdate]):
             
         sections = update_data.pop("sections", None)
         schedule = update_data.pop("schedule", None)
+        subjects = update_data.pop("subjects", None)
         
         for field, value in update_data.items():
             setattr(db_obj, field, value)
@@ -56,6 +63,13 @@ class CRUDClass(CRUDBase[Class, ClassCreate, ClassUpdate]):
             for sec_name in sections:
                 sec = Section(name=sec_name, class_id=db_obj.id, school_id=db_obj.school_id)
                 db.add(sec)
+                
+        if subjects is not None:
+            db_obj.subjects.clear()
+            if subjects:
+                from src.modules.subject.models import Subject
+                subject_models = db.query(Subject).filter(Subject.id.in_(subjects)).all()
+                db_obj.subjects.extend(subject_models)
                 
         if schedule is not None:
             db.query(ClassSchedule).filter(ClassSchedule.class_id == db_obj.id).delete()

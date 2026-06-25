@@ -21,6 +21,7 @@ class ClassScheduleBase(BaseModel):
 class ClassCreate(ClassBase):
     sections: Optional[list[str]] = []
     schedule: Optional[list[ClassScheduleBase]] = []
+    subjects: Optional[list[UUID]] = []
 
 class ClassUpdate(BaseModel):
     name: Optional[str] = None
@@ -30,6 +31,7 @@ class ClassUpdate(BaseModel):
     yearly_fee: Optional[int] = None
     sections: Optional[list[str]] = None
     schedule: Optional[list[ClassScheduleBase]] = None
+    subjects: Optional[list[UUID]] = None
 
 class ClassResponse(CoreSchema):
     name: str
@@ -41,6 +43,7 @@ class ClassResponse(CoreSchema):
     
     sections: Optional[list[Any]] = []
     schedule: Optional[list[Any]] = []
+    subjects: Optional[list[Any]] = []
     
     @model_validator(mode='before')
     @classmethod
@@ -93,10 +96,24 @@ class ClassResponse(CoreSchema):
                     "id": str(sch.id),
                     "start_time": sch.start_time,
                     "end_time": sch.end_time,
-                    "subject_id": str(sch.subject_id),
-                    "teacher_id": str(sch.teacher_id),
+                    "subject_id": {
+                        "id": str(sch.subject_id),
+                        "name": sch.subject.name if hasattr(sch, "subject") and sch.subject else "Unknown"
+                    },
+                    "teacher_id": {
+                        "id": str(sch.teacher_id),
+                        "name": sch.teacher.name if hasattr(sch, "teacher") and sch.teacher else "Unknown"
+                    },
                     "class_id": str(sch.class_id)
                 } for sch in data.schedules
+            ]
+            
+        if hasattr(data, 'subjects'):
+            result["subjects"] = [
+                {
+                    "id": str(sub.id),
+                    "name": sub.name
+                } for sub in data.subjects
             ]
             
         return result

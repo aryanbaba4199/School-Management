@@ -212,7 +212,28 @@ export function SchoolForm({ schoolId, onSubmit, onCancel }: SchoolFormProps) {
             {isSavingDraft ? <CircularProgress size={24} /> : 'Next'}
           </Button>
         ) : (
-          <Button onClick={handleSubmit(onSubmit, (errs) => console.log('Validation Errors:', errs))} variant="contained" color="primary" sx={{ textTransform: 'none' }}>
+          <Button onClick={handleSubmit(onSubmit, (errs) => {
+            for (let i = 0; i < STEP_FIELDS.length; i++) {
+              const stepHasError = STEP_FIELDS[i].some(field => {
+                if (field.includes('.')) {
+                   const [parent, child] = field.split('.');
+                   return (errs as any)[parent]?.[child];
+                }
+                return (errs as any)[field];
+              });
+
+              if (stepHasError) {
+                const targetStep = schoolId ? i - 1 : i;
+                if (targetStep >= 0 && targetStep !== activeStep) {
+                  setActiveStep(targetStep);
+                  notifier.showError('Please fix the highlighted errors in this step.');
+                } else if (targetStep === activeStep) {
+                  notifier.showError('Please fix the highlighted errors before submitting.');
+                }
+                break;
+              }
+            }
+          })} variant="contained" color="primary" sx={{ textTransform: 'none' }}>
             {schoolId ? 'Save Changes' : 'Create School'}
           </Button>
         )}
