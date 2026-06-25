@@ -1,1 +1,1 @@
-export const TAG_TYPES = ['School', 'State', 'District', 'SubscriptionPlan', 'User', 'UserAuditLog', 'Class', 'Section', 'Subject', 'Fee', 'Exam', 'ExamSchedule', 'StudentExamMark', 'Attendance', 'AttendanceSettings', 'RfidCard'] as const;
+export const TAG_TYPES = ['School', 'State', 'District', 'SubscriptionPlan', 'User', 'UserAuditLog', 'Class', 'Section', 'Subject', 'Fee', 'Exam', 'ExamSchedule', 'StudentExamMark', 'Attendance', 'AttendanceSettings', 'RfidCard', 'Homework', 'HomeworkSubmission'] as const;

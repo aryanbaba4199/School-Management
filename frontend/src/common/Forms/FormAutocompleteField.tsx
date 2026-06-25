@@ -1,5 +1,5 @@
 import { Controller } from 'react-hook-form';
-import type { Control, FieldValues, Path } from 'react-hook-form';
+import type { FieldValues, Path } from 'react-hook-form';
 import { Autocomplete, TextField } from '@mui/material';
 import type { SelectOption } from './FormSelectField';
 
@@ -7,7 +7,7 @@ import type { SelectOption } from './FormSelectField';
 
 interface FormAutocompleteFieldProps<TFieldValues extends FieldValues> {
   name: Path<TFieldValues>;
-  control: Control<TFieldValues>;
+  control: any;
   label: string;
   options: SelectOption[];
   disabled?: boolean;

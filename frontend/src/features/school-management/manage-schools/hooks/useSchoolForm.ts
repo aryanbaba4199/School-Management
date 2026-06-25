@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useForm, type DefaultValues } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { schoolSchema, type SchoolFormData } from '../../schema/school.schema';
+import { schoolSchema, type SchoolFormData } from '../schema/school.schema';
 import type { ISchoolDraft } from '../../types/schools.types';
 import type { ISchool } from '@api/schoolsApi';
 

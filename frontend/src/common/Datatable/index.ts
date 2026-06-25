@@ -5,3 +5,4 @@ export { default as DatatableFooter } from './components/DatatableFooter';
 export { ActionMenu, type ActionMenuItem } from './components/ActionMenu';
 export * from './types/datatable.types';
 export * from './utils/exportUtils';
+export * from './utils/renderers';

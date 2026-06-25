@@ -22,7 +22,9 @@ import { ExamDetailsPage } from '../features/exams/pages/ExamDetailsPage';
 import { PrintReportCardPage } from '../features/exams/pages/PrintReportCardPage';
 import { MainLayout } from '@common/navbar';
 import { StudentAttendancePage, TeacherAttendancePage, RfidAttendancePage, AttendanceReportsPage, AttendanceSettingsPage } from '../features/attendance';
-import { HomeworkPage, AssignmentsPage } from '../features/homework-management';
+import { TeacherHomeworkDashboard } from '../features/homework-management/pages/TeacherHomeworkDashboard';
+import { StudentHomeworkDashboard } from '../features/homework-management/pages/StudentHomeworkDashboard';
+import { HomeworkSubmissionsPage } from '../features/homework-management/pages/HomeworkSubmissionsPage';
 import { AnnouncementsPage, AlertsPage, NotificationsPage } from '../features/communication';
 import { ClassTimetablePage, TeacherTimetablePage } from '../features/timetable';
 import { RecommendationsPage, VideosPage, QuizzesPage, PracticePage } from '../features/learning';
@@ -120,11 +122,11 @@ export function AppRoutes() {
         <Route path="/attendance" element={<Navigate to="/attendance/students" replace />} />
         <Route
           path="/homework"
-          element={isSchoolAdmin || isTeacher || isStudent || isParent ? <HomeworkPage /> : <Navigate to="/" replace />}
+          element={isSuperAdmin || isSchoolAdmin || isTeacher ? <TeacherHomeworkDashboard /> : isStudent ? <StudentHomeworkDashboard /> : <Navigate to="/" replace />}
         />
         <Route
-          path="/homework/assignments"
-          element={isSchoolAdmin || isTeacher || isStudent || isParent ? <AssignmentsPage /> : <Navigate to="/" replace />}
+          path="/homework/:id/submissions"
+          element={isSuperAdmin || isSchoolAdmin || isTeacher ? <HomeworkSubmissionsPage /> : <Navigate to="/" replace />}
         />
         <Route path="/communication/announcements" element={<AnnouncementsPage />} />
         <Route

@@ -1,12 +1,12 @@
 import { Controller } from 'react-hook-form';
-import type { Control, FieldValues, Path } from 'react-hook-form';
+import type { FieldValues, Path } from 'react-hook-form';
 import { TextField } from '@mui/material';
 
 /*------------- FormTextField Interface -------------*/
 
 interface FormTextFieldProps<TFieldValues extends FieldValues> {
   name: Path<TFieldValues>;
-  control: Control<TFieldValues>;
+  control: any;
   label: string;
   type?: string;
   placeholder?: string;

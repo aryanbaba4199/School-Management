@@ -26,6 +26,9 @@ import ParentDetailsDialog from '../../features/users/parents/components/ParentD
 import { CreateExamDialog } from '../../features/exams/components/CreateExamDialog';
 import { ScheduleSubjectDialog } from '../../features/exams/components/ScheduleSubjectDialog';
 import { ReportCardDialog } from '../../features/exams/components/ReportCardDialog';
+import { HomeworkFormDialog } from '../../features/homework-management/components/HomeworkFormDialog';
+import { SubmissionDialog } from '../../features/homework-management/components/SubmissionDialog';
+import { GradingDialog } from '../../features/homework-management/components/GradingDialog';
 
 /*------------- Dialog Provider Component -------------*/
 
@@ -94,6 +97,12 @@ export function DialogProvider({ children }: { children: ReactNode }) {
         return <ScheduleSubjectDialog {...(props as DialogPropsMap['SCHEDULE_SUBJECT_FORM'])} onClose={closeDialog} />;
       case 'REPORT_CARD_VIEW':
         return <ReportCardDialog {...(props as DialogPropsMap['REPORT_CARD_VIEW'])} onClose={closeDialog} />;
+      case 'HOMEWORK_FORM':
+        return <HomeworkFormDialog {...(props as DialogPropsMap['HOMEWORK_FORM'])} onClose={closeDialog} />;
+      case 'SUBMISSION_FORM':
+        return <SubmissionDialog {...(props as DialogPropsMap['SUBMISSION_FORM'])} onClose={closeDialog} />;
+      case 'GRADING_FORM':
+        return <GradingDialog {...(props as DialogPropsMap['GRADING_FORM'])} onClose={closeDialog} />;
       default:
         return null;
     }

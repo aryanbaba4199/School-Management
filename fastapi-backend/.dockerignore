@@ -1,0 +1,27 @@
+# Environments
+.env
+.venv
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Git
+.git
+.gitignore
+
+# Tests
+.pytest_cache/
+test.db
+coverage.xml
+htmlcov/
+.tox/
+
+# IDEs
+.vscode/
+.idea/
+
+# macOS
+.DS_Store

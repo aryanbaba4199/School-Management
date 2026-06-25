@@ -138,11 +138,19 @@ export const usersApi = baseApi.injectEndpoints({
       },
     }),
     loginUser: builder.mutation<{ success: boolean; message: string; data: { token: string; user: ISchoolUser } }, { email?: string; password?: string; userCode?: string }>({
-      query: (body) => ({
-        url: '/users/login',
-        method: 'POST',
-        body,
-      }),
+      query: (body) => {
+        const formData = new URLSearchParams();
+        formData.append('username', body.email || body.userCode || '');
+        formData.append('password', body.password || '');
+        return {
+          url: '/users/login',
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        };
+      },
     }),
   }),
 });

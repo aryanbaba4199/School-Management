@@ -11,7 +11,7 @@ export class SchoolDraftService {
   /**
    * Saves or updates a draft registration.
    */
-  async saveDraft(draftData: Record<string, unknown>) {
+  async saveDraft(draftData: { adminEmail: string; [key: string]: unknown }) {
     const { adminEmail } = draftData;
     if (!adminEmail) {
       throw new Error('adminEmail is required to save a draft.');

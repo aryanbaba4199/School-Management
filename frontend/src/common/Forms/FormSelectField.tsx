@@ -1,5 +1,5 @@
 import { Controller } from 'react-hook-form';
-import type { Control, FieldValues, Path } from 'react-hook-form';
+import type { FieldValues, Path } from 'react-hook-form';
 import { FormControl, InputLabel, Select, MenuItem, FormHelperText } from '@mui/material';
 
 /*------------- Option Interface -------------*/
@@ -13,7 +13,7 @@ export interface SelectOption {
 
 interface FormSelectFieldProps<TFieldValues extends FieldValues> {
   name: Path<TFieldValues>;
-  control: Control<TFieldValues>;
+  control: any;
   label: string;
   options: SelectOption[];
   disabled?: boolean;

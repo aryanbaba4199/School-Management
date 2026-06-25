@@ -1,12 +1,12 @@
 import { Controller } from 'react-hook-form';
-import type { Control, FieldValues, Path } from 'react-hook-form';
+import type { FieldValues, Path } from 'react-hook-form';
 import { FormControlLabel, Checkbox, FormHelperText, FormControl } from '@mui/material';
 
 /*------------- FormCheckboxField Interface -------------*/
 
 interface FormCheckboxFieldProps<TFieldValues extends FieldValues> {
   name: Path<TFieldValues>;
-  control: Control<TFieldValues>;
+  control: any;
   label: string;
   disabled?: boolean;
 }

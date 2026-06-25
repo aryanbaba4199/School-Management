@@ -2,6 +2,7 @@ import type { SchoolFormData } from '../../features/school-management/manage-sch
 import type { PlanFormData } from '../../features/app-management/plan-management/schema/plan.schema';
 import type { ISubscriptionPlan } from '../../features/app-management/plan-management/types/plans.types';
 import type { IReportCard, IExam, IExamSchedule } from '@api/examApi';
+import type { IHomeworkSubmission } from '@api/homeworkApi';
 
 import type { ISchoolUser } from '@api/usersApi';
 
@@ -26,6 +27,9 @@ export type DialogType =
   | 'EXAM_FORM'
   | 'SCHEDULE_SUBJECT_FORM'
   | 'REPORT_CARD_VIEW'
+  | 'HOMEWORK_FORM'
+  | 'SUBMISSION_FORM'
+  | 'GRADING_FORM'
   | null;
 
 export interface DialogPropsMap {
@@ -95,6 +99,14 @@ export interface DialogPropsMap {
   };
   REPORT_CARD_VIEW: {
     reportCard: IReportCard;
+  };
+  HOMEWORK_FORM: Record<string, never>; // No required props for creation
+  SUBMISSION_FORM: {
+    homeworkId: string;
+  };
+  GRADING_FORM: {
+    submission: IHomeworkSubmission;
+    maxMarks?: number;
   };
 }
 

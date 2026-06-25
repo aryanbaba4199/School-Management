@@ -74,10 +74,10 @@ const MENU_ITEMS: MenuItemType[] = [
   {
     label: 'Homework',
     icon: <FaBookOpen size={16} />,
-    roles: ['SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
+    roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'],
     children: [
-      { label: 'Homework', roles: ['SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'], path: '/homework' },
-      { label: 'Assignments', roles: ['SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT'], path: '/homework/assignments' }
+      { label: 'Assignments', roles: ['SUPER_ADMIN', 'SCHOOL_ADMIN', 'TEACHER'], path: '/homework' },
+      { label: 'My Tasks', roles: ['STUDENT', 'PARENT'], path: '/homework' }
     ]
   },
   {
