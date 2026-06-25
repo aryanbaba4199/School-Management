@@ -136,7 +136,7 @@ export const homeworkApi = baseApi.injectEndpoints({
       invalidatesTags: (_result, _error, { submissionId }) => [{ type: 'HomeworkSubmission', id: submissionId }],
     }),
   }),
-  overrideExisting: false,
+  overrideExisting: true,
 });
 
 export const {

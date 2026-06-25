@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Float, Boolean, Integer, ForeignKey
+from sqlalchemy import Column, String, Float, Boolean, Integer, ForeignKey, JSON
 from sqlalchemy.orm import relationship
 from src.common.models.base import CoreModel
 
@@ -47,7 +47,7 @@ class SubscriptionPlan(CoreModel):
     
     name = Column(String, unique=True, nullable=False)
     code = Column(String, unique=True, nullable=False)
-    price = Column(Float, nullable=False)
-    duration_days = Column(Integer, nullable=False)
-    features = Column(String) # Could be serialized JSON but kept simple
+    price = Column(JSON, nullable=False) # Store { monthly, yearly }
+    max_students = Column(Integer, default=500)
+    features = Column(JSON) # Store feature toggles
     is_active = Column(Boolean, default=True)

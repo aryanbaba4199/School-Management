@@ -93,7 +93,7 @@ export const feesApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: [{ type: 'Fee', id: 'LIST' }],
     }),
-  }),
+  }),  overrideExisting: true,
 });
 
 export const { 

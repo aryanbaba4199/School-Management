@@ -49,7 +49,7 @@ export const subjectsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Subject', 'User'],
     }),
-  }),
+  }),  overrideExisting: true,
 });
 
 export const {

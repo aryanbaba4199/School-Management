@@ -80,7 +80,7 @@ export const masterApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['SubscriptionPlan'],
     }),
-  }),
+  }),  overrideExisting: true,
 });
 
 export const {

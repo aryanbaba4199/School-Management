@@ -23,6 +23,12 @@ class School(CoreModel):
     
     board_type_id = Column(ForeignKey("board_types.id", ondelete="RESTRICT"), nullable=False)
     subscription_plan_id = Column(ForeignKey("subscription_plans.id", ondelete="RESTRICT"), nullable=False)
+    
+    district = relationship("District")
+    state = relationship("State")
+    country = relationship("Country")
+    board_type = relationship("BoardType")
+    subscription_plan = relationship("SubscriptionPlan")
     billing_cycle = Column(String, nullable=False) # 'MONTHLY', 'YEARLY'
     subscription_start_date = Column(Date)
     subscription_end_date = Column(Date)

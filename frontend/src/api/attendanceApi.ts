@@ -195,7 +195,7 @@ export const attendanceApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: [{ type: 'Attendance', id: 'LIST' }],
     }),
-  }),
+  }),  overrideExisting: true,
 });
 
 export const {

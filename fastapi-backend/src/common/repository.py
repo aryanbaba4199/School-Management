@@ -21,11 +21,13 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 
     def get_multi(
         self, db: Session, *, skip: int = 0, limit: int = 100, school_id: Optional[UUID] = None
-    ) -> List[ModelType]:
+    ) -> tuple[List[ModelType], int]:
         query = db.query(self.model)
         if school_id and hasattr(self.model, "school_id"):
             query = query.filter(self.model.school_id == school_id)
-        return query.offset(skip).limit(limit).all()
+        total_count = query.count()
+        items = query.offset(skip).limit(limit).all()
+        return items, total_count
 
     def create(self, db: Session, *, obj_in: CreateSchemaType) -> ModelType:
         obj_in_data = obj_in.model_dump()

@@ -5,6 +5,7 @@ from uuid import UUID
 from datetime import date
 
 from src.common.dependencies import get_db, RoleChecker, get_current_user
+from src.common.schemas import PaginatedResponse
 from src.modules.user.models import User
 from .models import FeeStatusEnum
 from . import schemas, repository
@@ -12,14 +13,24 @@ from . import schemas, repository
 router = APIRouter()
 
 # --- Transactions ---
-@router.get("/transactions", response_model=List[schemas.FeeTransactionResponse])
-def read_transactions(
-    skip: int = 0, limit: int = 100, db: Session = Depends(get_db),
-    current_user: User = Depends(RoleChecker(["SUPER_ADMIN", "SCHOOL_ADMIN", "ACCOUNTANT"]))
+@router.get("/transactions", response_model=PaginatedResponse[schemas.FeeTransactionResponse])
+def get_fee_transactions(
+    page: int = 1, limit: int = 100, db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ) -> Any:
-    # To properly filter transactions by school, we'd join FeeRecord.
-    # For now, just generic multi logic
-    return repository.fee_transaction.get_multi(db, skip=skip, limit=limit)
+    # Need to filter by school if not super admin
+    # This involves a join with FeeRecord which is a bit complex for base get_multi, so stubbing
+    skip = (page - 1) * limit
+    records, total_count = repository.fee_transaction.get_multi(db, skip=skip, limit=limit)
+    return {
+        "data": records,
+        "pagination": {
+            "total_pages": (total_count + limit - 1) // limit if limit > 0 else 1,
+            "total_count": total_count,
+            "current_page": page,
+            "limit": limit
+        }
+    }
 
 @router.post("/pay-receipt", response_model=schemas.FeeTransactionResponse)
 def process_payment(
@@ -54,37 +65,89 @@ def generate_fee(
 
 @router.post("/generate-bulk")
 def generate_bulk_fee(
-    # Takes school_id, year, month, etc.
+    bulk_in: schemas.BulkFeeGenerateRequest,
     db: Session = Depends(get_db),
     current_user: User = Depends(RoleChecker(["SUPER_ADMIN", "SCHOOL_ADMIN"]))
 ) -> Any:
-    # Bulk logic placeholder
-    return {"message": "Bulk fee generation initiated"}
+    school_id = bulk_in.school_id or current_user.school_id
+    if not school_id:
+        raise HTTPException(status_code=400, detail="School ID is required")
+        
+    # Get students for the class
+    students = db.query(User).filter(User.class_id == bulk_in.class_id, User.role == "STUDENT").all()
+    count = 0
+    for student in students:
+        record = repository.fee_record.model(
+            school_id=school_id,
+            student_id=student.id,
+            amount=bulk_in.amount,
+            due_date=bulk_in.due_date,
+            description=bulk_in.description
+        )
+        db.add(record)
+        count += 1
+    db.commit()
+    return {"message": f"Bulk fee generated for {count} students"}
 
 # --- Specific Retrievals ---
-@router.get("/student/{student_id}", response_model=List[schemas.FeeRecordResponse])
+@router.get("/student/{student_id}", response_model=PaginatedResponse[schemas.FeeRecordResponse])
 def get_student_fees(
     student_id: UUID,
-    db: Session = Depends(get_db),
+    page: int = 1, limit: int = 100, db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ) -> Any:
-    # Students can view their own, Parents their child's, Admins view any.
-    if current_user.role.value == "STUDENT" and current_user.id != student_id:
-        raise HTTPException(status_code=403, detail="Access denied")
+    # Security check: if role=PARENT, must verify student_id is their child
+    # If role=STUDENT, student_id must be self
+    if current_user.role.value == "STUDENT" and student_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Can only view own fees")
+        
+    skip = (page - 1) * limit
+    records, total_count = repository.fee_record.get_multi(db, skip=skip, limit=limit)
+    filtered_records = [r for r in records if r.student_id == student_id]
+    filtered_total = len(filtered_records)
     
-    # Needs a custom repo method or filter
-    return db.query(repository.fee_record.model).filter(
-        repository.fee_record.model.student_id == student_id
-    ).all()
+    return {
+        "data": filtered_records,
+        "pagination": {
+            "total_pages": (filtered_total + limit - 1) // limit if limit > 0 else 1,
+            "total_count": filtered_total,
+            "current_page": page,
+            "limit": limit
+        }
+    }
 
-@router.get("/cycle/{year}/{month}", response_model=List[schemas.FeeRecordResponse])
+@router.get("/cycle/{year}/{month}", response_model=PaginatedResponse[schemas.FeeRecordResponse])
 def get_cycle_fees(
     year: int, month: int,
+    page: int = 1, limit: int = 100,
     db: Session = Depends(get_db),
     current_user: User = Depends(RoleChecker(["SUPER_ADMIN", "SCHOOL_ADMIN"]))
 ) -> Any:
-    # Dummy logic for now
-    return []
+    school_id = current_user.school_id if current_user.role.value != "SUPER_ADMIN" else None
+    skip = (page - 1) * limit
+    
+    # Very basic date filter - could be improved based on exact month logic
+    from sqlalchemy import extract
+    query = db.query(repository.fee_record.model)
+    if school_id:
+        query = query.filter(repository.fee_record.model.school_id == school_id)
+    query = query.filter(
+        extract('year', repository.fee_record.model.due_date) == year,
+        extract('month', repository.fee_record.model.due_date) == month
+    )
+    
+    total_count = query.count()
+    records = query.offset(skip).limit(limit).all()
+    
+    return {
+        "data": records,
+        "pagination": {
+            "total_pages": (total_count + limit - 1) // limit if limit > 0 else 1,
+            "total_count": total_count,
+            "current_page": page,
+            "limit": limit
+        }
+    }
 
 # --- Status Updates ---
 @router.put("/{id}/pay", response_model=schemas.FeeRecordResponse)

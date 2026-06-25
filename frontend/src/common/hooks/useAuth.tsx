@@ -74,7 +74,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const storedToken = localStorage.getItem('auth_token');
       const storedUser = localStorage.getItem('auth_user');
       if (storedToken && storedUser && !isTokenExpired(storedToken)) {
-        return JSON.parse(storedUser) as IUser;
+        const parsedUser = JSON.parse(storedUser) as IUser;
+        if (typeof parsedUser.role === 'string') {
+          parsedUser.role = { name: parsedUser.role, access: [] } as any;
+        }
+        return parsedUser;
       }
     } catch {
       // Ignore reading storage errors on init

@@ -152,7 +152,7 @@ export const usersApi = baseApi.injectEndpoints({
         };
       },
     }),
-  }),
+  }),  overrideExisting: true,
 });
 
 export const {

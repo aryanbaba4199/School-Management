@@ -1,4 +1,5 @@
 from sqlalchemy import Column, String, Float, ForeignKey, Date, Enum
+from sqlalchemy.orm import relationship
 from src.common.models.base import CoreModel
 import enum
 
@@ -20,6 +21,9 @@ class FeeRecord(CoreModel):
     status = Column(Enum(FeeStatusEnum, name="fee_status_enum", create_type=False), default=FeeStatusEnum.UNPAID)
     
     description = Column(String)
+    
+    school = relationship("School")
+    student = relationship("User", foreign_keys=[student_id])
 
 class FeeTransaction(CoreModel):
     __tablename__ = "fee_transactions"
@@ -30,3 +34,6 @@ class FeeTransaction(CoreModel):
     payment_method = Column(String) # CASH, CARD, UPI
     transaction_reference = Column(String)
     collected_by = Column(ForeignKey("users.id", ondelete="SET NULL"))
+    
+    fee_record = relationship("FeeRecord")
+    collector = relationship("User", foreign_keys=[collected_by])

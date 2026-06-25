@@ -15,14 +15,17 @@ class Class(CoreModel):
     
     name = Column(String, nullable=False, index=True)
     school_id = Column(ForeignKey("schools.id", ondelete="CASCADE"), nullable=False, index=True)
+    school = relationship("School")
     is_active = Column(Boolean, default=True)
     
     class_teacher_id = Column(ForeignKey("users.id", ondelete="SET NULL", use_alter=True), nullable=True)
+    class_teacher = relationship("User", foreign_keys=[class_teacher_id])
     monthly_fee = Column(Integer)
     yearly_fee = Column(Integer)
     
     subjects = relationship("Subject", secondary=class_subjects_association, backref="classes")
     schedules = relationship("ClassSchedule", back_populates="cls", cascade="all, delete-orphan")
+    sections = relationship("Section", backref="cls", cascade="all, delete-orphan")
 
 class ClassSchedule(CoreModel):
     __tablename__ = "class_schedules"

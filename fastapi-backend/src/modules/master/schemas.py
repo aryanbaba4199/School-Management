@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Dict, Any
 from uuid import UUID
 from pydantic import BaseModel
 from src.common.schemas import CoreSchema
@@ -82,9 +82,9 @@ class BoardTypeResponse(CoreSchema, BoardTypeBase):
 class SubscriptionPlanBase(BaseModel):
     name: str
     code: str
-    price: float
-    duration_days: int
-    features: Optional[str] = None
+    price: Dict[str, float]
+    max_students: int = 500
+    features: Optional[Dict[str, Any]] = None
     is_active: bool = True
 
 class SubscriptionPlanCreate(SubscriptionPlanBase):
@@ -93,9 +93,9 @@ class SubscriptionPlanCreate(SubscriptionPlanBase):
 class SubscriptionPlanUpdate(BaseModel):
     name: Optional[str] = None
     code: Optional[str] = None
-    price: Optional[float] = None
-    duration_days: Optional[int] = None
-    features: Optional[str] = None
+    price: Optional[Dict[str, float]] = None
+    max_students: Optional[int] = None
+    features: Optional[Dict[str, Any]] = None
     is_active: Optional[bool] = None
 
 class SubscriptionPlanResponse(CoreSchema, SubscriptionPlanBase):

@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from uuid import UUID
 
 from src.common.dependencies import get_db, RoleChecker, get_current_user
+from src.common.schemas import PaginatedResponse
 from src.modules.user.models import User
 from . import schemas, repository
 
@@ -21,13 +22,23 @@ def create_class(
         raise HTTPException(status_code=403, detail="Cannot create class for another school")
     return repository.class_repo.create(db, obj_in=class_in)
 
-@router.get("/", response_model=List[schemas.ClassResponse])
+@router.get("/", response_model=PaginatedResponse[schemas.ClassResponse])
 def read_classes(
-    skip: int = 0, limit: int = 100, db: Session = Depends(get_db),
+    page: int = 1, limit: int = 100, db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ) -> Any:
     school_id = current_user.school_id if current_user.role.value != "SUPER_ADMIN" else None
-    return repository.class_repo.get_multi(db, skip=skip, limit=limit, school_id=school_id)
+    skip = (page - 1) * limit
+    classes, total_count = repository.class_repo.get_multi(db, skip=skip, limit=limit, school_id=school_id)
+    return {
+        "data": classes,
+        "pagination": {
+            "total_pages": (total_count + limit - 1) // limit if limit > 0 else 1,
+            "total_count": total_count,
+            "current_page": page,
+            "limit": limit
+        }
+    }
 
 @router.get("/{id}", response_model=schemas.ClassResponse)
 def read_class_by_id(
@@ -80,13 +91,22 @@ def create_section(
         raise HTTPException(status_code=403, detail="Access denied")
     return repository.section.create(db, obj_in=section_in)
 
+from typing import Optional
 @router.get("/sections", response_model=List[schemas.SectionResponse])
 def read_sections(
+    classId: Optional[UUID] = None,
     skip: int = 0, limit: int = 100, db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ) -> Any:
     school_id = current_user.school_id if current_user.role.value != "SUPER_ADMIN" else None
-    return repository.section.get_multi(db, skip=skip, limit=limit, school_id=school_id)
+    
+    query = db.query(repository.section.model)
+    if school_id:
+        query = query.filter(repository.section.model.school_id == school_id)
+    if classId:
+        query = query.filter(repository.section.model.class_id == classId)
+        
+    return query.offset(skip).limit(limit).all()
 
 @router.put("/sections/{id}", response_model=schemas.SectionResponse)
 def update_section(

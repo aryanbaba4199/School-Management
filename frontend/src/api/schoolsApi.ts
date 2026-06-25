@@ -30,13 +30,30 @@ export const schoolsApi = baseApi.injectEndpoints({
     }),
     getDraft: builder.query<{ success: boolean; data: ISchoolDraft }, string>({
       query: (email) => `/schools/drafts/${encodeURIComponent(email)}`,
+      transformResponse: (response: any) => {
+        if (response?.data?.data) {
+          return { success: true, data: response.data.data };
+        }
+        return response;
+      }
     }),
     saveDraft: builder.mutation<{ success: boolean; data: ISchoolDraft }, ISchoolDraft>({
-      query: (draft) => ({
-        url: '/schools/drafts',
-        method: 'POST',
-        body: draft,
-      }),
+      query: (draft) => {
+        return {
+          url: '/schools/drafts',
+          method: 'POST',
+          body: {
+            email: draft.adminEmail || draft.schoolDetails?.email || 'draft@temp.com',
+            data: draft
+          },
+        };
+      },
+      transformResponse: (response: any) => {
+        if (response?.data?.data) {
+          return { success: true, data: response.data.data };
+        }
+        return response;
+      }
     }),
     updateSchool: builder.mutation<{ success: boolean; data: ISchool }, { id: string; body: Partial<SchoolFormData> }>({
       query: ({ id, body }) => ({
@@ -62,6 +79,7 @@ export const schoolsApi = baseApi.injectEndpoints({
       invalidatesTags: ['School'],
     }),
   }),
+  overrideExisting: true,
 });
 
 export const { 

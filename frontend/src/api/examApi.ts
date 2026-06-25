@@ -153,7 +153,7 @@ export const examApi = baseApi.injectEndpoints({
       }),
       providesTags: ['ReportCard'],
     }),
-  }),
+  }),  overrideExisting: true,
 });
 
 export const { 

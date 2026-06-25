@@ -1,4 +1,5 @@
 from sqlalchemy import Column, String, Integer, Float, ForeignKey, Date, Enum, UniqueConstraint
+from sqlalchemy.orm import relationship
 from src.common.models.base import CoreModel
 import enum
 
@@ -26,6 +27,9 @@ class Exam(CoreModel):
     status = Column(Enum(ExamStatusEnum, name="exam_status_enum", create_type=False), default=ExamStatusEnum.DRAFT)
     created_by = Column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
 
+    school = relationship("School")
+    creator = relationship("User")
+
 class ExamSchedule(CoreModel):
     __tablename__ = "exam_schedules"
     
@@ -34,6 +38,12 @@ class ExamSchedule(CoreModel):
     class_id = Column(ForeignKey("classes.id", ondelete="CASCADE"), nullable=False)
     section_id = Column(ForeignKey("sections.id", ondelete="CASCADE"), nullable=False)
     subject_id = Column(ForeignKey("subjects.id", ondelete="CASCADE"), nullable=False)
+    
+    school = relationship("School")
+    exam = relationship("Exam")
+    class_ = relationship("Class")
+    section = relationship("Section")
+    subject = relationship("Subject")
     
     exam_date = Column(Date, nullable=False)
     start_time = Column(String, nullable=False)
@@ -54,6 +64,14 @@ class StudentExamMark(CoreModel):
     section_id = Column(ForeignKey("sections.id", ondelete="CASCADE"), nullable=False)
     subject_id = Column(ForeignKey("subjects.id", ondelete="CASCADE"), nullable=False)
     
+    school = relationship("School")
+    exam = relationship("Exam")
+    schedule = relationship("ExamSchedule")
+    student = relationship("User", foreign_keys=[student_id])
+    class_ = relationship("Class")
+    section = relationship("Section")
+    subject = relationship("Subject")
+    
     obtained_marks = Column(Float)
     max_marks = Column(Float, nullable=False)
     grade = Column(String)
@@ -61,6 +79,7 @@ class StudentExamMark(CoreModel):
     attendance_status = Column(String, default="PRESENT")
     
     entered_by = Column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    entered_by_user = relationship("User", foreign_keys=[entered_by])
     
     __table_args__ = (
         UniqueConstraint('exam_schedule_id', 'student_id', name='uq_student_exam_schedule'),
@@ -83,6 +102,12 @@ class ReportCard(CoreModel):
     student_id = Column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     class_id = Column(ForeignKey("classes.id", ondelete="CASCADE"), nullable=False)
     section_id = Column(ForeignKey("sections.id", ondelete="CASCADE"), nullable=False)
+    
+    school = relationship("School")
+    exam = relationship("Exam")
+    student = relationship("User")
+    class_ = relationship("Class")
+    section = relationship("Section")
     
     total_marks = Column(Float, nullable=False)
     obtained_marks = Column(Float, nullable=False)

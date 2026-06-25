@@ -75,7 +75,7 @@ export const classesApi = baseApi.injectEndpoints({
       }),
       providesTags: ['Section'],
     }),
-  }),
+  }),  overrideExisting: true,
 });
 
 export const {

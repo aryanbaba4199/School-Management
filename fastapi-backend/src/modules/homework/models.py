@@ -1,10 +1,18 @@
-from sqlalchemy import Column, String, ForeignKey, Date, Enum
+from sqlalchemy import Column, String, ForeignKey, Date, Enum, Integer
+from sqlalchemy.orm import relationship
 from src.common.models.base import CoreModel
 import enum
 
 class HomeworkStatusEnum(str, enum.Enum):
     PUBLISHED = "PUBLISHED"
     DRAFT = "DRAFT"
+
+class SubmissionStatusEnum(str, enum.Enum):
+    PENDING = "PENDING"
+    SUBMITTED = "SUBMITTED"
+    GRADED = "GRADED"
+    LATE = "LATE"
+    CORRECTION_REQUIRED = "CORRECTION_REQUIRED"
 
 class Homework(CoreModel):
     __tablename__ = "homeworks"
@@ -17,10 +25,19 @@ class Homework(CoreModel):
     title = Column(String, nullable=False)
     description = Column(String)
     due_date = Column(Date, nullable=False)
-    attachment_url = Column(String)
+    
+    from sqlalchemy.dialects.postgresql import JSONB
+    attachments = Column(JSONB, nullable=True) # JSON array of {url, name, type}
+    max_marks = Column(Integer, nullable=True)
     
     status = Column(Enum(HomeworkStatusEnum, name="homework_status_enum", create_type=False), default=HomeworkStatusEnum.DRAFT)
-    created_by = Column(ForeignKey("users.id", ondelete="SET NULL"))
+    teacher_id = Column(ForeignKey("users.id", ondelete="SET NULL"))
+    
+    school = relationship("School")
+    class_ = relationship("Class")
+    section = relationship("Section")
+    subject = relationship("Subject")
+    teacher = relationship("User", foreign_keys=[teacher_id])
 
 class HomeworkSubmission(CoreModel):
     __tablename__ = "homework_submissions"
@@ -29,8 +46,17 @@ class HomeworkSubmission(CoreModel):
     student_id = Column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     
     submission_text = Column(String)
-    attachment_url = Column(String)
+    from sqlalchemy.dialects.postgresql import JSONB
+    attachments = Column(JSONB, nullable=True)
     
-    grade = Column(String)
+    status = Column(Enum(SubmissionStatusEnum, name="submission_status_enum", create_type=True), default=SubmissionStatusEnum.PENDING)
+    submission_date = Column(Date, nullable=True)
+    
+    obtained_marks = Column(Integer, nullable=True)
     teacher_feedback = Column(String)
-    evaluated_by = Column(ForeignKey("users.id", ondelete="SET NULL"))
+    graded_by = Column(ForeignKey("users.id", ondelete="SET NULL"))
+    graded_at = Column(Date, nullable=True)
+    
+    homework = relationship("Homework")
+    student = relationship("User", foreign_keys=[student_id])
+    evaluator = relationship("User", foreign_keys=[graded_by])

@@ -11,6 +11,13 @@ class UserRoleEnum(str, enum.Enum):
     STUDENT = "STUDENT"
     PARENT = "PARENT"
 
+class UserAuditActionEnum(str, enum.Enum):
+    CREATE = "CREATE"
+    UPDATE = "UPDATE"
+    DELETE = "DELETE"
+    STATUS_TOGGLE = "STATUS_TOGGLE"
+    PASSWORD_CHANGE = "PASSWORD_CHANGE"
+
 user_children_association = Table(
     'user_children',
     CoreModel.metadata,
@@ -25,6 +32,13 @@ user_subjects_association = Table(
     Column('subject_id', UUID(as_uuid=True), ForeignKey('subjects.id', ondelete="CASCADE"), primary_key=True)
 )
 
+user_classes_association = Table(
+    'user_classes',
+    CoreModel.metadata,
+    Column('user_id', UUID(as_uuid=True), ForeignKey('users.id', ondelete="CASCADE"), primary_key=True),
+    Column('class_id', UUID(as_uuid=True), ForeignKey('classes.id', ondelete="CASCADE"), primary_key=True)
+)
+
 class User(CoreModel):
     __tablename__ = "users"
     
@@ -36,6 +50,7 @@ class User(CoreModel):
     role = Column(Enum(UserRoleEnum, name="user_role_enum", create_type=False), nullable=False)
     
     school_id = Column(ForeignKey("schools.id", ondelete="CASCADE"), nullable=True, index=True)
+    school = relationship("School")
     phone = Column(String)
     is_active = Column(Boolean, default=True)
     
@@ -45,6 +60,10 @@ class User(CoreModel):
     address_state_id = Column(ForeignKey("states.id", ondelete="SET NULL"), nullable=True)
     address_district_id = Column(ForeignKey("districts.id", ondelete="SET NULL"), nullable=True)
     address_pincode = Column(Integer)
+    
+    city = relationship("City")
+    state = relationship("State")
+    district = relationship("District")
     
     class_id = Column(ForeignKey("classes.id", ondelete="SET NULL"), nullable=True)
     joined_class_id = Column(ForeignKey("classes.id", ondelete="SET NULL"), nullable=True)
@@ -62,6 +81,9 @@ class User(CoreModel):
     # Association for Subjects
     subjects = relationship("Subject", secondary=user_subjects_association, backref="users")
     
+    # Association for Classes (Teachers)
+    classes = relationship("Class", secondary=user_classes_association, backref="users")
+    
     reg_date = Column(Date)
     start_date = Column(Date)
     leave_date = Column(Date)
@@ -70,3 +92,16 @@ class User(CoreModel):
     
     last_login_at = Column(Date)
     password_changed_at = Column(Date)
+
+class UserAuditLog(CoreModel):
+    __tablename__ = "user_audit_logs"
+    
+    school_id = Column(ForeignKey("schools.id", ondelete="CASCADE"), nullable=True, index=True)
+    user_id = Column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    changed_by = Column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    action = Column(Enum(UserAuditActionEnum, name="user_audit_action_enum", create_type=False), nullable=False)
+    
+    from sqlalchemy.dialects.postgresql import JSONB
+    previous_data = Column(JSONB, nullable=True)
+    new_data = Column(JSONB, nullable=True)
+    reason = Column(String, nullable=True)

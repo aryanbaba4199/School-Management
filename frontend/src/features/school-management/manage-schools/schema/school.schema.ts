@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 
-const ObjectIdRegex = /^[0-9a-fA-F]{24}$/;
+const IdRegex = /^([0-9a-fA-F]{24}|[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})$/i;
 
 export const schoolSchema = yup.object({
   adminName: yup
@@ -50,18 +50,18 @@ export const schoolSchema = yup.object({
   country: yup
     .string()
     .required('Country is required')
-    .matches(ObjectIdRegex, 'Invalid Country ID'),
+    .matches(IdRegex, 'Invalid Country ID'),
   countryCode: yup
     .string()
     .default('+91'),
   address: yup.string().max(250, 'Address cannot exceed 250 characters').optional(),
   state: yup
     .string()
-    .matches(ObjectIdRegex, { message: 'Invalid State ID', excludeEmptyString: true })
+    .matches(IdRegex, { message: 'Invalid State ID', excludeEmptyString: true })
     .optional(),
   district: yup
     .string()
-    .matches(ObjectIdRegex, { message: 'Invalid District ID', excludeEmptyString: true })
+    .matches(IdRegex, { message: 'Invalid District ID', excludeEmptyString: true })
     .optional(),
   pincode: yup
     .number()
@@ -71,11 +71,11 @@ export const schoolSchema = yup.object({
   boardType: yup
     .string()
     .required('Board Type is required')
-    .matches(ObjectIdRegex, 'Invalid Board Type ID'),
+    .matches(IdRegex, 'Invalid Board Type ID'),
   subscriptionPlan: yup
     .string()
     .required('Subscription plan is required')
-    .matches(ObjectIdRegex, 'Invalid Subscription Plan ID'),
+    .matches(IdRegex, 'Invalid Subscription Plan ID'),
   billingCycle: yup
     .string()
     .oneOf(['MONTHLY', 'YEARLY'], 'Invalid billing cycle')
